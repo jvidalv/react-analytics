@@ -6,7 +6,7 @@ import { SWRConfig } from "swr";
 import { PublicFooter } from "@/components/public/footer";
 import { useParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { logout } from "@/app/actions";
 import { swrConfig } from "@/lib/shared-swrconfig";
 import { useAppSlugFromLocalStorage } from "@/domains/app/app.utils";

@@ -21,9 +21,9 @@ import {
   Navigation,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import IosIcon from "@/components/ui/ios-icon";
-import AndroidIcon from "@/components/ui/android-icon";
-import { TooltipWrapper } from "@/components/ui/tooltip";
+import IosIcon from "@/components/custom/ios-icon";
+import AndroidIcon from "@/components/custom/android-icon";
+import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";
 
 const aggregateTypeOptions = [
   {

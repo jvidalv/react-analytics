@@ -12,9 +12,9 @@ import {
 import { useAnalyticsUsers } from "@/domains/app/users/users.api";
 import { getUserName } from "@/domains/app/users/users.utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { TooltipWrapper } from "@/components/ui/tooltip";
-import AndroidIcon from "@/components/ui/android-icon";
-import IosIcon from "@/components/ui/ios-icon";
+import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";
+import AndroidIcon from "@/components/custom/android-icon";
+import IosIcon from "@/components/custom/ios-icon";
 import { cn } from "@/lib/utils";
 import { useDebouncedQueryParam } from "@/hooks/use-debounce-query-param";
 import countries from "@/lib/countries";
@@ -22,7 +22,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { getColor } from "@/lib/colors";
-import { SearchFilterInput } from "@/components/ui/input-search";
+import { SearchFilterInput } from "@/components/custom/input-search";
 
 const pageSize = 10;
 

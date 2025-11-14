@@ -1,10 +1,10 @@
 import { useTranslateKeys } from "@/domains/app/translation/translation.api";
-import { TooltipWrapper } from "@/components/ui/tooltip";
+import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";
 import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Locale } from "@/lib/languages";
-import ThunderIcon from "@/components/ui/thunder-icon";
+import ThunderIcon from "@/components/custom/thunder-icon";
 import { cn } from "@/lib/utils";
 
 interface Props {

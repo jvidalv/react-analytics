@@ -2,7 +2,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTranslateKeys } from "@/domains/app/translation/translation.api";
 import { ALL_LANGUAGES, Locale } from "@/lib/languages";
 import { CheckCircle, Loader2 } from "lucide-react";
-import ThunderIcon from "@/components/ui/thunder-icon";
+import ThunderIcon from "@/components/custom/thunder-icon";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 

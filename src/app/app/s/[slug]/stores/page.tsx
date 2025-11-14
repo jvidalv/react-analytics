@@ -27,10 +27,10 @@ import { Button } from "@/components/ui/button";
 import { Check, Copy, Loader2, MessageSquare, Save } from "lucide-react";
 import { mutate } from "swr";
 import { Textarea } from "@/components/ui/textarea";
-import { TooltipWrapper } from "@/components/ui/tooltip";
+import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { MAX_CHARACTERS, TONE_STYLES, ToneStyle } from "@/lib/ai";
-import ThunderIcon from "@/components/ui/thunder-icon";
+import ThunderIcon from "@/components/custom/thunder-icon";
 
 const getData = (data: AppStoreData, language: Locale, platform: Platform) => {
   const foundData = data?.[language]?.[platform];

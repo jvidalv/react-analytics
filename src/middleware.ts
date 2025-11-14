@@ -1,3 +1,9 @@
+/**
+ * NOTE: In Next.js 16, middleware.ts is deprecated in favor of proxy.ts.
+ * However, proxy.ts only supports Node.js runtime, not Edge runtime.
+ * We're keeping middleware.ts to continue using Edge runtime for this auth middleware.
+ * See: https://nextjs.org/docs/app/api-reference/file-conventions/middleware
+ */
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 

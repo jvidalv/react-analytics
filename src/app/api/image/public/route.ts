@@ -29,7 +29,7 @@ export const POST = async (req: Request) => {
     const fileBuffer = Buffer.from(arrayBuffer);
 
     // Process image based on type
-    let processedBuffer = fileBuffer;
+    let processedBuffer: Buffer = fileBuffer;
     const fileExt = ".jpg";
 
     if (type === "avatar") {

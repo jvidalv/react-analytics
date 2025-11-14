@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { uuidv7 } from "uuidv7";
 import { Textarea } from "@/components/ui/textarea";
-import { InputColor } from "@/components/ui/input-color";
+import { InputColor } from "@/components/custom/input-color";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   APP_FEATURES,

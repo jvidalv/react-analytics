@@ -19,7 +19,7 @@ import {
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import ThunderIcon from "@/components/ui/thunder-icon";
+import ThunderIcon from "@/components/custom/thunder-icon";
 import { useUserApps } from "@/domains/app/app.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useParams, usePathname } from "next/navigation";

@@ -1,6 +1,6 @@
 import React, { SVGProps } from "react";
-import AndroidIcon from "@/components/ui/android-icon";
-import IosIcon from "@/components/ui/ios-icon";
+import AndroidIcon from "@/components/custom/android-icon";
+import IosIcon from "@/components/custom/ios-icon";
 
 export type Platform = "android" | "ios";
 

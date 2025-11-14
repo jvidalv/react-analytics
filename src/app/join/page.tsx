@@ -1,4 +1,4 @@
-import ThunderIcon from "@/components/ui/thunder-icon";
+import ThunderIcon from "@/components/custom/thunder-icon";
 import { PublicFooter } from "@/components/public/footer";
 import Image from "next/image";
 import { SignInButton } from "@/app/join/page.buttons";

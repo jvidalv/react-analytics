@@ -29,7 +29,7 @@ import {
 import { mutate } from "swr";
 import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { InputColor } from "@/components/ui/input-color";
+import { InputColor } from "@/components/custom/input-color";
 import { getContrastTextColor } from "@/lib/colors";
 import { useUploadImage } from "@/domains/image/image.api";
 import { uuidv7 } from "uuidv7";

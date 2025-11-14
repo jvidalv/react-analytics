@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { TooltipWrapper } from "@/components/ui/tooltip";
-import { SearchFilterInput } from "@/components/ui/input-search";
+import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";
+import { SearchFilterInput } from "@/components/custom/input-search";
 import { ALL_LANGUAGES, Locale } from "@/lib/languages";
 import { ImportTranslationsPopover } from "@/app/app/s/[slug]/translations/translations.import-popover";
 import { ExportTranslationsButton } from "@/app/app/s/[slug]/translations/translations.export";
