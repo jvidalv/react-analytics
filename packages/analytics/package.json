@@ -1,0 +1,106 @@
+{
+  "name": "@jvidalv/react-analytics",
+  "type": "module",
+  "version": "1.0.2",
+  "description": "A universal analytics library for any React application (web, React Native, Expo, Next.js). Plug and play with automatic navigation tracking, built-in storage adapters, and support for multiple routers.",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "prepare": "npm run build",
+    "push": "npm run build && npm publish",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "react",
+    "analytics",
+    "expo",
+    "react-native",
+    "next.js",
+    "react-router",
+    "tracking",
+    "universal"
+  ],
+  "author": "josepvidalvidal@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "uuidv7": "^1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7",
+    "@babel/preset-react": "^7",
+    "@babel/preset-typescript": "^7",
+    "@eslint/eslintrc": "^3",
+    "@react-native-async-storage/async-storage": "^2",
+    "@rollup/plugin-babel": "^6",
+    "@rollup/plugin-commonjs": "^28",
+    "@rollup/plugin-node-resolve": "^16",
+    "@rollup/plugin-typescript": "^12",
+    "@testing-library/jest-dom": "^6",
+    "@testing-library/react": "^16",
+    "@testing-library/user-event": "^14",
+    "@types/react": "^19",
+    "@typescript-eslint/eslint-plugin": "^8",
+    "@typescript-eslint/parser": "^8",
+    "@vitejs/plugin-react": "^4",
+    "@vitest/coverage-v8": "^2",
+    "@vitest/ui": "^2",
+    "eslint": "^9",
+    "eslint-config-prettier": "^10",
+    "eslint-plugin-prettier": "^5",
+    "eslint-plugin-react": "^7",
+    "eslint-plugin-react-hooks": "^5",
+    "eslint-plugin-react-native": "^5",
+    "expo-application": "^7",
+    "expo-constants": "^18",
+    "expo-device": "^8",
+    "expo-router": "^6",
+    "expo-secure-store": "^15",
+    "jsdom": "^26",
+    "prettier": "^3",
+    "react": "^19",
+    "react-dom": "^19",
+    "react-native": "^0.82",
+    "react-router-dom": "^7",
+    "rollup": "^4",
+    "rollup-plugin-dts": "^6",
+    "typescript": "^5",
+    "vitest": "^2"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  },
+  "peerDependenciesMeta": {
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    },
+    "expo-application": {
+      "optional": true
+    },
+    "expo-constants": {
+      "optional": true
+    },
+    "expo-device": {
+      "optional": true
+    },
+    "expo-router": {
+      "optional": true
+    },
+    "next": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-router-dom": {
+      "optional": true
+    }
+  }
+}
