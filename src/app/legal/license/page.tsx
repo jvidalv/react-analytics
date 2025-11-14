@@ -11,17 +11,22 @@ export default function PrivacyPolicy() {
           <h2>TL;DR;</h2>
           <ul>
             <li>
-              <strong>Personal License:</strong> Build unlimited projects as an
-              individual.
+              <strong>Free Tier:</strong> Track analytics on 1 project with 30 days
+              data retention as an individual.
             </li>
             <li>
-              <strong>Team License:</strong> Build unlimited projects as a team.
+              <strong>Paid Subscriptions (Starter/Pro):</strong> Track analytics on
+              multiple projects with unlimited data retention.
+            </li>
+            <li>
+              <strong>Open Source:</strong> Self-host the MIT-licensed open source
+              version on your own infrastructure.
             </li>
           </ul>
 
           <p>
             This License Agreement (&apos;Agreement&apos;) is entered into
-            between <strong>ExpoFast</strong>, represented by Josep Vidal, whose
+            between <strong>React Analytics</strong>, represented by Josep Vidal, whose
             contact information is{" "}
             <a
               href="mailto:josepvidalvidal@gmail.com"
@@ -30,100 +35,132 @@ export default function PrivacyPolicy() {
               josepvidalvidal@gmail.com
             </a>
             , and you, the user (&apos;Licensee&apos;), regarding the use of the{" "}
-            <strong>ExpoFast</strong> coding boilerplate (the
-            &apos;Product&apos;) available at{" "}
-            <a href="https://expofast.app" className="text-blue-600 underline">
-              https://expofast.app
+            <strong>React Analytics</strong> service (the
+            &apos;Service&apos;) available at{" "}
+            <a href="https://react-analytics.app" className="text-blue-600 underline">
+              https://react-analytics.app
             </a>{" "}
-            (the &apos;Website&apos;). By downloading, accessing, or using the
-            Product, Licensee agrees to be bound by the terms and conditions of
+            (the &apos;Website&apos;). By accessing or using the
+            Service, Licensee agrees to be bound by the terms and conditions of
             this Agreement.
           </p>
 
-          <h2>1. Grant of License</h2>
+          <h2>1. Grant of Service License</h2>
 
-          <h3>1.1 Personal License</h3>
+          <h3>1.1 Free Tier</h3>
           <p>
             Subject to the terms and conditions of this Agreement,{" "}
-            <strong>ExpoFast</strong> grants Licensee a non-exclusive,
+            <strong>React Analytics</strong> grants Licensee a non-exclusive,
             non-transferable, and non-sublicensable{" "}
-            <strong>Personal License</strong> to use the{" "}
-            <strong>ExpoFast</strong> coding boilerplate for the following
+            <strong>Free Tier License</strong> to use the{" "}
+            <strong>React Analytics</strong> hosted service for the following
             purposes:
           </p>
           <ul>
-            <li>Create unlimited projects.</li>
+            <li>Track analytics on up to 1 project/application.</li>
             <li>
-              Build and develop applications or websites for personal or
-              commercial use.
+              Collect up to 10,000 analytics events per month.
+            </li>
+            <li>
+              Access analytics data with 30 days data retention.
+            </li>
+            <li>
+              Use the service for personal or commercial projects.
             </li>
           </ul>
 
-          <h3>1.2 Team License</h3>
+          <h3>1.2 Paid Subscriptions (Starter/Pro)</h3>
           <p>
-            Subject to the terms and conditions of this Agreement,{" "}
-            <strong>ExpoFast</strong> grants Licensee a non-exclusive,
-            non-transferable, and non-sublicensable{" "}
-            <strong>Team License</strong> to use the <strong>ExpoFast</strong>{" "}
-            coding boilerplate for the following purposes:
+            Subject to the terms and conditions of this Agreement and payment of
+            applicable subscription fees,{" "}
+            <strong>React Analytics</strong> grants Licensee a non-exclusive,
+            non-transferable, and non-sublicensable subscription license to use
+            the <strong>React Analytics</strong> hosted service with enhanced
+            features:
           </p>
           <ul>
-            <li>Create unlimited projects.</li>
+            <li>Track analytics on multiple projects (3 for Starter, unlimited for Pro).</li>
             <li>
-              Build and develop applications or websites as part of a team.
+              Collect increased analytics events per month (100,000 for Starter,
+              unlimited for Pro).
             </li>
-            <li>Share the code with other members of the team.</li>
+            <li>Unlimited data retention.</li>
+            <li>Advanced filtering, exports, and analytics features.</li>
+            <li>Share analytics dashboard access with team members (Pro tier).</li>
           </ul>
 
+          <h3>1.3 Open Source License</h3>
+          <p>
+            The <strong>React Analytics</strong> open source software is available
+            under the MIT License. Licensee may download, modify, and self-host
+            the software on their own infrastructure subject to the terms of the
+            MIT License available in the GitHub repository.
+          </p>
+
           <h2>2. Restrictions</h2>
-          <p>Licensee shall not:</p>
+          <p>For the hosted service, Licensee shall not:</p>
           <ul>
             <li>
-              Resell or redistribute the <strong>ExpoFast</strong> boilerplate
-              as a standalone product.
+              Resell, redistribute, or sublicense access to the{" "}
+              <strong>React Analytics</strong> hosted service without express
+              written permission.
             </li>
             <li>
-              Remove, alter, or obscure any copyright, trademark, or other
-              proprietary notices from the <strong>ExpoFast</strong>{" "}
-              boilerplate.
+              Attempt to reverse engineer, decompile, or access the source code
+              of the hosted service infrastructure.
             </li>
             <li>
-              Use the <strong>ExpoFast</strong> boilerplate in any way that
-              violates applicable laws, regulations, or third-party rights.
+              Use the <strong>React Analytics</strong> service in any way that
+              violates applicable laws, regulations, privacy laws, or third-party
+              rights.
             </li>
             <li>
-              Sub-license, rent, lease, or transfer the{" "}
-              <strong>ExpoFast</strong> boilerplate or any rights granted under
-              this Agreement.
+              Exceed usage limits (events, projects, data retention) applicable
+              to your subscription tier without upgrading.
+            </li>
+            <li>
+              Use the service to collect analytics data without proper user
+              consent where required by law.
             </li>
           </ul>
+          <p>
+            The open source self-hosted version is subject to the MIT License
+            terms in the repository and not these restrictions.
+          </p>
 
           <h2>3. Ownership and Intellectual Property</h2>
           <p>
-            <strong>ExpoFast</strong> retains all ownership and intellectual
-            property rights in and to the <strong>ExpoFast</strong> boilerplate.
-            This Agreement does not grant Licensee any ownership rights in the{" "}
-            <strong>ExpoFast</strong> boilerplate.
+            <strong>React Analytics</strong> retains all ownership and intellectual
+            property rights in and to the <strong>React Analytics</strong> hosted
+            service and its proprietary components. This Agreement does not grant
+            Licensee any ownership rights in the hosted service infrastructure.
+          </p>
+          <p>
+            The open source software components are licensed under the MIT License,
+            granting Licensee the rights specified in that license for self-hosted
+            deployments.
           </p>
 
           <h2>4. Warranty and Disclaimer</h2>
           <p>
-            THE <strong>EXPOFAST</strong> BOILERPLATE IS PROVIDED &apos;AS
-            IS&apos;; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+            THE <strong>REACT ANALYTICS</strong> SERVICE IS PROVIDED &apos;AS
+            IS&apos; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
             INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
             MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR
-            NONINFRINGEMENT.
+            NONINFRINGEMENT. NO WARRANTY IS PROVIDED REGARDING UPTIME,
+            DATA ACCURACY, OR AVAILABILITY OF THE SERVICE.
           </p>
 
           <h2>5. Limitation of Liability</h2>
           <p>
             TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW,{" "}
-            <strong>EXPOFAST</strong> SHALL NOT BE LIABLE FOR ANY DIRECT,
+            <strong>REACT ANALYTICS</strong> SHALL NOT BE LIABLE FOR ANY DIRECT,
             INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES
             ARISING OUT OF OR RELATING TO THE USE OR INABILITY TO USE THE{" "}
-            <strong>EXPOFAST</strong> BOILERPLATE, EVEN IF{" "}
-            <strong>EXPOFAST</strong> HAS BEEN ADVISED OF THE POSSIBILITY OF
-            SUCH DAMAGES.
+            <strong>REACT ANALYTICS</strong> SERVICE, INCLUDING BUT NOT LIMITED
+            TO DATA LOSS, BUSINESS INTERRUPTION, OR INACCURATE ANALYTICS DATA,
+            EVEN IF <strong>REACT ANALYTICS</strong> HAS BEEN ADVISED OF THE
+            POSSIBILITY OF SUCH DAMAGES.
           </p>
 
           <h2>6. Governing Law and Jurisdiction</h2>
@@ -138,7 +175,7 @@ export default function PrivacyPolicy() {
           <h2>7. Entire Agreement</h2>
           <p>
             This Agreement constitutes the entire agreement between Licensee and{" "}
-            <strong>ExpoFast</strong> concerning the subject matter herein and
+            <strong>React Analytics</strong> concerning the subject matter herein and
             supersedes all prior or contemporaneous agreements, representations,
             warranties, and understandings.
           </p>
@@ -150,7 +187,7 @@ export default function PrivacyPolicy() {
           </p>
 
           <p>
-            <strong>ExpoFast</strong>
+            <strong>React Analytics</strong>
             <br />
             Contact Information:{" "}
             <a
