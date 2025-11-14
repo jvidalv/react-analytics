@@ -1,56 +1,64 @@
-export const PRICE_PLANS = [
+type PricePlan = {
+  title: string;
+  price: string;
+  slashedPrice?: string;
+  bulletPoints: string[];
+  crossedBulletPoints?: string[];
+  ctaText: string;
+  ctaButtonVariant?: string;
+  ctaUrl: string | undefined;
+  perMonth?: boolean;
+  payOnce?: boolean;
+  allThePrevious?: boolean;
+};
+
+export const PRICE_PLANS: PricePlan[] = [
   {
-    title: "Straw 🌾",
+    title: "Free 🎯",
     price: "0",
-    bulletPoints: ["Platform access", "AI generator for text and images"],
-    crossedBulletPoints: ["ExpoFast starter"],
-    ctaText: "Access ExpoFast",
+    bulletPoints: [
+      "1 project",
+      "30 days data retention",
+      "10,000 events/month",
+      "Basic analytics dashboard",
+      "Event tracking (navigation, actions, errors)",
+    ],
+    crossedBulletPoints: ["Unlimited projects", "Unlimited data retention"],
+    ctaText: "Start Free",
     ctaButtonVariant: "outline",
-    ctaUrl: process.env.NEXT_PUBLIC_STRAW_PLAN,
+    ctaUrl: process.env.NEXT_PUBLIC_FREE_PLAN,
   },
   {
-    title: "Wood 🪵",
-    slashedPrice: "249",
-    price: "199",
+    title: "Starter 🚀",
+    price: "9.99",
+    perMonth: true,
     bulletPoints: [
-      "ExpoFast starter",
-      "API & Database",
-      "Stripe configuration",
-      "Apple & Google Pay setup",
-      "Emails by Resend",
-      "Authentication",
-      "Documentation x2",
+      "3 projects",
+      "Unlimited data retention",
+      "100,000 events/month",
+      "Advanced filtering & exports",
+      "Email support",
     ],
-    crossedBulletPoints: [
-      "Discord & Apps showcase",
-      "Access to our apps code",
-      "Lifetime updates",
-    ],
-    ctaText: "Buy ExpoFast",
+    crossedBulletPoints: ["Unlimited projects", "Priority support"],
+    ctaText: "Get Starter",
     allThePrevious: true,
-    payOnce: true,
-    ctaUrl: process.env.NEXT_PUBLIC_WOOD_PLAN,
+    ctaUrl: process.env.NEXT_PUBLIC_STARTER_PLAN,
   },
   {
-    title: "Metal 🪙",
-    slashedPrice: "299",
-    price: "249",
+    title: "Pro 💎",
+    price: "19.99",
+    perMonth: true,
     bulletPoints: [
-      "ExpoFast starter",
-      "API & Database",
-      "Stripe configuration",
-      "Apple & Google Pay setup",
-      "Emails by Resend",
-      "Authentication",
-      "Documentation x2",
-      "Discord & Apps showcase",
-      "Access to our apps code",
-      "Lifetime updates",
+      "Unlimited projects",
+      "Unlimited data retention",
+      "Unlimited events",
+      "Advanced filtering & exports",
+      "Custom integrations",
+      "Priority support",
+      "Team collaboration",
     ],
-    ctaText: "Buy ExpoFast",
-    ctaLink: "/#join",
+    ctaText: "Get Pro",
     allThePrevious: true,
-    payOnce: true,
-    ctaUrl: process.env.NEXT_PUBLIC_METAL_PLAN,
+    ctaUrl: process.env.NEXT_PUBLIC_PRO_PLAN,
   },
 ];
