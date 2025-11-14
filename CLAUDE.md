@@ -439,6 +439,111 @@ NEXT_PUBLIC_WOOD_PLAN=...
 NEXT_PUBLIC_STRAW_PLAN=...
 ```
 
+## Git Commit Conventions
+
+This project follows semantic commit conventions to maintain a clear and meaningful git history.
+
+### Commit Message Format
+
+```
+<type>: <subject>
+
+<body (optional)>
+```
+
+### Commit Types
+
+- **feat**: New features or significant enhancements to existing features
+  - Example: `feat: add user authentication with OAuth`
+  - Use when adding new functionality that users will notice
+
+- **fix**: Bug fixes
+  - Example: `fix: resolve navigation crash on iOS`
+  - Use when correcting defects or errors
+
+- **refactor**: Code restructuring without changing functionality
+  - Example: `refactor: reorganize analytics event handling`
+  - Use when improving code structure, moving files, or renaming
+
+- **docs**: Documentation updates
+  - Example: `docs: update API endpoint documentation`
+  - Use for README, CLAUDE.md, comments, or legal page updates
+
+- **chore**: Maintenance tasks, dependency updates, configuration
+  - Example: `chore: upgrade Next.js to v16`
+  - Use for dependencies, build config, or routine maintenance
+
+- **test**: Adding or updating tests
+  - Example: `test: add analytics batching tests`
+  - Use when working with test files
+
+- **perf**: Performance improvements
+  - Example: `perf: optimize database query for user analytics`
+  - Use when specifically improving performance
+
+### Commit Message Guidelines
+
+- **Subject line**: Keep under 72 characters, use imperative mood ("add" not "added")
+- **Body**: Explain the "why" not the "what" - the code shows what changed
+- **Scope**: Optionally add scope in parentheses: `feat(analytics): add custom event tracking`
+- **Breaking changes**: Prefix with `BREAKING:` in body for major changes
+
+### Examples
+
+**Good commits:**
+```
+feat: restructure pricing plans from one-time to subscription model
+
+Changed from Straw/Wood/Metal tiers to Free/Starter/Pro SaaS pricing.
+This enables recurring revenue and scales better with usage patterns.
+```
+
+```
+docs: update legal pages for React Analytics rebrand
+
+Updated privacy policy, terms of service, and license agreement to
+reflect the new React Analytics brand and subscription model.
+```
+
+```
+chore: upgrade Next.js 16, React 19, and Tailwind 4
+
+Major framework upgrades to latest stable versions. Includes
+migration to Turbopack and Tailwind CSS v4 configuration.
+```
+
+**Avoid:**
+```
+update stuff          # Too vague
+Fixed bug             # Not descriptive enough
+WIP                   # Work should be completed before committing
+Updated 15 files      # Describes what, not why
+```
+
+### When to Commit
+
+- Commit logical units of work that pass tests
+- One feature/fix per commit when possible
+- Separate refactoring from feature changes
+- Group related changes together (e.g., all legal docs, all UI components)
+
+### Multi-Commit Changes
+
+For large changes affecting multiple areas:
+
+1. **Break into logical commits** by concern (pricing, UI, docs)
+2. **Ensure each commit builds** and doesn't break the app
+3. **Order commits logically** (dependencies first, features after)
+4. **Keep commits focused** - one purpose per commit
+
+### AI-Assisted Development
+
+This project uses AI tools (Claude Code, GitHub Copilot, etc.) to assist with development.
+
+**Important**: Do NOT add co-author attribution or "Generated with Claude Code" footers to commit messages. Commits should be clean and professional without AI attribution.
+
+The use of AI tools is documented here in CLAUDE.md, not in individual commits.
+
 ## Code Patterns & Conventions
 
 ### File Naming
