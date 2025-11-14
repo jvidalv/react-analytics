@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import ThunderIcon from "@/components/ui/thunder-icon";
-import GithubIcon from "@/components/ui/github-icon";
+import ThunderIcon from "@/components/custom/thunder-icon";
+import GithubIcon from "@/components/custom/github-icon";
 
 export const PublicHeader = () => {
   return (
@@ -20,12 +20,13 @@ export const PublicHeader = () => {
         <div className="flex items-center gap-2 sm:gap-4">
           <Link href="/#join">
             <Button variant="outline">
-              <ThunderIcon className="text-white" /> Start shipping
+              <ThunderIcon className="text-white" /> Start Tracking
             </Button>
           </Link>
           <a
-            href="https://github.com/expofast"
+            href="https://github.com/jvidalv/react-analytics"
             target="_blank"
+            rel="noopener noreferrer"
             className="transition-all hover:scale-105"
           >
             <GithubIcon className="size-6 sm:size-8" />

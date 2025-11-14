@@ -24,14 +24,14 @@ export const JoinSection = () => {
         </div>
         <div className="relative">
           <h2 className="mb-4 text-center text-4xl font-bold sm:text-5xl">
-            Join the waitlist 🕘
+            Start Tracking Today 🚀
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-center text-lg font-medium text-muted-foreground sm:text-xl">
-            Receive{" "}
+            Get started with{" "}
             <span className="text-foreground underline underline-offset-4">
-              free access
+              our free tier
             </span>{" "}
-            when we launch and be the first to dive deep into our product:
+            or self-host the open source version. Start understanding your users in minutes:
           </p>
           <div className="mx-auto max-w-md">
             <HomeForm />

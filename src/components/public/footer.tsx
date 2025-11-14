@@ -17,7 +17,7 @@ export const PublicFooter = () => {
               />
             </Link>
             <p className="text-muted-foreground">
-              Ship your startup in days, not weeks Copyright ©{" "}
+              Open source analytics for React applications. Copyright ©{" "}
               {new Date().getFullYear()} - All rights reserved
             </p>
           </div>
@@ -50,10 +50,31 @@ export const PublicFooter = () => {
             </div>
           </div>
           <div>
-            <h4 className="mb-2 font-semibold">Apps by ExpoFast</h4>
+            <h4 className="mb-2 font-semibold">Resources</h4>
             <div className="grid gap-1">
-              <a href="https://100cims.app" className="text-muted-foreground">
-                100cims
+              <a
+                href="https://github.com/jvidalv/react-analytics"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground"
+              >
+                GitHub
+              </a>
+              <a
+                href="https://github.com/jvidalv/react-analytics#documentation"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground"
+              >
+                Documentation
+              </a>
+              <a
+                href="https://github.com/jvidalv/react-analytics#self-hosting"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground"
+              >
+                Self-Hosting Guide
               </a>
             </div>
           </div>

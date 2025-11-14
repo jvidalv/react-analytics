@@ -3,186 +3,211 @@
 import { SVGProps, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
-  BellRing,
+  Activity,
+  BarChart3,
   ChevronsRight,
-  CircleEllipsis,
-  CreditCard,
   Database,
-  Mail,
-  Palette,
+  Filter,
+  Globe,
+  Search,
+  Smartphone,
   UserCircle,
 } from "lucide-react";
 
 export default function HomeStarterFeatures() {
-  const [selected, setSelected] = useState("api");
+  const [selected, setSelected] = useState("tracking");
 
   const features = [
     {
-      key: "api",
-      title: "API",
+      key: "tracking",
+      title: "Event Tracking",
       points: [
-        "Backend API included, single repository app thanks to expo-router.",
-        "Zero infrastructure hassle, deploy with one click.",
-        "Fully typed end to end experience with elysia-js and eden.",
+        "Automatic navigation tracking for Next.js App Router, Expo Router, and React Router.",
+        "Track custom actions, errors, state changes, and user identification.",
+        "Properties support for detailed event metadata (up to 600 characters).",
+        "Client-side batching for optimized network performance.",
       ],
-      poweredBy: (
-        <p>
-          Easily deploy on{" "}
-          <a
-            href="https://vercel.com"
-            target="_blank"
-            className="underline underline-offset-4"
-          >
-            Vercel
-          </a>{" "}
-          or on{" "}
-          <a
-            href="https://expo.dev"
-            target="_blank"
-            className="underline underline-offset-4"
-          >
-            Expo
-          </a>{" "}
-          with one click.
-        </p>
-      ),
-      note: "You can also self-host if that's what you prefer.",
-      Icon: (props: SVGProps<SVGSVGElement>) => (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width={800}
-          height={800}
-          viewBox="0 0 1024 1024"
-          fill="currentColor"
-          {...props}
-        >
-          <path d="m877.686 727.913-.585-.365a32.899 32.899 0 0 1-8.042-46.424 411.817 411.817 0 1 0-141.83 145.777c14.622-8.992 33.63-5.117 43.646 8.773l.146.073a30.413 30.413 0 0 1-7.969 43.207l-6.14 4.02a475.201 475.201 0 1 1 163.615-164.419 29.974 29.974 0 0 1-42.841 9.358zM340.343 329.33c7.164-7.091 24.71-9.65 33.264 0 10.6 11.186 7.164 29.462 0 37.139L262.995 473.936l107.907 102.205c7.164 7.092 8.115 27.343 0 35.384-9.797 9.724-29.828 8.188-36.481 1.536L208.31 487.388a18.423 18.423 0 0 1 0-25.953l132.033-132.033zm343.314 0L815.69 461.362a18.423 18.423 0 0 1 0 25.953L689.652 613.134c-6.653 6.58-25.588 10.747-36.554 0-10.308-10.235-7.091-31.29 0-38.382l108.346-100.67L649.59 365.445c-7.165-7.676-9.504-26.611 0-36.042 9.285-9.138 26.904-7.091 34.068 0zM548.115 303.01c3.583-9.504 21.348-15.499 32.68-11.258 10.82 4.02 17.18 19.008 14.256 28.512L475.154 649.98c-3.51 9.504-20.617 13.306-30.194 9.723-10.162-3.509-21.201-17.545-17.546-26.976L548.042 303.01z" />
-        </svg>
-      ),
+      Icon: Activity,
     },
     {
-      key: "database",
-      title: "Database",
+      key: "dashboard",
+      title: "Dashboard",
       points: [
-        "PostgreSQL managed by drizzle-orm.",
-        "Supabase integration.",
-        "Fully typed experience and seamless migration flow with examples.",
+        "Real-time analytics visualization with beautiful, intuitive interface.",
+        "User journey timelines showing complete event history.",
+        "Error tracking and debugging with full context and stack traces.",
+        "Session-based analytics to understand user behavior patterns.",
       ],
       poweredBy: (
         <p>
-          Leverages{" "}
+          Built with{" "}
           <a
-            href="https://supabase.com"
+            href="https://nextjs.org"
             target="_blank"
+            rel="noopener noreferrer"
             className="underline underline-offset-4"
           >
-            Supabase
+            Next.js 15
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://ui.shadcn.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            Shadcn/ui
           </a>
           .
         </p>
       ),
-      Icon: Database,
-      note: "You can switch to any other SQL database.",
+      Icon: BarChart3,
     },
     {
-      key: "payments",
-      title: "Payments",
+      key: "platforms",
+      title: "Multi-Platform",
       points: [
-        "Native Stripe implementation for an amazing user experience.",
-        "Apple Pay and Google Pay implementation out of the box.",
-        "Examples of webhooks to manage Stripe within the repository.",
+        "Universal analytics library for React, React Native, Expo, and Next.js.",
+        "Single package (@jvidalv/react-analytics) works everywhere.",
+        "Automatic platform detection and device information collection.",
+        "Consistent API across web and mobile platforms.",
+      ],
+      poweredBy: (
+        <p>
+          Supports{" "}
+          <a
+            href="https://react.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            React
+          </a>
+          ,{" "}
+          <a
+            href="https://reactnative.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            React Native
+          </a>
+          ,{" "}
+          <a
+            href="https://expo.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            Expo
+          </a>
+          , and{" "}
+          <a
+            href="https://nextjs.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            Next.js
+          </a>
+          .
+        </p>
+      ),
+      Icon: Smartphone,
+    },
+    {
+      key: "users",
+      title: "User Analytics",
+      points: [
+        "Identify users with custom IDs to track across sessions and devices.",
+        "Device fingerprinting for anonymous user tracking.",
+        "User session management and session-based analytics.",
+        "Privacy-focused with sensitive mode to hide personal data.",
+      ],
+      Icon: UserCircle,
+    },
+    {
+      key: "database",
+      title: "Data Storage",
+      points: [
+        "PostgreSQL database with Drizzle ORM for type safety.",
+        "Separate production and test data tables for clean development.",
+        "Optimized indexes for fast queries on large datasets.",
+        "JSON support for flexible event properties storage.",
       ],
       poweredBy: (
         <p>
           Uses{" "}
           <a
-            href="https://stripe.com"
+            href="https://neon.tech"
             target="_blank"
+            rel="noopener noreferrer"
             className="underline underline-offset-4"
           >
-            Stripe
+            Neon
+          </a>{" "}
+          serverless PostgreSQL with{" "}
+          <a
+            href="https://orm.drizzle.team"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            Drizzle ORM
           </a>
           .
         </p>
       ),
-      Icon: CreditCard,
+      note: "Switch to any PostgreSQL, MySQL, or SQLite database.",
+      Icon: Database,
     },
     {
-      key: "user",
-      title: "Users",
+      key: "api",
+      title: "Simple API",
       points: [
-        "Sign in with Apple and Google.",
-        "Magic links.",
-        "Super simple session management, no convoluted auth libraries.",
-        "Protected/public API routes examples.",
+        "RESTful API endpoint for analytics ingestion (/api/analytics/push).",
+        "API key authentication with separate production and test keys.",
+        "CORS-enabled for cross-origin requests from your apps.",
+        "Comprehensive API documentation and TypeScript types.",
       ],
-      Icon: UserCircle,
+      note: "Fully typed end-to-end experience with TypeScript.",
+      Icon: Globe,
     },
     {
-      key: "emails",
-      title: "Emails",
+      key: "filtering",
+      title: "Query & Filter",
       points: [
-        "Transactional emails examples for sign-up and stripe purchases.",
-        "Create emails using React.",
-        "Setup guide to avoid spam folder.",
+        "Filter events by date range, event type, and user ID.",
+        "Search functionality to find specific events quickly.",
+        "Pagination support for handling large datasets.",
+        "Aggregated statistics and metrics calculation.",
       ],
-      poweredBy: (
-        <p>
-          Powered by{" "}
-          <a
-            href="https://resend.com"
-            target="_blank"
-            className="underline underline-offset-4"
-          >
-            Resend
-          </a>{" "}
-          and react-email.
-        </p>
-      ),
-      Icon: Mail,
+      Icon: Filter,
     },
     {
-      key: "notifications",
-      title: "Notifications",
+      key: "opensource",
+      title: "Open Source",
       points: [
-        "Push notifications setup for both Android and iOS.",
-        "Detailed documentation for configuring it.",
-      ],
-      Icon: BellRing,
-    },
-    {
-      key: "design",
-      title: "Design",
-      points: [
-        "30+ components with animations to build the perfect UI.",
-        "Easily adapt to your desired style thanks to nativewind defaults.",
-        "Light/Dark mode out of the box.",
+        "Fully open source and MIT licensed—fork it, customize it, contribute to it.",
+        "Self-host on your own infrastructure for complete data control.",
+        "Docker support and comprehensive deployment documentation.",
+        "Active community and regular updates on GitHub.",
       ],
       poweredBy: (
         <p>
-          Build with{" "}
+          View source code on{" "}
           <a
-            href="https://tailwindcss.com"
+            href="https://github.com/jvidalv/react-analytics"
             target="_blank"
+            rel="noopener noreferrer"
             className="underline underline-offset-4"
           >
-            Tailwind
-          </a>{" "}
-          and nativewind.
+            GitHub
+          </a>
+          .
         </p>
       ),
-      Icon: Palette,
-    },
-    {
-      key: "more",
-      title: "More",
-      points: [
-        "Easily convert it to a fully functional web thanks to react-native-web.",
-        "Access our discord community to receive help and share progress.",
-        "Documentation for x10 engineers, no noise, straight to the point.",
-        "Access to a highly trained AI with all the ExpoFast content and and our production apps code.",
-      ],
-      Icon: CircleEllipsis,
+      Icon: Search,
     },
   ];
 
