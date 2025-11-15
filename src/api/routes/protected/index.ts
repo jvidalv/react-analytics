@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { getUserMeRoute } from "./get-user-me.route";
 import { postUserMeRoute } from "./post-user-me.route";
+import { appRoutes } from "./app";
 
 export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .onBeforeHandle(async ({ set, store }) => {
@@ -37,4 +38,5 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
     (store as { user: StoreUser }).user = user;
   })
   .use(getUserMeRoute)
-  .use(postUserMeRoute);
+  .use(postUserMeRoute)
+  .use(appRoutes);

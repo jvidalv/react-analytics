@@ -1,5 +1,5 @@
-import useSWR, { mutate } from "swr";
-import useSWRMutation from "swr/mutation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetcherProtected } from "@/lib/fetcher";
 import { FeatureKey } from "@/lib/features";
 
 export type App = {
@@ -17,89 +17,135 @@ export type App = {
   updatedAt: string;
 };
 
+// Query key functions for cache invalidation
+export const getAppQueryKey = (slug?: string) => ["app", slug] as const;
+export const getAllAppsQueryKey = () => ["apps", "all"] as const;
+
 export const useUserApps = () => {
-  const { data, mutate, isLoading } = useSWR<App[]>("/api/app/all");
+  const {
+    data: apps,
+    isPending: isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: getAllAppsQueryKey(),
+    queryFn: async () => {
+      const { data, error } = await fetcherProtected.app.all.get();
+
+      if (error) {
+        throw error;
+      }
+
+      return data.message as App[];
+    },
+  });
 
   return {
-    apps: data,
+    apps,
     isLoading,
-    refetch: mutate,
+    refetch,
   };
 };
 
 export const useAppBySlug = (slug?: string) => {
-  const { data, mutate, isLoading } = useSWR<App | null>(
-    slug ? `/api/app/one?slug=${slug}` : null,
-  );
+  const enabled = !!slug;
+
+  const {
+    data: app,
+    isPending: isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: getAppQueryKey(slug),
+    queryFn: async () => {
+      if (!slug) return null;
+
+      const { data, error } = await fetcherProtected.app({ slug }).get();
+
+      if (error) {
+        throw error;
+      }
+
+      return data.message as App;
+    },
+    enabled,
+  });
 
   return {
-    app: data,
+    app,
     isLoading,
-    refetch: mutate,
+    refetch,
   };
 };
 
-const createAppFetcher = async (
-  url: string,
-  {
-    arg,
-  }: {
-    arg: Omit<App, "userId" | "slug" | "createdAt" | "updatedAt"> & {
-      features: string[];
-    };
-  },
-) => {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(arg),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create app");
-  }
-
-  return (await response.json()) as App;
-};
-
 export const useCreateApp = () => {
-  const { trigger, isMutating } = useSWRMutation(
-    "/api/app/one",
-    createAppFetcher,
-  );
+  const queryClient = useQueryClient();
 
-  return { createApp: trigger, isCreating: isMutating };
-};
+  const { mutateAsync: createApp, isPending: isCreating } = useMutation({
+    mutationFn: async (payload: {
+      id?: string;
+      name: string;
+      description?: string;
+      primaryColor?: string;
+      logoUrl?: string;
+      features?: string[];
+    }) => {
+      const { data, error } = await fetcherProtected.app.create.post(payload);
 
-const updateAppFetcher = async (
-  url: string,
-  { arg }: { arg: Partial<App> & { id: string } },
-) => {
-  const response = await fetch(url, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
+      if (error) {
+        throw error;
+      }
+
+      return data.message as App;
     },
-    body: JSON.stringify(arg),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: getAllAppsQueryKey(),
+      });
+    },
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to update app");
-  }
-
-  const updatedApp = await response.json();
-  await mutate("/api/app/all"); // Refetch all apps after update
-  await mutate(`/api/app?slug=${arg.slug}`); // Refetch the specific app
-  return updatedApp;
+  return {
+    createApp,
+    isCreating,
+  };
 };
 
-export const useUpdateApp = () => {
-  const { trigger, isMutating } = useSWRMutation(
-    "/api/app/one",
-    updateAppFetcher,
-  );
+export const useUpdateApp = (slug?: string) => {
+  const queryClient = useQueryClient();
 
-  return { updateApp: trigger, isUpdating: isMutating };
+  const { mutateAsync: updateApp, isPending: isUpdating } = useMutation({
+    mutationFn: async (payload: {
+      name?: string;
+      description?: string;
+      primaryColor?: string;
+      logoUrl?: string;
+      features?: string[];
+      websiteUrl?: string;
+      email?: string;
+    }) => {
+      if (!slug) throw new Error("No app slug provided");
+
+      const { data, error } = await fetcherProtected
+        .app({ slug })
+        .put(payload);
+
+      if (error) {
+        throw error;
+      }
+
+      return data.message as App;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: getAppQueryKey(slug),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: getAllAppsQueryKey(),
+      });
+    },
+  });
+
+  return {
+    updateApp,
+    isUpdating,
+  };
 };

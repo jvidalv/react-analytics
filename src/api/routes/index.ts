@@ -58,3 +58,5 @@ export const app = new Elysia({ prefix: "/api" })
   })
   .use(publicRoutes)
   .use(protectedRoutes);
+
+export type Api = typeof app;
