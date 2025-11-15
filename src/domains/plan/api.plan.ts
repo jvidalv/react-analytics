@@ -30,7 +30,7 @@ export const PRICE_PLANS: PricePlan[] = [
   },
   {
     title: "Starter 🚀",
-    price: "9.99",
+    price: "10",
     perMonth: true,
     bulletPoints: [
       "3 projects",
@@ -46,14 +46,13 @@ export const PRICE_PLANS: PricePlan[] = [
   },
   {
     title: "Pro 💎",
-    price: "19.99",
+    price: "30",
     perMonth: true,
     bulletPoints: [
       "Unlimited projects",
       "Unlimited data retention",
       "Unlimited events",
       "Advanced filtering & exports",
-      "Custom integrations",
       "Priority support",
       "Team collaboration",
     ],
