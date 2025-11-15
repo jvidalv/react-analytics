@@ -35,7 +35,7 @@ export default function HomeForm() {
         disabled={isSuccess}
         required
         placeholder="me@email.com"
-        className="mb-4 w-full rounded-xl border-4 border-primary py-6 text-center !text-xl backdrop-blur-lg focus:border-primary focus-visible:ring-primary"
+        className="mb-4 w-full  border-4 border-primary py-6 text-center !text-xl backdrop-blur-lg focus:border-primary focus-visible:ring-primary"
       />
       <Button
         className={cn(

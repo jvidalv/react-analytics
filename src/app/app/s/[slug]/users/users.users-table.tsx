@@ -57,12 +57,12 @@ export function UsersUsersTable({ apiKey }: { apiKey?: string }) {
   const baseSize = (page - 1) * pageSize + 1;
 
   return (
-    <div className="divide-y overflow-hidden rounded-lg border">
+    <div className="divide-y overflow-hidden  border">
       <div className="flex items-center py-1.5 pl-2 pr-4">
         <SearchFilterInput
           defaultValue={query}
           placeholder="Search by name, email, actions, errors..."
-          className="focus-active:border-none w-full rounded-none border-none focus:outline-none focus:ring-0 focus-visible:ring-0"
+          className="focus-active:border-none w-full  border-none focus:outline-none focus:ring-0 focus-visible:ring-0"
           onChange={handleInputChange}
         />
         <div className="flex gap-1 text-xs text-muted-foreground">
@@ -137,7 +137,7 @@ export function UsersUsersTable({ apiKey }: { apiKey?: string }) {
                   {lastSeen}
                 </time>
               )}
-              <div className="flex items-center justify-between gap-2 rounded border px-2 py-px">
+              <div className="flex items-center justify-between gap-2  border px-2 py-px">
                 {isAndroid && <AndroidIcon className="size-4" />}
                 {isApple && <IosIcon className="size-4" />}
                 <div className="-my-2 h-[28px] w-px bg-border" />

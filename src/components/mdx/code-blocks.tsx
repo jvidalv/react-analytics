@@ -19,7 +19,7 @@ export default function CodeBlock({ children }: PropsWithChildren) {
     <div className="group relative">
       <button
         onClick={copyToClipboard}
-        className="absolute right-4 top-5 z-10 rounded text-xs text-muted-foreground transition group-hover:text-foreground"
+        className="absolute right-4 top-5 z-10  text-xs text-muted-foreground transition group-hover:text-foreground"
       >
         {copied ? (
           <ClipboardCheck className="size-4 text-green-500" />

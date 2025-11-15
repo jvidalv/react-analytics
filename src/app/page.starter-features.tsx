@@ -226,14 +226,14 @@ export default function HomeStarterFeatures() {
             onClick={() => setSelected(key)}
             key={title}
             className={cn(
-              "relative hover:scale-105 flex cursor-pointer items-center gap-2 sm:gap-3 rounded-lg bg-background border-4 border-transparent transition-all p-1 sm:p-4",
+              "relative hover:scale-105 flex cursor-pointer items-center gap-2 sm:gap-3  bg-background border-4 border-transparent transition-all p-1 sm:p-4",
               selected === key && "border-primary [&_svg]:text-background",
               index % 2 ? "hover:rotate-1" : "hover:-rotate-1",
             )}
           >
             <div
               className={cn(
-                "rounded-lg relative border-2 border-transparent bg-foreground/10 transition all p-1 sm:p-2",
+                " relative border-2 border-transparent bg-foreground/10 transition all p-1 sm:p-2",
                 selected === key && "bg-primary",
               )}
             >
@@ -245,7 +245,7 @@ export default function HomeStarterFeatures() {
           </button>
         ))}
       </div>
-      <div className="mx-auto max-w-6xl rounded-lg bg-background p-4">
+      <div className="mx-auto max-w-6xl  bg-background p-4">
         <h3 className="mb-6 text-2xl font-semibold sm:text-3xl">
           {currentFeature.title}
         </h3>

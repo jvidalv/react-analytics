@@ -219,7 +219,7 @@ export default function Home() {
           {twits.map(({ text, name, handle, avatar, url }) => (
             <div
               key={name}
-              className="flex h-60 w-full flex-col justify-between rounded-lg border-2 p-6"
+              className="flex h-60 w-full flex-col justify-between  border-2 p-6"
             >
               {text}
               <div className="flex items-end justify-between">
@@ -267,14 +267,14 @@ export default function Home() {
                 <div className="flex items-center gap-4">
                   <div
                     className={cn(
-                      "w-fit relative rounded p-2 animate-glow",
+                      "w-fit relative  p-2 animate-glow",
                       color,
                     )}
                   >
                     <Icon className="relative z-20 size-12 stroke-1" />
                     <span
                       className={cn(
-                        "absolute inset-0 animate-pulse rounded-lg blur-md",
+                        "absolute inset-0 animate-pulse  blur-md",
                         color,
                       )}
                     />
@@ -318,7 +318,7 @@ export default function Home() {
               </p>
             </div>
             <div className="grid gap-8 sm:grid-cols-2">
-              <div className="rounded-xl border-2 bg-card p-8">
+              <div className=" border-2 bg-card p-8">
                 <div className="mb-4 flex items-center gap-3">
                   <LayoutGrid className="size-8 text-primary" />
                   <h3 className="text-2xl font-semibold">MIT Licensed</h3>
@@ -336,7 +336,7 @@ export default function Home() {
                   View on GitHub →
                 </a>
               </div>
-              <div className="rounded-xl border-2 bg-card p-8">
+              <div className=" border-2 bg-card p-8">
                 <div className="mb-4 flex items-center gap-3">
                   <Database className="size-8 text-emerald-500" />
                   <h3 className="text-2xl font-semibold">Self-Host</h3>
@@ -387,7 +387,7 @@ export default function Home() {
                 <div
                   key={title}
                   className={cn(
-                    "flex flex-col rounded-xl border-4 p-4 sm:p-6",
+                    "flex flex-col  border-4 p-4 sm:p-6",
                     index === 2 && "border-emerald-400",
                   )}
                 >

@@ -38,7 +38,7 @@ export function UsersErrorChart({ apiKey }: { apiKey?: string }) {
 
   return (
     <Card>
-      <div className="flex w-full items-center gap-2 rounded-none border-x-0 border-b border-t-0 p-4 text-sm">
+      <div className="flex w-full items-center gap-2  border-x-0 border-b border-t-0 p-4 text-sm">
         <ShieldX className="text-muted-foreground" />
         Errors
         <span className="ml-auto text-muted-foreground">last 7 Days</span>

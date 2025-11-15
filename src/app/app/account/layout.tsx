@@ -44,7 +44,7 @@ export default function SettingsLayout({
               key={link.href}
               href={link.href}
               className={cn(
-                "flex items-center gap-2 px-4 text-muted-foreground font-medium py-2 rounded-lg hover:bg-border/80 transition-all",
+                "flex items-center gap-2 px-4 text-muted-foreground font-medium py-2  hover:bg-border/80 transition-all",
                 link.active && "bg-border/80 text-foreground",
               )}
             >

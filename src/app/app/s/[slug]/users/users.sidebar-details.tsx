@@ -42,7 +42,7 @@ function UsersSessionEvent({ event }: { event: AnalyticsEvent }) {
   if (type === "error") {
     return (
       <div className="flex items-center gap-2">
-        <div className="rounded border border-red-500 p-1 text-red-500">
+        <div className=" border border-red-500 p-1 text-red-500">
           <Ban className="size-3 stroke-2" />
         </div>
         <div className="line-clamp-1 text-left text-sm text-red-500">
@@ -57,7 +57,7 @@ function UsersSessionEvent({ event }: { event: AnalyticsEvent }) {
   if (type === "action") {
     return (
       <div className="flex items-center gap-2">
-        <div className="rounded border border-purple-500 p-1 text-purple-500">
+        <div className=" border border-purple-500 p-1 text-purple-500">
           <MousePointerClick className="size-3 stroke-2" />
         </div>
         <div className="text-sm text-purple-500">
@@ -70,7 +70,7 @@ function UsersSessionEvent({ event }: { event: AnalyticsEvent }) {
   if (type === "identify") {
     return (
       <div className="flex items-center gap-2">
-        <div className="rounded border border-green-500 p-1">
+        <div className=" border border-green-500 p-1">
           <UserSearch className="size-3 stroke-2 text-green-500" />
         </div>
         <div className="text-sm text-green-500">User identified</div>
@@ -85,7 +85,7 @@ function UsersSessionEvent({ event }: { event: AnalyticsEvent }) {
 
     return (
       <div className="flex items-center gap-2">
-        <div className="rounded border p-1">
+        <div className=" border p-1">
           <Icon className="size-3 stroke-1 text-muted-foreground" />
         </div>
         <div className="text-sm text-muted-foreground">{label}</div>
@@ -96,7 +96,7 @@ function UsersSessionEvent({ event }: { event: AnalyticsEvent }) {
   if (type === "navigation") {
     return (
       <div className="flex items-center gap-2">
-        <div className="rounded border p-1">
+        <div className=" border p-1">
           <Navigation className="size-3 stroke-1 text-muted-foreground" />
         </div>
         <div className="text-sm">{properties.path as string}</div>
@@ -143,7 +143,7 @@ function UsersSessionGroup({ session }: { session: AnalyticsSession }) {
           </div>
         </TooltipWrapper>
       </div>
-      <div className="flex flex-col gap-2 rounded-lg border p-4">
+      <div className="flex flex-col gap-2  border p-4">
         {session.map((event, index) => {
           const prevEvent = index > 0 ? session[index - 1] : null;
           const timeSinceLastEvent =
@@ -223,7 +223,7 @@ function UsersInformation({
   );
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border p-4">
+    <div className="flex flex-col gap-2  border p-4">
       <div>
         <div className="text-sm">User ID</div>
         {user.userId ? (
@@ -343,7 +343,7 @@ export function UsersSidebarDetails({ apiKey }: { apiKey?: string }) {
             <UserDetailsHeader user={user} />
           ) : (
             <div className="flex items-center gap-4">
-              <Skeleton className="size-14 rounded-full" />
+              <Skeleton className="size-14 " />
               <div>
                 <Skeleton className="mb-1 h-6 w-32" />
                 <Skeleton className="h-5 w-24" />

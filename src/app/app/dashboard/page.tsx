@@ -82,7 +82,7 @@ const CreateAppForm = ({
     <form
       onSubmit={handleSubmit}
       className={cn(
-        "absolute top-0 shadow-lg z-10 -mx-6 w-full transition-all rounded-lg border backdrop-blur-lg p-6 border-muted-foreground/50",
+        "absolute top-0 shadow-lg z-10 -mx-6 w-full transition-all  border backdrop-blur-lg p-6 border-muted-foreground/50",
         !show ? "opacity-0 pointer-events-none" : "opacity-100",
       )}
     >
@@ -92,7 +92,7 @@ const CreateAppForm = ({
           onClick={triggerFilePicker}
           disabled={isUploading}
           className={cn(
-            "flex size-16 min-w-16 items-center justify-center transition-all rounded-lg cursor-pointer border-background/50 hover:border-2",
+            "flex size-16 min-w-16 items-center justify-center transition-all  cursor-pointer border-background/50 hover:border-2",
             show && getColor(idRef.current),
           )}
           style={{ background: color, color: getContrastTextColor(color) }}
@@ -101,7 +101,7 @@ const CreateAppForm = ({
             <img
               src={uploadedUrl}
               alt="logo"
-              className="rounded-lg transition-all"
+              className=" transition-all"
             />
           ) : isUploading ? (
             <Loader2 className="size-5 animate-spin" />
@@ -212,12 +212,12 @@ export default function DashboardPage() {
       <div className="mb-8 grid grid-cols-2 gap-6">
         {isLoading && (
           <>
-            <div className="flex gap-4 rounded-lg border p-6">
-              <Skeleton className="size-16 rounded" />
+            <div className="flex gap-4  border p-6">
+              <Skeleton className="size-16 " />
               <Skeleton className="h-6 w-32" />
             </div>
-            <div className="flex gap-4 rounded-lg border p-6">
-              <Skeleton className="size-16 rounded" />
+            <div className="flex gap-4  border p-6">
+              <Skeleton className="size-16 " />
               <Skeleton className="h-6 w-32" />
             </div>
           </>
@@ -226,16 +226,16 @@ export default function DashboardPage() {
           <Link
             href={`/app/s/${app.slug}`}
             key={app.id}
-            className="flex gap-4 rounded-lg border p-6 transition-all hover:border-muted-foreground/50"
+            className="flex gap-4  border p-6 transition-all hover:border-muted-foreground/50"
           >
             <div>
-              <Avatar className="size-16 rounded">
+              <Avatar className="size-16 ">
                 {!!app?.logoUrl && (
-                  <AvatarImage src={app.logoUrl} className="rounded" />
+                  <AvatarImage src={app.logoUrl} className="" />
                 )}
                 <AvatarFallback
                   className={cn(
-                    "rounded capitalize text-2xl",
+                    " capitalize text-2xl",
                     getColor(app.id),
                   )}
                   style={{ background: app?.primaryColor || undefined }}
@@ -263,7 +263,7 @@ export default function DashboardPage() {
         <div
           role="button"
           className={cn(
-            "relative group flex items-center gap-4 rounded-lg border p-6 opacity-90 transition-all hover:opacity-100 hover:border-muted-foreground/50",
+            "relative group flex items-center gap-4  border p-6 opacity-90 transition-all hover:opacity-100 hover:border-muted-foreground/50",
             isLoading && "opacity-0 hover:opacity-0",
             openCreate &&
               "opacity-100 border-transparent hover:border-transparent",
@@ -273,7 +273,7 @@ export default function DashboardPage() {
           {!isLoading && (
             <CreateAppForm show={openCreate} cancelCreate={handleCloseCreate} />
           )}
-          <div className="flex size-16 items-center justify-center rounded-lg  bg-neutral-800 text-muted-foreground transition-all group-hover:rotate-90 group-hover:scale-105">
+          <div className="flex size-16 items-center justify-center   bg-neutral-800 text-muted-foreground transition-all group-hover:rotate-90 group-hover:scale-105">
             <Plus className="size-8 stroke-1" />
           </div>
           {!openCreate && (

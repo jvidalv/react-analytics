@@ -145,7 +145,7 @@ function PlanSection({ user }: { user: User }) {
             Your current plan is{" "}
             <div
               className={cn(
-                "flex h-8 items-center rounded-lg border px-2 text-sm capitalize",
+                "flex h-8 items-center  border px-2 text-sm capitalize",
                 user.plan === "wood" &&
                   "bg-orange-900/30 border-orange-500/50 text-orange-500/70",
                 user.plan === "straw" && "bg-neutral-900/80 text-neutral-400",
@@ -183,7 +183,7 @@ function PlanSection({ user }: { user: User }) {
                   <div
                     key={title}
                     className={cn(
-                      "flex flex-col rounded-xl border p-4 sm:p-6",
+                      "flex flex-col  border p-4 sm:p-6",
                       index === 2 && "border-emerald-400",
                     )}
                   >

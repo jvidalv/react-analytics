@@ -24,7 +24,7 @@ export const WaitlistJoinEmail = () => (
       <Head />
       <Preview>We’re thrilled to have you on the ExpoFast waitlist! 🎉</Preview>
       <Body style={main}>
-        <Container className="rounded-lg" style={container}>
+        <Container className="" style={container}>
           <Section style={box}>
             <Img
               src={`${baseUrl}/assets/images/logo-emails.png`}

@@ -3,6 +3,8 @@ import { analytics, analyticsTest, analyticsApiKeys } from "@/db/schema";
 import { db } from "@/db";
 import { auth } from "@/auth";
 import { eq, or, sql } from "drizzle-orm";
+import { GetUsersQuerySchema, UsersResponseSchema } from "@/schemas/analytics";
+import { validateQueryParams, validateResponse } from "@/lib/validation";
 
 export const GET = async (req: Request) => {
   const session = await auth();
@@ -12,22 +14,16 @@ export const GET = async (req: Request) => {
 
   try {
     const { searchParams } = new URL(req.url);
-    const apiKey = searchParams.get("apiKey");
-    const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = parseInt(searchParams.get("pageSize") || "10", 10);
-    const offset = (page - 1) * limit;
 
-    const platform = searchParams.get("platform");
-    const country = searchParams.get("country");
-    const appVersion = searchParams.get("appVersion");
-    const query = searchParams.get("query")?.toLowerCase() || "";
-
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: "API key is required" },
-        { status: 400 },
-      );
+    // Validate query parameters
+    const validation = validateQueryParams(searchParams, GetUsersQuerySchema);
+    if (!validation.success) {
+      return validation.error;
     }
+
+    const { apiKey, page, pageSize: limit, platform, country, appVersion, query: searchQuery } = validation.data;
+    const offset = (page - 1) * limit;
+    const query = searchQuery?.toLowerCase() || "";
 
     const apiKeyRecord = await db
       .select()
@@ -185,15 +181,21 @@ export const GET = async (req: Request) => {
       firstSeen: user.first_time_seen,
     }));
 
-    return NextResponse.json({
-      data: formattedUsers,
-      pagination: {
-        total,
-        totalPages,
-        page,
-        limit,
+    // Validate response before sending
+    const response = validateResponse(
+      {
+        data: formattedUsers,
+        pagination: {
+          total,
+          totalPages,
+          page,
+          limit,
+        },
       },
-    });
+      UsersResponseSchema
+    );
+
+    return NextResponse.json(response);
   } catch (err) {
     console.error("Error fetching users with filters:", err);
     return NextResponse.json(

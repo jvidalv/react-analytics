@@ -1,7 +1,7 @@
 @reference "tailwindcss";
 
 [data-rehype-pretty-code-figure] pre {
-  @apply w-full mb-4 mt-6 max-h-[650px] overflow-x-auto rounded-xl  py-4 bg-zinc-950 dark:bg-zinc-900;
+  @apply w-full mb-4 mt-6 max-h-[650px] overflow-x-auto py-4 bg-zinc-950 dark:bg-zinc-900;
 }
 
 .steps-container h3 {
@@ -11,7 +11,7 @@
 .steps-container h3::before {
   counter-increment: step-counter;
   content: counter(step-counter);
-  @apply border-4 size-8 border-[hsl(var(--background))] absolute left-[-41px] top-1/2 transform -translate-y-1/2 flex items-center justify-center rounded-full bg-[hsl(var(--border))] text-white text-sm font-bold;
+  @apply border-4 size-8 border-[hsl(var(--background))] absolute left-[-41px] top-1/2 transform -translate-y-1/2 flex items-center justify-center bg-[hsl(var(--border))] text-white text-sm font-bold;
 }
 
 .steps-container {

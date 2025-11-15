@@ -16,7 +16,7 @@ export function UsersEmptyState({
   const [copiedDevKey, copyDevKey] = useClipboard();
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6 rounded-lg border p-6 py-12">
+    <div className="flex flex-col items-center justify-center gap-6  border p-6 py-12">
       <div className="flex w-full max-w-2xl flex-col items-start gap-1">
         <div className="flex items-center gap-2">
           <ChartNoAxesCombined className="mb-2 size-12 text-primary" />
@@ -33,7 +33,7 @@ export function UsersEmptyState({
       <div className="grid w-full max-w-2xl gap-4">
         <div className="space-y-2 text-sm">
           <p>Install the package:</p>
-          <pre className="rounded-md bg-muted px-3 py-2 text-xs">
+          <pre className=" bg-muted px-3 py-2 text-xs">
             <code>npm install @jvidalv/react-analytics</code>
           </pre>
         </div>
@@ -42,7 +42,7 @@ export function UsersEmptyState({
           <p>
             Wrap your app with the analytics provider and configure the client:
           </p>
-          <pre className="rounded-md bg-muted px-3 py-2 text-xs">
+          <pre className=" bg-muted px-3 py-2 text-xs">
             {`import { useMemo } from "react";
 import { createAnalyticsClient, ExpofastAnalyticsProvider } from "@jvidalv/react-analytics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -68,7 +68,7 @@ export default function RootLayout() {
 
         <div className="space-y-2 text-sm">
           <p>Extend your .env file:</p>
-          <pre className="rounded-md bg-muted px-3 py-2 text-xs">
+          <pre className=" bg-muted px-3 py-2 text-xs">
             {`EXPO_PUBLIC_EXPOFAST_ANALYTICS_KEY=${apiKey}`}
           </pre>
         </div>

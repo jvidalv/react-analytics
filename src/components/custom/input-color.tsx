@@ -23,7 +23,7 @@ const InputColor = React.forwardRef<HTMLInputElement, InputColorProps>(
     return (
       <div
         className={cn(
-          "relative flex items-center rounded-md h-9 border border-input transition-colors",
+          "relative flex items-center  h-9 border border-input transition-colors",
           isFocused && "ring-1 ring-ring",
           className,
         )}
@@ -49,7 +49,7 @@ const InputColor = React.forwardRef<HTMLInputElement, InputColorProps>(
           {...props}
         />
         <div
-          className="z-10 flex h-8 w-full min-w-8 cursor-pointer items-center justify-center rounded-md"
+          className="z-10 flex h-8 w-full min-w-8 cursor-pointer items-center justify-center "
           onClick={handleClick}
           style={{ background: internalValue }}
         >

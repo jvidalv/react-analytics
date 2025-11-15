@@ -9,7 +9,7 @@ export const MeSection = () => {
             src="/assets/images/me.jpg"
             width={150}
             height={150}
-            className="rounded-lg sm:rounded-full"
+            className=" sm:"
             alt="photo of me on Ararat, Turkye"
           />
         </div>

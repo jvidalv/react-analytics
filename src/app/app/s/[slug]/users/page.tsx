@@ -31,14 +31,14 @@ interface DevelopmentModeState {
 }
 
 const TableSkeleton = () => (
-  <div className="divide-y rounded-lg border">
+  <div className="divide-y  border">
     <div className="flex h-12 items-center justify-end p-4">
       <Skeleton className="h-4 w-12" />
     </div>
     {Array.from({ length: 10 }).map((_, i) => (
       <div key={i} className="flex items-center justify-between p-4">
         <div className="flex items-center gap-4">
-          <Skeleton className="size-10 rounded-full" />
+          <Skeleton className="size-10 " />
           <Skeleton className="h-4 w-32" />
         </div>
         <div className="flex items-center gap-2">

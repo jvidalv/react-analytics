@@ -56,12 +56,12 @@ export function UsersAggregates({ apiKey }: { apiKey?: string }) {
   const [type, setType] = useState<AggregateType | "stats">("stats");
 
   return (
-    <div className="rounded-lg border">
+    <div className=" border">
       <Select
         value={type}
         onValueChange={(val) => setType(val as AggregateType)}
       >
-        <SelectTrigger className="w-full rounded-none border-x-0 border-b border-t-0 px-4 py-6">
+        <SelectTrigger className="w-full  border-x-0 border-b border-t-0 px-4 py-6">
           <SelectValue placeholder="Select type" />
         </SelectTrigger>
         <SelectContent onCloseAutoFocus={(e) => e.preventDefault()}>
@@ -69,7 +69,7 @@ export function UsersAggregates({ apiKey }: { apiKey?: string }) {
             <SelectItem key={option.value} value={option.value}>
               <span className="flex items-center">
                 <span
-                  className={cn(option.color, "mr-1.5 rounded border p-0.5")}
+                  className={cn(option.color, "mr-1.5  border p-0.5")}
                 >
                   <option.icon className="size-4" />
                 </span>

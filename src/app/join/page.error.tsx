@@ -17,7 +17,7 @@ export default function PageError() {
   }
 
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-red-500 p-3 text-sm text-red-500">
+    <div className="flex items-center gap-2  border border-red-500 p-3 text-sm text-red-500">
       <TriangleAlert />
       {errorMessage}
     </div>

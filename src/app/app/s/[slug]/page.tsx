@@ -33,7 +33,7 @@ export default function AppsSlug() {
             </Link>
           </div>
         </div>
-        <div className="flex gap-6 rounded-lg border p-6">
+        <div className="flex gap-6  border p-6">
           <Skeleton className="size-32" />
         </div>
       </div>
@@ -53,14 +53,14 @@ export default function AppsSlug() {
           </Link>
         </div>
       </div>
-      <div className="flex gap-6 rounded-lg border p-6">
-        <Avatar className="size-32 rounded">
+      <div className="flex gap-6  border p-6">
+        <Avatar className="size-32 ">
           {!!app?.logoUrl && (
             <AvatarImage src={app.logoUrl} className="size-32" />
           )}
           <AvatarFallback
             className={cn(
-              "size-32 rounded capitalize text-4xl",
+              "size-32  capitalize text-4xl",
               getColor(app.id),
             )}
             style={{ background: app?.primaryColor || undefined }}
