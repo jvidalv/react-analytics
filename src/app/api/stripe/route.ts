@@ -68,14 +68,14 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      const isPlanWood = process.env.PRODUCT_WOOD_PLAN_ID === product.productId;
-      const isPlanMetal =
-        process.env.PRODUCT_METAL_PLAN_ID === product.productId;
+      const isPlanStarter = process.env.PRODUCT_STARTER_PLAN_ID === product.productId;
+      const isPlanPro =
+        process.env.PRODUCT_PRO_PLAN_ID === product.productId;
 
       await db.insert(transactions).values({
         email: customerEmail,
         productId: product.productId,
-        productName: isPlanWood ? "wood" : "metal",
+        productName: isPlanStarter ? "starter" : "pro",
       });
 
       const user = await db
@@ -83,10 +83,10 @@ export async function POST(req: NextRequest) {
         .from(users)
         .where(eq(users.email, customerEmail));
 
-      if (user && (isPlanWood || isPlanMetal)) {
+      if (user && (isPlanStarter || isPlanPro)) {
         await db
           .update(users)
-          .set({ plan: isPlanMetal ? "metal" : "wood" })
+          .set({ plan: isPlanPro ? "pro" : "starter" })
           .where(eq(users.email, customerEmail));
       }
 

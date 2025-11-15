@@ -2,10 +2,8 @@
 
 import * as React from "react";
 import { FormEvent, useState } from "react";
-import { useUploadImage } from "@/domains/image/image.api";
-import { useFilePicker } from "@/hooks/use-file-picker";
 import { cn } from "@/lib/utils";
-import { Check, Infinity, Loader2, Plus, Save, X } from "lucide-react";
+import { Check, Infinity, Plus, Save, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,7 +19,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { PRICE_PLANS } from "@/domains/plan/api.plan";
-import { getUserPlanEmoji } from "@/domains/user/user.utils";
+import { getPlanDisplayName, getPlanEmoji } from "@/domains/plan/plan.utils";
 
 export default function AccountPage() {
   const { me } = useMe();
@@ -44,19 +42,12 @@ export default function AccountPage() {
 
 function AccountForm({ user }: { user: User }) {
   const { toast } = useToast();
-  const { uploadedUrl, isUploading, uploadImage } = useUploadImage();
-  const { triggerFilePicker } = useFilePicker({
-    accept: "image/*",
-    onSelect: (files) => {
-      if (files?.length) void uploadImage({ file: files[0], type: "avatar" });
-    },
-  });
   const { updateUser, isUpdating } = useUpdateUser();
   const [name, setName] = useState(user.name);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await updateUser({ name, image: uploadedUrl });
+    await updateUser({ name });
     toast({
       title: "Account details updated",
       description: "Your details have been successfully updated.",
@@ -67,34 +58,19 @@ function AccountForm({ user }: { user: User }) {
     <Card>
       <CardHeader>
         <CardTitle>Account</CardTitle>
-        <CardDescription>Update your name and avatar.</CardDescription>
+        <CardDescription>Update your account information.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit}>
           <div className="flex items-start gap-6">
             <div className="flex flex-col gap-1.5">
               <Label>Avatar</Label>
-              <button
-                type="button"
-                onClick={triggerFilePicker}
-                disabled={isUploading}
-              >
-                <Avatar
-                  className={cn(
-                    "relative flex size-32 items-center justify-center transition-all cursor-pointer",
-                  )}
-                >
-                  {isUploading && (
-                    <Loader2 className="absolute size-5 animate-spin" />
-                  )}
-                  <AvatarImage src={uploadedUrl || user.image} alt="avatar" />
-                  <AvatarFallback>
-                    {isUploading
-                      ? ""
-                      : (user.name || user.email || "?")[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </button>
+              <Avatar className="flex size-32 items-center justify-center">
+                <AvatarImage src={user.image} alt="avatar" />
+                <AvatarFallback>
+                  {(user.name || user.email || "?")[0].toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
             </div>
             <div className="grid w-full flex-1 gap-4">
               <div className="flex flex-col gap-1.5">
@@ -116,7 +92,7 @@ function AccountForm({ user }: { user: User }) {
                 />
               </div>
               <Button
-                isLoading={isUpdating || isUploading}
+                isLoading={isUpdating}
                 type="submit"
                 className="mt-4 w-fit"
               >
@@ -146,24 +122,24 @@ function PlanSection({ user }: { user: User }) {
             <div
               className={cn(
                 "flex h-8 items-center  border px-2 text-sm capitalize",
-                user.plan === "wood" &&
+                user.plan === "starter" &&
                   "bg-orange-900/30 border-orange-500/50 text-orange-500/70",
-                user.plan === "straw" && "bg-neutral-900/80 text-neutral-400",
-                user.plan === "metal" &&
+                user.plan === "free" && "bg-neutral-900/80 text-neutral-400",
+                user.plan === "pro" &&
                   "bg-indigo-900/50 border-indigo-400/30  text-indigo-400 ",
               )}
             >
-              <span className="mr-2 font-medium">{user.plan}</span>
-              {getUserPlanEmoji(user.plan)}
+              <span className="mr-2 font-medium">{getPlanDisplayName(user.plan)}</span>
+              {getPlanEmoji(user.plan)}
             </div>
           </div>
-          {(user.plan === "straw" || user.plan === "wood") && (
+          {(user.plan === "free" || user.plan === "starter") && (
             <div className="grid grid-cols-2 gap-4">
               {PRICE_PLANS.filter(
                 (p) =>
-                  p.title.toLowerCase().includes("metal") ||
-                  (user.plan === "straw" &&
-                    p.title.toLowerCase().includes("wood")),
+                  p.title.toLowerCase().includes("pro") ||
+                  (user.plan === "free" &&
+                    p.title.toLowerCase().includes("starter")),
               ).map(
                 (
                   {

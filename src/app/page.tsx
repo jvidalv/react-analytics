@@ -212,7 +212,7 @@ export default function Home() {
                   size="lg"
                   className="mb-2 py-7 text-xl !font-bold min-w-xs animate-glow"
                 >
-                  <ThunderIcon className="size-5" /> Start Free
+                  Start Free
                 </Button>
               </Link>
             </div>

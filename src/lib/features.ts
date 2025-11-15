@@ -4,7 +4,6 @@ import {
   Database,
   FileJson2,
   Fingerprint,
-  Languages,
   Mail,
 } from "lucide-react";
 
@@ -13,7 +12,6 @@ export type FeatureKey =
   | "auth"
   | "payments"
   | "emails"
-  | "languages"
   | "api"
   | "analytics";
 
@@ -59,12 +57,6 @@ export const FEATURE_EMAILS: Feature = {
   Icon: Mail,
 };
 
-export const FEATURE_LANGUAGES: Feature = {
-  key: "languages",
-  name: "Languages",
-  Icon: Languages,
-};
-
 export const APP_FEATURES: Feature[] = [
   FEATURE_ANALYTICS,
   FEATURE_API,
@@ -72,7 +64,6 @@ export const APP_FEATURES: Feature[] = [
   FEATURE_AUTH,
   FEATURE_PAYMENTS,
   FEATURE_EMAILS,
-  FEATURE_LANGUAGES,
 ];
 
 export const getFeatureByKey = (key: Feature["key"]): Feature => {

@@ -1,7 +1,8 @@
-import useSWR, { mutate } from "swr";
-import useSWRMutation from "swr/mutation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetcherProtected } from "@/lib/fetcher";
+import { PlanType } from "@/domains/plan/plan.utils";
 
-export type UserPlans = "straw" | "wood" | "metal";
+export type UserPlans = PlanType;
 
 export type User = {
   id: string;
@@ -15,42 +16,59 @@ export type User = {
   updatedAt: string;
 };
 
+// Query key function for cache invalidation
+export const getUserQueryKey = () => ["user", "me"] as const;
+
 export const useMe = () => {
-  const { data, mutate, isLoading } = useSWR<User>("/api/user/me");
+  const {
+    data: me,
+    isPending: isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: getUserQueryKey(),
+    queryFn: async () => {
+      const { data, error } = await fetcherProtected.user.me.get();
+
+      if (error) {
+        throw error;
+      }
+
+      return data.message as User;
+    },
+  });
 
   return {
-    me: data,
+    me,
     isLoading,
-    refetch: mutate,
+    refetch,
   };
 };
 
-const updateUserFetcher = async (
-  url: string,
-  { arg }: { arg: Partial<User> },
-) => {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync: updateUser, isPending: isUpdating } = useMutation({
+    mutationFn: async (updatedFields: {
+      name?: string;
+      image?: string;
+      aiModel?: string;
+    }) => {
+      const { data, error } =
+        await fetcherProtected.user.me.post(updatedFields);
+
+      if (error) {
+        throw error;
+      }
+
+      // Invalidate and refetch user data
+      void queryClient.invalidateQueries({ queryKey: getUserQueryKey() });
+
+      return data.message;
     },
-    body: JSON.stringify(arg),
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to update user");
-  }
-
-  const updatedUser = await response.json();
-  await mutate("/api/user/me"); // Refetch user data after update
-  return updatedUser;
-};
-
-export const useUpdateUser = () => {
-  const { trigger, isMutating } = useSWRMutation(
-    "/api/user/me",
-    updateUserFetcher,
-  );
-
-  return { updateUser: trigger, isUpdating: isMutating };
+  return {
+    updateUser,
+    isUpdating,
+  };
 };

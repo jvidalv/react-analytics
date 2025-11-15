@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { getColor, getContrastTextColor } from "@/lib/colors";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { BookText, Camera, Loader2, Plus } from "lucide-react";
+import { BookText, Plus } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -25,8 +25,6 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { mutate } from "swr";
 import { Badge } from "@/components/ui/badge";
-import { useUploadImage } from "@/domains/image/image.api";
-import { useFilePicker } from "@/hooks/use-file-picker";
 import { wait } from "@/lib/wait";
 import { useTitle } from "@/hooks/use-title";
 
@@ -39,15 +37,6 @@ const CreateAppForm = ({
 }) => {
   const router = useRouter();
   const idRef = useRef(uuidv7());
-  const { uploadedUrl, isUploading, uploadImage } = useUploadImage();
-  const { triggerFilePicker } = useFilePicker({
-    accept: "image/*",
-    onSelect: (files) => {
-      if (files && files.length > 0) {
-        void uploadImage({ file: files[0], type: "avatar" });
-      }
-    },
-  });
   const { createApp, isCreating } = useCreateApp();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -68,8 +57,6 @@ const CreateAppForm = ({
       description,
       primaryColor: color,
       features,
-      logoUrl: uploadedUrl,
-      languages: ["en"],
     });
 
     router.push(`/app/s/${app.slug}`);
@@ -87,28 +74,15 @@ const CreateAppForm = ({
       )}
     >
       <div className="flex items-start gap-4">
-        <button
-          type="button"
-          onClick={triggerFilePicker}
-          disabled={isUploading}
+        <div
           className={cn(
-            "flex size-16 min-w-16 items-center justify-center transition-all  cursor-pointer border-background/50 hover:border-2",
+            "flex size-16 min-w-16 items-center justify-center transition-all text-2xl font-semibold capitalize",
             show && getColor(idRef.current),
           )}
           style={{ background: color, color: getContrastTextColor(color) }}
         >
-          {uploadedUrl ? (
-            <img
-              src={uploadedUrl}
-              alt="logo"
-              className=" transition-all"
-            />
-          ) : isUploading ? (
-            <Loader2 className="size-5 animate-spin" />
-          ) : (
-            <Camera />
-          )}
-        </button>
+          {name?.[0] || "?"}
+        </div>
         <div className="flex w-full flex-1 flex-col items-start gap-4">
           <div className="flex w-full flex-col items-start gap-2">
             <Label>Name</Label>

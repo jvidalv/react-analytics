@@ -20,10 +20,9 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { InputColor } from "@/components/custom/input-color";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useUploadImage } from "@/domains/image/image.api";
-import { useFilePicker } from "@/hooks/use-file-picker";
-import { Camera, Loader2, Save } from "lucide-react";
-import { getColor, getContrastTextColor } from "@/lib/colors";
+import { Save } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getColor } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 import { mutate } from "swr";
 
@@ -84,23 +83,11 @@ export default function SettingsPage() {
 function BasicInfoForm({ app }: { app: App }) {
   const { toast } = useToast();
   const { updateApp, isUpdating } = useUpdateApp();
-  const { uploadedUrl, isUploading, uploadImage } = useUploadImage();
-  const { triggerFilePicker } = useFilePicker({
-    accept: "image/*",
-    onSelect: (files) => {
-      if (files?.length) void uploadImage({ file: files[0], type: "avatar" });
-    },
-  });
 
   const [name, setName] = useState(app.name);
   const [description, setDescription] = useState(app.description);
   const [email, setEmail] = useState(app.email);
   const [websiteUrl, setWebsiteUrl] = useState(app.websiteUrl);
-  const [logoUrl, setLogoUrl] = useState(app.logoUrl);
-
-  useEffect(() => {
-    if (uploadedUrl) setLogoUrl(uploadedUrl);
-  }, [uploadedUrl]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -110,7 +97,6 @@ function BasicInfoForm({ app }: { app: App }) {
       description,
       email,
       websiteUrl,
-      logoUrl: uploadedUrl || app.logoUrl,
     });
     void mutate("/api/app/all");
     toast({ title: "App updated", description: "Basic information updated." });
@@ -120,33 +106,25 @@ function BasicInfoForm({ app }: { app: App }) {
     <form onSubmit={handleSubmit} className="grid gap-4">
       <div className="flex flex-col gap-1.5">
         <Label>Logo</Label>
-        <button
-          type="button"
-          onClick={triggerFilePicker}
-          disabled={isUploading}
+        <Avatar
           className={cn(
-            "flex size-16 min-w-16 items-center justify-center transition-all  cursor-pointer",
+            "flex size-16 items-center justify-center text-2xl font-semibold capitalize",
             getColor(app.id),
           )}
           style={{
             background: app.primaryColor || undefined,
-            color: app.primaryColor
-              ? getContrastTextColor(app.primaryColor)
-              : undefined,
           }}
         >
-          {logoUrl ? (
-            <img
-              src={logoUrl}
-              alt="logo"
-              className=" transition-all"
-            />
-          ) : isUploading ? (
-            <Loader2 className="size-5 animate-spin" />
-          ) : (
-            <Camera />
-          )}
-        </button>
+          {app.logoUrl && <AvatarImage src={app.logoUrl} alt="logo" />}
+          <AvatarFallback
+            className="text-2xl font-semibold capitalize"
+            style={{
+              background: app.primaryColor || undefined,
+            }}
+          >
+            {app.name?.[0]}
+          </AvatarFallback>
+        </Avatar>
       </div>
       <div className="flex flex-col gap-1.5">
         <Label>Slug</Label>
@@ -188,7 +166,7 @@ function BasicInfoForm({ app }: { app: App }) {
         />
       </div>
       <Button
-        isLoading={isUpdating || isUploading}
+        isLoading={isUpdating}
         type="submit"
         className="mt-4 w-fit"
       >

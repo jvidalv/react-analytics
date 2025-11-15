@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Join - Expofast",
+    title: "Join - React Analytics",
   };
 }
 
@@ -19,13 +19,10 @@ export default function JoinPage() {
       <main className="grid min-h-screen grid-cols-2">
         <div className="mx-auto flex w-full max-w-md flex-col justify-center">
           <Link href="/">
-            <h1 className="mb-2 text-3xl font-bold">
-              ExpoFast
-              <ThunderIcon className="-mt-2 inline-flex text-primary" />
-            </h1>
+            <h1 className="mb-2 text-3xl font-bold">Welcome!</h1>
           </Link>
           <p className="mb-6 text-lg font-medium text-muted-foreground">
-            Supercharge your mobile development
+            Privacy-first analytics for your React apps
           </p>
           <Suspense>
             <div className="mb-4 flex flex-col gap-2">
@@ -35,9 +32,9 @@ export default function JoinPage() {
             <PageError />
           </Suspense>
         </div>
-        <div className="flex items-center justify-center  bg-gradient-to-bl from-primary to-indigo-800">
-          <Image
-            src="/assets/images/upsell-white.png"
+        <div className="flex items-center justify-center  bg-gradient-to-bl from-purple-600 to-purple-800">
+          <img
+            src="/assets/images/logo.png"
             alt="upsell"
             width={500}
             height={500}
