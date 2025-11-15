@@ -18,7 +18,7 @@ export type AnalyticsEventType = z.infer<typeof AnalyticsEventTypeSchema>;
 
 // Event properties with 600 character limit
 export const EventPropertiesSchema = z
-  .record(z.unknown())
+  .record(z.string(), z.unknown())
   .refine(
     (props) => {
       const jsonString = JSON.stringify(props);

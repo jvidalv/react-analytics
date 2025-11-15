@@ -7,7 +7,6 @@ export type App = {
   userId: string;
   name: string;
   slug: string;
-  logoUrl?: string;
   description?: string;
   primaryColor?: string;
   websiteUrl?: string;
@@ -85,7 +84,6 @@ export const useCreateApp = () => {
       name: string;
       description?: string;
       primaryColor?: string;
-      logoUrl?: string;
       features?: string[];
     }) => {
       const { data, error } = await fetcherProtected.app.create.post(payload);
@@ -117,7 +115,6 @@ export const useUpdateApp = (slug?: string) => {
       name?: string;
       description?: string;
       primaryColor?: string;
-      logoUrl?: string;
       features?: string[];
       websiteUrl?: string;
       email?: string;

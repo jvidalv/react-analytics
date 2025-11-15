@@ -2,7 +2,7 @@
 
 import { useCreateApp, useUserApps } from "@/domains/app/app.api";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { getColor, getContrastTextColor } from "@/lib/colors";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,18 +13,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { uuidv7 } from "uuidv7";
 import { Textarea } from "@/components/ui/textarea";
-import { InputColor } from "@/components/custom/input-color";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  APP_FEATURES,
-  FEATURE_ANALYTICS,
-  FeatureKey,
-  getFeatureByKey,
-} from "@/lib/features";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { mutate } from "swr";
-import { Badge } from "@/components/ui/badge";
 import { wait } from "@/lib/wait";
 import { useTitle } from "@/hooks/use-title";
 
@@ -40,10 +31,6 @@ const CreateAppForm = ({
   const { createApp, isCreating } = useCreateApp();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [color, setColor] = useState("");
-  const [features, setFeatures] = useState<FeatureKey[]>([
-    FEATURE_ANALYTICS.key,
-  ]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -55,8 +42,6 @@ const CreateAppForm = ({
       id: idRef.current,
       name,
       description,
-      primaryColor: color,
-      features,
     });
 
     router.push(`/app/s/${app.slug}`);
@@ -79,7 +64,6 @@ const CreateAppForm = ({
             "flex size-16 min-w-16 items-center justify-center transition-all text-2xl font-semibold capitalize",
             show && getColor(idRef.current),
           )}
-          style={{ background: color, color: getContrastTextColor(color) }}
         >
           {name?.[0] || "?"}
         </div>
@@ -105,30 +89,6 @@ const CreateAppForm = ({
               onChangeText={setDescription}
               placeholder="Typing a detailed description will enhace the quality of the AI generated texts later on."
             />
-          </div>
-          <div className="flex w-full flex-col items-start gap-2">
-            <Label>Features</Label>
-            <ToggleGroup
-              type="multiple"
-              value={features}
-              onValueChange={(values: FeatureKey[]) => setFeatures(values)}
-              className="flex-wrap justify-start"
-            >
-              {APP_FEATURES.map((feat) => (
-                <ToggleGroupItem
-                  key={feat.key}
-                  value={feat.key}
-                  aria-label={`Toggle ${feat.name}`}
-                >
-                  <feat.Icon />
-                  {feat.name}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          </div>
-          <div className="flex w-full flex-col items-start gap-2">
-            <Label>Primary color</Label>
-            <InputColor onChangeText={setColor} />
           </div>
           <div className="mt-4 flex gap-2">
             <Button isLoading={isCreating}>Create app</Button>
@@ -204,14 +164,8 @@ export default function DashboardPage() {
           >
             <div>
               <Avatar className="size-16 ">
-                {!!app?.logoUrl && (
-                  <AvatarImage src={app.logoUrl} className="" />
-                )}
                 <AvatarFallback
-                  className={cn(
-                    " capitalize text-2xl",
-                    getColor(app.id),
-                  )}
+                  className="capitalize text-2xl"
                   style={{ background: app?.primaryColor || undefined }}
                 >
                   {app?.name?.[0]}
@@ -220,17 +174,6 @@ export default function DashboardPage() {
             </div>
             <div>
               <h2 className="mb-2 text-xl font-semibold">{app.name}</h2>
-              <div className="flex flex-wrap gap-2">
-                {app.features?.map((key) => {
-                  const feature = getFeatureByKey(key);
-                  return (
-                    <Badge variant="outline" key={key}>
-                      <feature.Icon className="mr-2 size-4 stroke-1" />{" "}
-                      {feature.name}
-                    </Badge>
-                  );
-                })}
-              </div>
             </div>
           </Link>
         ))}

@@ -6,7 +6,6 @@ export const AppSchema = t.Object({
   userId: t.String({ format: "uuid" }),
   name: t.String(),
   slug: t.String(),
-  logoUrl: t.Union([t.String(), t.Null()]),
   description: t.Union([t.String(), t.Null()]),
   primaryColor: t.Union([t.String(), t.Null()]),
   websiteUrl: t.Union([t.String(), t.Null()]),
@@ -22,7 +21,6 @@ export const CreateAppBodySchema = t.Object({
   name: t.String(),
   description: t.Optional(t.String()),
   primaryColor: t.Optional(t.String()),
-  logoUrl: t.Optional(t.String()),
   features: t.Optional(t.Array(t.String())),
 });
 
@@ -31,7 +29,6 @@ export const UpdateAppBodySchema = t.Object({
   name: t.Optional(t.String()),
   description: t.Optional(t.String()),
   primaryColor: t.Optional(t.String()),
-  logoUrl: t.Optional(t.String()),
   features: t.Optional(t.Array(t.String())),
   websiteUrl: t.Optional(t.String()),
   email: t.Optional(t.String()),

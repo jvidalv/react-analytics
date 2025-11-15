@@ -5,12 +5,9 @@ import { publicRoutes } from "./public";
 import { protectedRoutes } from "./protected";
 
 export const app = new Elysia({ prefix: "/api" })
-  .use(
-    cors({
-      origin: true,
-      credentials: true,
-    })
-  )
+  // CORS removed from global level - managed per-route for flexibility
+  // Analytics endpoints need permissive CORS (accept from any domain)
+  // Protected routes can add their own restrictive CORS if needed
   .use(
     swagger({
       documentation: {
@@ -28,7 +25,7 @@ export const app = new Elysia({ prefix: "/api" })
         ],
       },
       path: "/swagger",
-    })
+    }),
   )
   .onError(({ code, error, set }) => {
     console.error(`[${code}]`, error);

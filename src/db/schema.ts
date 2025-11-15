@@ -70,7 +70,6 @@ export const apps = pgTable("apps", {
     .references(() => users.id, { onDelete: "cascade" }),
   name: text().notNull(),
   slug: text().notNull().unique(),
-  logoUrl: text(),
   description: text(),
   primaryColor: text(),
   features: text().default("[]"),

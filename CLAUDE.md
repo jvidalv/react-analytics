@@ -557,6 +557,7 @@ The use of AI tools is documented here in CLAUDE.md, not in individual commits.
 - Import `db` from `@/db`
 - Use `eq()`, `and()`, `or()` from `drizzle-orm`
 - Always use prepared statements
+- **Note**: Drizzle has a native `count()` function. Use it instead of `.select({ count: sql<number>`count(*)` })`
 
 ### API Routes (Next.js - Legacy)
 - Return `NextResponse.json()`

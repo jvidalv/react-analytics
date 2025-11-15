@@ -162,6 +162,7 @@ yarn test         # Run tests (in analytics package)
 ### When Writing Code
 1. Follow TypeScript patterns from CLAUDE.md
 2. Use Drizzle ORM for database queries
+   - **Note**: Drizzle has a native `count()` function. Use it instead of `.select({ count: sql<number>`count(*)` })`
 3. Validate inputs (see BUGBOT.md security section)
 4. Add proper error handling
 5. Include relevant tests

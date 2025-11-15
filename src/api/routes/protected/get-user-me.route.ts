@@ -21,7 +21,7 @@ export const getUserMeRoute = new Elysia().get(
 
     const userPlan = latestTransaction.length
       ? latestTransaction[0].productName
-      : "straw";
+      : "free";
 
     // Update user row with the latest plan (non-blocking)
     db.update(users)
@@ -52,5 +52,5 @@ export const getUserMeRoute = new Elysia().get(
       description: "Get the currently authenticated user's profile",
       tags: ["User"],
     },
-  }
+  },
 );

@@ -21,6 +21,15 @@ export const getColor = (id: string) => {
   return color;
 };
 
+export const generateRandomHexColor = (): string => {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
 export const getContrastTextColor = (hex: string): "#000000" | "#ffffff" => {
   if (!hex.startsWith("#") || (hex.length !== 7 && hex.length !== 4))
     return "#000000";

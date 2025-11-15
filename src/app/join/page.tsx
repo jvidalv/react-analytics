@@ -6,6 +6,8 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import PageError from "@/app/join/page.error";
 import Link from "next/link";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -13,7 +15,18 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function JoinPage() {
+export default async function JoinPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ redirect_to?: string }>;
+}) {
+  const session = await auth();
+
+  if (session?.user) {
+    const params = await searchParams;
+    const redirectTo = params.redirect_to || "/app/dashboard";
+    redirect(redirectTo);
+  }
   return (
     <div>
       <main className="grid min-h-screen grid-cols-2">

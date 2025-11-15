@@ -34,7 +34,6 @@ export const putUpdateAppRoute = new Elysia().put(
       updatedFields.description = body.description;
     if (body.primaryColor !== undefined)
       updatedFields.primaryColor = body.primaryColor;
-    if (body.logoUrl !== undefined) updatedFields.logoUrl = body.logoUrl;
     if (body.websiteUrl !== undefined)
       updatedFields.websiteUrl = body.websiteUrl;
     if (body.email !== undefined) updatedFields.email = body.email;

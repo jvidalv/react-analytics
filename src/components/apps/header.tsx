@@ -197,11 +197,8 @@ const Apps = () => {
               <Skeleton className="size-5 " />
             ) : app ? (
               <Avatar className="size-5 ">
-                {!!app?.logoUrl && (
-                  <AvatarImage src={app.logoUrl} className="" />
-                )}
                 <AvatarFallback
-                  className={cn(" capitalize", getColor(app.id))}
+                  className="capitalize"
                   style={{ background: app?.primaryColor || undefined }}
                 >
                   {app?.name?.[0]}
@@ -242,11 +239,8 @@ const Apps = () => {
           const Content = () => (
             <DropdownMenuItem className="gap-2 p-2">
               <Avatar className="size-6 ">
-                {!!app?.logoUrl && (
-                  <AvatarImage src={app.logoUrl} className="size-6" />
-                )}
                 <AvatarFallback
-                  className={cn("size-6  capitalize", getColor(app.id))}
+                  className="size-6 capitalize"
                   style={{ background: app?.primaryColor || undefined }}
                 >
                   {app?.name?.[0]}

@@ -7,6 +7,7 @@ import { SuccessResponse } from "@/api/schemas/common.schema";
 import { AppSchema, CreateAppBodySchema } from "@/api/schemas/app.schema";
 import { uuidv7 } from "uuidv7";
 import { APP_FEATURES, FeatureKey } from "@/lib/features";
+import { generateRandomHexColor } from "@/lib/colors";
 
 const VALID_FEATURE_KEYS = new Set(APP_FEATURES.map((feature) => feature.key));
 
@@ -54,8 +55,7 @@ export const postCreateAppRoute = new Elysia().post(
       name: body.name,
       slug,
       description: body.description || null,
-      primaryColor: body.primaryColor || null,
-      logoUrl: body.logoUrl || null,
+      primaryColor: body.primaryColor || generateRandomHexColor(),
       features: JSON.stringify(body.features || []),
       email: user.email,
       websiteUrl: null,

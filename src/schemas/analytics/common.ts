@@ -35,7 +35,7 @@ export const CountryCodeSchema = z
 export const DateStringSchema = z.string().datetime();
 
 // Generic JSON object for flexible properties
-export const JsonObjectSchema = z.record(z.unknown());
+export const JsonObjectSchema = z.record(z.string(), z.unknown());
 
 // Error response schema
 export const ErrorResponseSchema = z.object({
