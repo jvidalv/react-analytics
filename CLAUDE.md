@@ -558,12 +558,21 @@ The use of AI tools is documented here in CLAUDE.md, not in individual commits.
 - Use `eq()`, `and()`, `or()` from `drizzle-orm`
 - Always use prepared statements
 
-### API Routes
+### API Routes (Next.js - Legacy)
 - Return `NextResponse.json()`
 - Include proper HTTP status codes
 - Add CORS headers for analytics endpoints
 - Validate input with TypeScript types
 - Handle errors gracefully
+
+### Elysia API Routes (Current Standard)
+- **One endpoint per file** - Each HTTP method (GET, POST, PUT, DELETE) should be in its own separate route file
+  - Example: `get-user-me.route.ts`, `post-user-me.route.ts`
+- Use TypeBox schemas for request/response validation
+- Follow `{success: boolean, message: any}` response format
+- Group routes by feature in `/src/api/routes/[public|protected]/`
+- Protected routes use middleware to fetch user and store in Elysia store
+- Export route instances that can be composed with `.use()`
 
 ### Component Structure
 - Server Components by default

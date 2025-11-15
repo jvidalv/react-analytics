@@ -9,9 +9,9 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Expofast — Ship mobile apps in days not weeks",
+  title: "React Analytics — Privacy-first analytics for React applications",
   description:
-    "Expofast supercharges your workflow, have an S-grade app production ready in days, not weeks.",
+    "Open source, self-hostable analytics platform for React, Next.js, Expo, and React Native. Track user behavior without compromising privacy.",
 };
 
 export default async function RootLayout({
