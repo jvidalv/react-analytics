@@ -28,9 +28,10 @@ import { cn } from "@/lib/utils";
 import { getColor } from "@/lib/colors";
 import { useMe } from "@/domains/user/me.api";
 import {
-  getUserPlanEmoji,
+  getPlanDisplayName,
+  getPlanEmoji,
   shouldOfferUpgrade,
-} from "@/domains/user/user.utils";
+} from "@/domains/plan/plan.utils";
 import { useScrollPosition } from "@/hooks/use-scroll-position";
 import {
   useAppSlugFromLocalStorage,
@@ -50,15 +51,15 @@ const Plan = () => {
     <div
       className={cn(
         "flex h-8 items-center  border px-2 text-sm capitalize",
-        me.plan === "wood" &&
+        me.plan === "starter" &&
           "bg-orange-900/30 border-orange-500/50 text-orange-500/70",
-        me.plan === "straw" && "bg-neutral-900/80 text-neutral-400",
-        me.plan === "metal" &&
+        me.plan === "free" && "bg-neutral-900/80 text-neutral-400",
+        me.plan === "pro" &&
           "bg-indigo-900/50 border-indigo-400/30  text-indigo-400 ",
       )}
     >
-      <span className="mr-2 font-medium">{me.plan}</span>
-      {getUserPlanEmoji(me.plan)}
+      <span className="mr-2 font-medium">{getPlanDisplayName(me.plan)}</span>
+      {getPlanEmoji(me.plan)}
     </div>
   );
 };
@@ -268,13 +269,6 @@ function AppHeader() {
     {
       name: "Overview",
       href: `/app/s/${params.slug}`,
-      get current() {
-        return pathname === this.href;
-      },
-    },
-    {
-      name: "Users",
-      href: `/app/s/${params.slug}/users`,
       get current() {
         return pathname === this.href;
       },
