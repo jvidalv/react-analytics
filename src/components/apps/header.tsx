@@ -8,18 +8,11 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  ChevronsUpDown,
-  LogOut,
-  MoveUpRight,
-  Plus,
-  Sparkles,
-  User,
-} from "lucide-react";
+import { ChevronsUpDown, LogOut, Plus, Sparkles, User } from "lucide-react";
 import * as React from "react";
+import { useLayoutEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import ThunderIcon from "@/components/custom/thunder-icon";
 import { useUserApps } from "@/domains/app/app.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useParams, usePathname } from "next/navigation";
@@ -33,13 +26,52 @@ import {
   shouldOfferUpgrade,
 } from "@/domains/plan/plan.utils";
 import { useScrollPosition } from "@/hooks/use-scroll-position";
-import {
-  useAppSlugFromLocalStorage,
-  useGetAppFromLocalStorageSlug,
-  useGetAppFromSlug,
-} from "@/domains/app/app.utils";
-import { useIsDocs } from "@/hooks/use-is-docs";
-import { useIsMounted } from "@/hooks/use-is-mounted";
+import { useGetAppFromSlug } from "@/domains/app/app.utils";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { create } from "zustand";
+
+const DEV_MODE_STORAGE_KEY = "users::development-mode";
+
+interface DevelopmentModeState {
+  isDevelopmentMode: boolean;
+  setDevelopmentMode: (status: boolean) => void;
+  toggleDevelopmentMode: (status: boolean) => void;
+}
+
+export const useUsersDevelopmentMode = create<DevelopmentModeState>((set) => ({
+  isDevelopmentMode: false,
+  setDevelopmentMode: (status: boolean) =>
+    set(() => ({ isDevelopmentMode: status })),
+  toggleDevelopmentMode: (status: boolean) => {
+    if (status) localStorage.setItem(DEV_MODE_STORAGE_KEY, "true");
+    else localStorage.removeItem(DEV_MODE_STORAGE_KEY);
+    set(() => ({ isDevelopmentMode: status }));
+  },
+}));
+
+const DevelopmentModeToggle = () => {
+  const { isDevelopmentMode, setDevelopmentMode, toggleDevelopmentMode } =
+    useUsersDevelopmentMode((s) => s);
+
+  useLayoutEffect(() => {
+    setDevelopmentMode(!!localStorage.getItem(DEV_MODE_STORAGE_KEY));
+  }, [setDevelopmentMode]);
+
+  return (
+    <div className="flex items-center space-x-2">
+      <Switch
+        id="development-mode"
+        className="data-[state=checked]:bg-orange-500"
+        onCheckedChange={toggleDevelopmentMode}
+        checked={isDevelopmentMode}
+      />
+      <Label htmlFor="development-mode" className="text-sm">
+        DEV
+      </Label>
+    </div>
+  );
+};
 
 const Plan = () => {
   const { me } = useMe();
@@ -150,11 +182,8 @@ const UserDropdown = ({ onLogout }: { onLogout: () => void }) => {
 const Apps = () => {
   const { apps } = useUserApps();
   const { app: appFromSlug, isLoadingApp } = useGetAppFromSlug();
-  const { app: appFromLocalStorage } = useGetAppFromLocalStorageSlug();
-  const { setAppSlug } = useAppSlugFromLocalStorage();
-  const isDocs = useIsDocs();
 
-  const app = isDocs ? appFromLocalStorage : appFromSlug;
+  const app = appFromSlug;
 
   return (
     <DropdownMenu>
@@ -228,14 +257,6 @@ const Apps = () => {
             </DropdownMenuItem>
           );
 
-          if (isDocs) {
-            return (
-              <button onClick={() => setAppSlug(app.slug)} key={app.slug}>
-                <Content />
-              </button>
-            );
-          }
-
           return (
             <Link href={`/app/s/${app.slug}`} key={app.slug}>
               <Content />
@@ -301,13 +322,10 @@ function AppHeader() {
 }
 
 export function AppsHeader({ onLogout }: { onLogout: () => void }) {
-  const isMounted = useIsMounted();
   const params = useParams();
   const hasSelectedApp = !!params.slug;
   const scrollY = useScrollPosition();
   const shouldMinifyHeader = scrollY > 20 && hasSelectedApp;
-  const isDocs = useIsDocs();
-  const { appSlug } = useAppSlugFromLocalStorage();
 
   return (
     <header
@@ -322,7 +340,7 @@ export function AppsHeader({ onLogout }: { onLogout: () => void }) {
             href="/app/dashboard"
             className="transition-all hover:scale-125 hover:text-primary"
           >
-            <ThunderIcon className="size-6" />
+            <img src="/assets/images/icon.png" className="size-6" />
           </Link>
           <span className="font-medium text-muted-foreground/50">/</span>
           <div
@@ -335,23 +353,7 @@ export function AppsHeader({ onLogout }: { onLogout: () => void }) {
           </div>
         </nav>
         <div className="flex items-center gap-4">
-          {isDocs && isMounted ? (
-            <Link
-              href={
-                appSlug ? { pathname: `/app/s/${appSlug}` } : "/apps/dashboard"
-              }
-              className="flex items-center gap-1 text-sm text-muted-foreground transition-all hover:text-foreground"
-            >
-              Go to app <MoveUpRight className="size-4 stroke-2" />
-            </Link>
-          ) : (
-            <Link
-              href="/app/docs"
-              className="flex items-center gap-1 text-sm text-muted-foreground transition-all hover:text-foreground"
-            >
-              Docs <MoveUpRight className="size-4 stroke-2" />
-            </Link>
-          )}
+          <DevelopmentModeToggle />
           <Plan />
           <UserDropdown onLogout={onLogout} />
         </div>

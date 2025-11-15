@@ -13,22 +13,14 @@ import {
   useAnalyticsUsers,
 } from "@/domains/app/users/users.api";
 import { useScrollPosition } from "@/hooks/use-scroll-position";
-import { PropsWithChildren, ReactNode, useLayoutEffect } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-import { create } from "zustand";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAnalyticsUserStats } from "@/domains/app/users/stats/users-stats.api";
 import { UsersErrorChart } from "@/app/app/s/[slug]/users/users.error-chart";
-
-interface DevelopmentModeState {
-  isDevelopmentMode: boolean;
-  setDevelopmentMode: (status: boolean) => void;
-  toggleDevelopmentMode: (status: boolean) => void;
-}
+import { useUsersDevelopmentMode } from "@/components/apps/header";
 
 const TableSkeleton = () => (
   <div className="divide-y  border">
@@ -70,21 +62,9 @@ const HeaderWrapper = ({
   );
 };
 
-const useUsersDevelopmentMode = create<DevelopmentModeState>((set) => ({
-  isDevelopmentMode: false,
-  setDevelopmentMode: (status: boolean) =>
-    set(() => ({ isDevelopmentMode: status })),
-  toggleDevelopmentMode: (status: boolean) => {
-    if (status) localStorage.setItem("users::development-mode", "true");
-    else localStorage.removeItem("users::development-mode");
-    set(() => ({ isDevelopmentMode: status }));
-  },
-}));
-
 export default function AnalyticsPage() {
   useTitle("Users");
-  const { isDevelopmentMode, setDevelopmentMode, toggleDevelopmentMode } =
-    useUsersDevelopmentMode((s) => s);
+  const { isDevelopmentMode } = useUsersDevelopmentMode((s) => s);
   const { app, isLoadingApp } = useGetAppFromSlug();
   const { apiKeys, isLoading: isLoadingApiKeys } = useAnalyticsApiKeys(app?.id);
   const searchParams = useSearchParams();
@@ -97,10 +77,6 @@ export default function AnalyticsPage() {
   const scrollY = useScrollPosition();
   const shouldMinifyHeader = scrollY > 20;
   const barWidth = 500;
-
-  useLayoutEffect(() => {
-    setDevelopmentMode(!!localStorage.getItem("users::development-mode"));
-  }, [setDevelopmentMode]);
 
   if (isLoadingApp || isLoadingApiKeys) {
     return (
@@ -117,22 +93,7 @@ export default function AnalyticsPage() {
 
   return (
     <>
-      <HeaderWrapper
-        rightHeader={
-          <div className="flex items-center gap-4">
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="airplane-mode"
-                className="data-[state=checked]:bg-orange-500"
-                onCheckedChange={toggleDevelopmentMode}
-                checked={isDevelopmentMode}
-              />
-              <Label htmlFor="airplane-mode">Development Mode</Label>
-            </div>
-            <UsersPageDropdown />
-          </div>
-        }
-      >
+      <HeaderWrapper rightHeader={<UsersPageDropdown />}>
         <div className="grid grid-cols-6 gap-8">
           <div className="col-span-2 flex flex-col gap-4">
             <UsersAggregates apiKey={apiKey} />
