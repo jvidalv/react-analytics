@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# React Analytics
 
-## Getting Started
+Privacy-first analytics platform for React applications. Track user behavior, monitor errors, and gain insights without compromising privacy.
 
-First, run the development server:
+## Open Source
+
+This project is open source and self-hostable. Built with modern web technologies and designed for developers who want full control over their analytics data.
+
+## Quick Start
+
+### Prerequisites
+- Node.js 18+
+- Docker & Docker Compose
+- Yarn package manager
+
+### Installation
 
 ```bash
-npm run dev
-# or
+# Clone the repository
+git clone https://github.com/jvidalv/react-analytics.git
+cd react-analytics/web
+
+# Install dependencies
+yarn install
+
+# Start PostgreSQL database
+yarn db
+
+# Push database schema
+yarn db:push
+
+# Run development server
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to access the dashboard.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Next.js 16** - React framework with App Router
+- **PostgreSQL** - Primary database (via Docker)
+- **Drizzle ORM** - Type-safe database queries
+- **NextAuth** - Authentication with Google OAuth
+- **Stripe** - Payment processing
+- **Tailwind CSS** - Styling
+- **Zod** - Schema validation
 
-## Learn More
+## Analytics Package
 
-To learn more about Next.js, take a look at the following resources:
+This monorepo includes the `@jvidalv/react-analytics` package in `packages/analytics`. This is the open source npm package that enables analytics tracking in React applications.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment Variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Create a `.env.local` file in the root directory with the following variables:
 
-## Deploy on Vercel
+### Required Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```env
+DATABASE_URL=postgresql://admin:admin@localhost:5434/expofast_local_db
+AUTH_SECRET=your-secret-key
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### OAuth Providers (Google & GitHub)
+
+For authentication, configure at least one OAuth provider:
+
+```env
+# Google OAuth
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# GitHub OAuth
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+```
+
+### Optional Variables
+
+```env
+# Stripe (only required if using payment features)
+STRIPE_SECRET_KEY=your-stripe-key
+```
+
+## License
+
+MIT License - feel free to use this project for personal or commercial purposes.

@@ -30,6 +30,15 @@
   ],
   "author": "josepvidalvidal@gmail.com",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jvidalv/react-analytics.git",
+    "directory": "packages/analytics"
+  },
+  "homepage": "https://github.com/jvidalv/react-analytics/tree/main/packages/analytics#readme",
+  "bugs": {
+    "url": "https://github.com/jvidalv/react-analytics/issues"
+  },
   "dependencies": {
     "uuidv7": "^1"
   },
