@@ -77,18 +77,6 @@ export const apps = pgTable("apps", {
   features: text().default("[]"),
   websiteUrl: text(),
   email: text(),
-  languages: text().default("[]"),
-  createdAt: timestamp().notNull().defaultNow(),
-  updatedAt: timestamp().notNull().defaultNow(),
-});
-
-export const appStores = pgTable("app_stores", {
-  id: uuid().primaryKey().defaultRandom(),
-  appId: uuid()
-    .notNull()
-    .unique()
-    .references(() => apps.id, { onDelete: "cascade" }),
-  storeData: jsonb("store_data").notNull(), // JSONB column for Apple/Android store details
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
@@ -181,13 +169,3 @@ export const analyticsTest = pgTable(
     ),
   }),
 );
-
-export const translations = pgTable("translations", {
-  id: uuid().primaryKey().defaultRandom(),
-  appId: uuid()
-    .notNull()
-    .references(() => apps.id, { onDelete: "cascade" }),
-  data: jsonb("data"),
-  createdAt: timestamp().notNull().defaultNow(),
-  updatedAt: timestamp().notNull().defaultNow(),
-});

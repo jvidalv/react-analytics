@@ -1,7 +1,6 @@
 import useSWR, { mutate } from "swr";
 import useSWRMutation from "swr/mutation";
 import { FeatureKey } from "@/lib/features";
-import { Locale } from "@/lib/languages";
 
 export type App = {
   id: string;
@@ -14,7 +13,6 @@ export type App = {
   websiteUrl?: string;
   email?: string;
   features: FeatureKey[];
-  languages: Locale[];
   createdAt: string;
   updatedAt: string;
 };

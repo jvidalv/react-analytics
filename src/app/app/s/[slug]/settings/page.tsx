@@ -5,7 +5,6 @@ import { useState, FormEvent, useEffect } from "react";
 import { useGetAppFromSlug } from "@/domains/app/app.utils";
 import { App, useUpdateApp } from "@/domains/app/app.api";
 import { APP_FEATURES, FeatureKey } from "@/lib/features";
-import { ALL_LANGUAGES, Locale } from "@/lib/languages";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
@@ -19,7 +18,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { InputColor } from "@/components/custom/input-color";
-import { MultiSelect } from "@/components/custom/multi-select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useUploadImage } from "@/domains/image/image.api";
@@ -65,18 +63,6 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent>
           <FeaturesForm app={app} />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Languages</CardTitle>
-          <CardDescription>
-            Select the supported languages of your app.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <LanguagesForm app={app} />
         </CardContent>
       </Card>
 
@@ -139,7 +125,7 @@ function BasicInfoForm({ app }: { app: App }) {
           onClick={triggerFilePicker}
           disabled={isUploading}
           className={cn(
-            "flex size-16 min-w-16 items-center justify-center transition-all rounded-lg cursor-pointer",
+            "flex size-16 min-w-16 items-center justify-center transition-all  cursor-pointer",
             getColor(app.id),
           )}
           style={{
@@ -153,7 +139,7 @@ function BasicInfoForm({ app }: { app: App }) {
             <img
               src={logoUrl}
               alt="logo"
-              className="rounded-lg transition-all"
+              className=" transition-all"
             />
           ) : isUploading ? (
             <Loader2 className="size-5 animate-spin" />
@@ -243,38 +229,6 @@ function FeaturesForm({ app }: { app: App }) {
           </ToggleGroupItem>
         ))}
       </ToggleGroup>
-      <Button isLoading={isUpdating} type="submit" className="mt-4 w-fit">
-        Save <Save />
-      </Button>
-    </form>
-  );
-}
-
-function LanguagesForm({ app }: { app: App }) {
-  const { toast } = useToast();
-  const { updateApp, isUpdating } = useUpdateApp();
-  const [languages, setLanguages] = useState<Locale[]>(app.languages || []);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    await updateApp({ ...app, languages });
-    void mutate("/api/app/all");
-    toast({ title: "App updated", description: "Languages updated." });
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="grid gap-4">
-      <MultiSelect
-        options={ALL_LANGUAGES.map((l) => ({
-          label: `${l.emoji} ${l.name}`,
-          value: l.locale,
-        }))}
-        onValueChange={(val) => setLanguages(val as Locale[])}
-        defaultValue={languages}
-        placeholder="Select languages"
-        animation={2}
-        maxCount={5}
-      />
       <Button isLoading={isUpdating} type="submit" className="mt-4 w-fit">
         Save <Save />
       </Button>

@@ -49,7 +49,7 @@ const Plan = () => {
   return (
     <div
       className={cn(
-        "flex h-8 items-center rounded-lg border px-2 text-sm capitalize",
+        "flex h-8 items-center  border px-2 text-sm capitalize",
         me.plan === "wood" &&
           "bg-orange-900/30 border-orange-500/50 text-orange-500/70",
         me.plan === "straw" && "bg-neutral-900/80 text-neutral-400",
@@ -67,13 +67,13 @@ const UserDropdown = ({ onLogout }: { onLogout: () => void }) => {
   const { me } = useMe();
 
   if (!me) {
-    return <Skeleton className="size-10 rounded-full" />;
+    return <Skeleton className="size-10 " />;
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 rounded-full transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[state=open]:scale-105">
+        <button className="flex items-center gap-2  transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[state=open]:scale-105">
           <Avatar className="size-8">
             {!!me.image && (
               <AvatarImage src={me.image} alt={me.name || "avatar"} />
@@ -83,18 +83,18 @@ const UserDropdown = ({ onLogout }: { onLogout: () => void }) => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 "
         side="bottom"
         align="end"
         sideOffset={4}
       >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <Avatar className="size-8 rounded-lg">
+            <Avatar className="size-8 ">
               {!!me.image && (
                 <AvatarImage src={me.image} alt={me.name || "avatar"} />
               )}
-              <AvatarFallback className="rounded-lg">
+              <AvatarFallback className="">
                 {(me.name || me.email || "?")?.[0]}
               </AvatarFallback>
             </Avatar>
@@ -162,23 +162,23 @@ const Apps = () => {
           variant="outline"
           className="group h-9 w-full border-0 px-2 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
         >
-          <div className="-ml-1 flex aspect-square size-8 items-center justify-center rounded">
+          <div className="-ml-1 flex aspect-square size-8 items-center justify-center ">
             {isLoadingApp ? (
-              <Skeleton className="size-5 rounded" />
+              <Skeleton className="size-5 " />
             ) : app ? (
-              <Avatar className="size-5 rounded">
+              <Avatar className="size-5 ">
                 {!!app?.logoUrl && (
-                  <AvatarImage src={app.logoUrl} className="rounded" />
+                  <AvatarImage src={app.logoUrl} className="" />
                 )}
                 <AvatarFallback
-                  className={cn("rounded capitalize", getColor(app.id))}
+                  className={cn(" capitalize", getColor(app.id))}
                   style={{ background: app?.primaryColor || undefined }}
                 >
                   {app?.name?.[0]}
                 </AvatarFallback>
               </Avatar>
             ) : (
-              <div className="size-5 rounded bg-neutral-700" />
+              <div className="size-5  bg-neutral-700" />
             )}
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
@@ -194,7 +194,7 @@ const Apps = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 "
         align="start"
         side="bottom"
         sideOffset={4}
@@ -204,19 +204,19 @@ const Apps = () => {
         </DropdownMenuLabel>
         {isLoadingApp && (
           <DropdownMenuItem className="gap-2 p-2">
-            <Skeleton className="size-6 rounded-sm" />
+            <Skeleton className="size-6 " />
             ...
           </DropdownMenuItem>
         )}
         {apps?.map((app) => {
           const Content = () => (
             <DropdownMenuItem className="gap-2 p-2">
-              <Avatar className="size-6 rounded">
+              <Avatar className="size-6 ">
                 {!!app?.logoUrl && (
                   <AvatarImage src={app.logoUrl} className="size-6" />
                 )}
                 <AvatarFallback
-                  className={cn("size-6 rounded capitalize", getColor(app.id))}
+                  className={cn("size-6  capitalize", getColor(app.id))}
                   style={{ background: app?.primaryColor || undefined }}
                 >
                   {app?.name?.[0]}
@@ -244,7 +244,7 @@ const Apps = () => {
         <DropdownMenuSeparator />
         <Link href="/app/dashboard?create=true">
           <DropdownMenuItem className="gap-2 p-2">
-            <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+            <div className="flex size-6 items-center justify-center  border bg-background">
               <Plus className="size-4" />
             </div>
             <div className="font-medium text-muted-foreground">Add app</div>
@@ -277,20 +277,6 @@ function AppHeader() {
       href: `/app/s/${params.slug}/users`,
       get current() {
         return pathname === this.href;
-      },
-    },
-    {
-      name: "Translations",
-      href: `/app/s/${params.slug}/translations`,
-      get current() {
-        return pathname === this.href;
-      },
-    },
-    {
-      name: "Stores",
-      href: `/app/s/${params.slug}/stores`,
-      get current() {
-        return pathname.startsWith(this.href);
       },
     },
     {

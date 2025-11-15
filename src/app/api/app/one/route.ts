@@ -1,25 +1,16 @@
 import { NextResponse } from "next/server";
-import { apps, appStores } from "@/db/schema";
+import { apps } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { uuidv7 } from "uuidv7";
 import { APP_FEATURES, FeatureKey } from "@/lib/features";
-import { ALL_LANGUAGES, Locale } from "@/lib/languages";
 
 const VALID_FEATURE_KEYS = new Set(APP_FEATURES.map((feature) => feature.key));
-const VALID_LANGUAGE_KEYS = new Set(
-  ALL_LANGUAGES.map((language) => language.locale),
-);
 
 const validateFeatures = (features: FeatureKey[]) => {
   if (!Array.isArray(features)) return false;
   return features.every((feature) => VALID_FEATURE_KEYS.has(feature));
-};
-
-const validateLanguages = (languages: Locale[]) => {
-  if (!Array.isArray(languages)) return false;
-  return languages.every((language) => VALID_LANGUAGE_KEYS.has(language));
 };
 
 // GET: Fetch one app for the authenticated user
@@ -113,16 +104,9 @@ export const POST = async (req: Request) => {
       logoUrl,
       features: JSON.stringify(features || []),
       email: session.user.email,
-      languages: '["en"]',
     };
 
     await db.insert(apps).values(newApp);
-
-    await db.insert(appStores).values({
-      id: uuidv7(),
-      appId: newApp.id,
-      storeData: "{}",
-    });
 
     return NextResponse.json(newApp, { status: 201 });
   } catch {
@@ -151,19 +135,11 @@ export const PUT = async (req: Request) => {
       features,
       websiteUrl,
       email,
-      languages,
     } = await req.json();
 
     if (!id) {
       return NextResponse.json(
         { error: "App ID is required" },
-        { status: 400 },
-      );
-    }
-
-    if (!validateLanguages(languages)) {
-      return NextResponse.json(
-        { error: "Invalid language(s) provided" },
         { status: 400 },
       );
     }
@@ -183,13 +159,6 @@ export const PUT = async (req: Request) => {
       ...(websiteUrl && { websiteUrl }),
       ...(logoUrl && { logoUrl }),
       ...(features && { features: JSON.stringify(features) }),
-      ...(languages && {
-        languages: JSON.stringify(
-          languages.includes("en")
-            ? ["en", ...languages.filter((l: Locale) => l !== "en")]
-            : languages,
-        ),
-      }),
     };
 
     const result = await db
