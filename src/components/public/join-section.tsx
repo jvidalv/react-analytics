@@ -1,4 +1,5 @@
-import HomeForm from "@/app/page.form";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const JoinSection = () => {
   return (
@@ -33,8 +34,12 @@ export const JoinSection = () => {
             </span>{" "}
             or self-host the open source version. Start understanding your users in minutes:
           </p>
-          <div className="mx-auto max-w-md">
-            <HomeForm />
+          <div className="mx-auto flex max-w-md justify-center">
+            <Link href="/join">
+              <Button size="lg" className="text-base">
+                Get Started
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
