@@ -44,7 +44,7 @@ const CreateAppForm = ({
       description,
     });
 
-    router.push(`/app/s/${app.slug}`);
+    router.push(`/a/s/${app.slug}`);
 
     await wait(200);
     void mutate("/api/app/all");
@@ -130,7 +130,7 @@ export default function DashboardPage() {
   const handleCloseCreate = () => {
     setOpenCreate(false);
     if (create) {
-      router.replace("/app/dashboard");
+      router.replace("/a/dashboard");
     }
   };
 
@@ -158,7 +158,7 @@ export default function DashboardPage() {
         )}
         {apps?.map((app) => (
           <Link
-            href={`/app/s/${app.slug}`}
+            href={`/a/s/${app.slug}`}
             key={app.id}
             className="flex gap-4  border p-6 transition-all hover:border-muted-foreground/50"
           >

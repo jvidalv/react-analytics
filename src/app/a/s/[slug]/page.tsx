@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAnalyticsUserStats } from "@/domains/app/users/stats/users-stats.api";
-import { UsersErrorChart } from "@/app/app/s/[slug]/users/users.error-chart";
+import { UsersErrorChart } from "@/app/a/s/[slug]/users/users.error-chart";
 import { useUsersDevelopmentMode } from "@/components/apps/header";
 
 const TableSkeleton = () => (

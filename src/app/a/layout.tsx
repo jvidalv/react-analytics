@@ -11,7 +11,7 @@ export default async function AppsLayout({
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/join?redirect_to=/app/dashboard");
+    redirect("/join?redirect_to=/a/dashboard");
   }
 
   return <AppLayoutClient>{children}</AppLayoutClient>;

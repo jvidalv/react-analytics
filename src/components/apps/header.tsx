@@ -162,7 +162,7 @@ const UserDropdown = ({ onLogout }: { onLogout: () => void }) => {
         )}
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href="/app/account">
+          <Link href="/a/account">
             <DropdownMenuItem>
               <User />
               Account
@@ -252,13 +252,13 @@ const Apps = () => {
           );
 
           return (
-            <Link href={`/app/s/${app.slug}`} key={app.slug}>
+            <Link href={`/a/s/${app.slug}`} key={app.slug}>
               <Content />
             </Link>
           );
         })}
         <DropdownMenuSeparator />
-        <Link href="/app/dashboard?create=true">
+        <Link href="/a/dashboard?create=true">
           <DropdownMenuItem className="gap-2 p-2">
             <div className="flex size-6 items-center justify-center  border bg-background">
               <Plus className="size-4" />
@@ -283,14 +283,14 @@ function AppHeader() {
   const links = [
     {
       name: "Overview",
-      href: `/app/s/${params.slug}`,
+      href: `/a/s/${params.slug}`,
       get current() {
         return pathname === this.href;
       },
     },
     {
       name: "Settings",
-      href: `/app/s/${params.slug}/settings`,
+      href: `/a/s/${params.slug}/settings`,
       get current() {
         return pathname === this.href;
       },
@@ -331,7 +331,7 @@ export function AppsHeader({ onLogout }: { onLogout: () => void }) {
       <div className="flex h-16 items-center justify-between">
         <nav className="flex items-center gap-4 ">
           <Link
-            href="/app/dashboard"
+            href="/a/dashboard"
             className="transition-all hover:scale-125 hover:text-primary"
           >
             <img src="/assets/images/icon.png" className="size-6" />

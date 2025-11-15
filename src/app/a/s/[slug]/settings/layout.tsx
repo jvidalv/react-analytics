@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Cog } from "lucide-react";
@@ -13,15 +13,16 @@ export default function SettingsLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  useTitle("Account");
+  useTitle("Settings");
 
+  const params = useParams();
   const pathname = usePathname();
 
   const links = [
     {
-      name: "Information",
+      name: "Configuration",
       icon: Cog,
-      href: `/app/account`,
+      href: `/a/s/${params.slug}/settings`,
       get active() {
         return this.href === pathname;
       },
@@ -32,8 +33,10 @@ export default function SettingsLayout({
     <div className="mx-auto max-w-7xl">
       <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row">
         <div>
-          <h1 className="text-3xl font-bold">Account</h1>
-          <p className="text-muted-foreground">Manage your account settings</p>
+          <h1 className="text-3xl font-bold">Settings</h1>
+          <p className="text-muted-foreground">
+            Modify your app configuration.
+          </p>
         </div>
         <div></div>
       </div>

@@ -41,7 +41,7 @@ react-analytics/
 - **NextAuth v5** - OAuth authentication
 - **Providers**: Google, Apple, GitHub
 - **Sessions**: Database-backed, 10-year duration
-- **Protection**: Middleware guards `/app/*` routes
+- **Protection**: Server-side auth checks on `/a/*` routes
 
 ### UI & Styling
 - **Tailwind CSS 3.4.1** - Utility-first styling

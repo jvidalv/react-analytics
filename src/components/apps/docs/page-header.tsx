@@ -21,7 +21,7 @@ export const PageHeader = ({ title, description }: PageHeaderProps) => {
         </span>
         <Link
           className="text-sm text-muted-foreground no-underline hover:text-foreground"
-          href="/app/docs"
+          href="/a/docs"
         >
           Docs
         </Link>
