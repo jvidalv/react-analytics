@@ -30,37 +30,43 @@ export default function Home() {
     {
       Icon: Smartphone,
       title: "Multi-Platform Library",
-      description: "Drop-in analytics for React, React Native, Expo, and Next.js with zero config.",
+      description:
+        "Drop-in analytics for React, React Native, Expo, and Next.js with zero config.",
       color: "bg-primary text-background",
     },
     {
       Icon: BarChart3,
       title: "Real-Time Dashboard",
-      description: "Beautiful analytics dashboard to visualize user journeys, events, and errors.",
+      description:
+        "Beautiful analytics dashboard to visualize user journeys, events, and errors.",
       color: "bg-indigo-500",
     },
     {
       Icon: Activity,
       title: "Event Tracking",
-      description: "Track navigation, custom actions, state changes, and errors automatically.",
+      description:
+        "Track navigation, custom actions, state changes, and errors automatically.",
       color: "bg-violet-500",
     },
     {
       Icon: Layers,
       title: "Multi-App Management",
-      description: "Manage analytics for unlimited apps from a single dashboard with separate API keys.",
+      description:
+        "Manage analytics for unlimited apps from a single dashboard with separate API keys.",
       color: "bg-pink-500",
     },
     {
       Icon: Database,
       title: "Open Source & Self-Hostable",
-      description: "Full control over your data. Self-host on your own infrastructure or use our hosted solution.",
+      description:
+        "Full control over your data. Self-host on your own infrastructure or use our hosted solution.",
       color: "bg-emerald-500",
     },
     {
       Icon: BookText,
       title: "Complete Documentation",
-      description: "Comprehensive guides, API references, and examples to get you started in minutes.",
+      description:
+        "Comprehensive guides, API references, and examples to get you started in minutes.",
       color: "bg-amber-500",
     },
   ];
@@ -69,10 +75,10 @@ export default function Home() {
     {
       text: (
         <p className="text-xl font-medium">
-          <span className="bg-gray-800 text-white transition-all hover:bg-primary">
+          <span className="bg-gray-800 text-white transition-all">
             Finally, analytics that just works
-          </span>
-          {" "}across all my React apps. Setup took literally 5 minutes.
+          </span>{" "}
+          across all my React apps. Setup took literally 5 minutes.
         </p>
       ),
       avatar: "https://github.com/shadcn.png",
@@ -84,7 +90,7 @@ export default function Home() {
       text: (
         <p className="text-xl font-medium">
           Being{" "}
-          <span className="bg-gray-800 text-white transition-colors hover:bg-primary">
+          <span className="bg-gray-800 text-white transition-colors">
             open source and self-hostable
           </span>{" "}
           means I own my data. Perfect for enterprise compliance.
@@ -100,7 +106,7 @@ export default function Home() {
       text: (
         <p className="text-xl font-medium">
           The real-time dashboard helped us identify and fix a{" "}
-          <span className="bg-gray-800 text-white transition-colors hover:bg-primary">
+          <span className="bg-gray-800 text-white transition-colors">
             critical navigation bug
           </span>{" "}
           in production within minutes.
@@ -120,11 +126,13 @@ export default function Home() {
       content: (
         <>
           <span>
-            Yes! The free tier includes 1 project, 10,000 events per month, and 30 days of data retention.
-            Perfect for side projects and small applications.
+            Yes! The free tier includes 1 project, 10,000 events per month, and
+            30 days of data retention. Perfect for side projects and small
+            applications.
           </span>
           <span>
-            Plus, being open source, you can self-host it completely free on your own infrastructure.
+            Plus, being open source, you can self-host it completely free on
+            your own infrastructure.
           </span>
         </>
       ),
@@ -138,8 +146,9 @@ export default function Home() {
             You get complete control over your data and infrastructure.
           </span>
           <span>
-            We provide comprehensive documentation and Docker support to make self-hosting easy.
-            Check our GitHub repository for the full self-hosting guide.
+            We provide comprehensive documentation and Docker support to make
+            self-hosting easy. Check our GitHub repository for the full
+            self-hosting guide.
           </span>
         </>
       ),
@@ -149,12 +158,13 @@ export default function Home() {
       content: (
         <>
           <span>
-            Our analytics library works seamlessly with React, React Native, Expo, and Next.js.
-            One package, universal compatibility.
+            Our analytics library works seamlessly with React, React Native,
+            Expo, and Next.js. One package, universal compatibility.
           </span>
           <span>
-            It automatically detects your router (Next.js App Router, Expo Router, React Router)
-            and tracks navigation events without any configuration.
+            It automatically detects your router (Next.js App Router, Expo
+            Router, React Router) and tracks navigation events without any
+            configuration.
           </span>
         </>
       ),
@@ -164,12 +174,12 @@ export default function Home() {
       content: (
         <>
           <span>
-            For our hosted solution, we use PostgreSQL with industry-standard security practices.
-            Your data is encrypted at rest and in transit.
+            For our hosted solution, we use PostgreSQL with industry-standard
+            security practices. Your data is encrypted at rest and in transit.
           </span>
           <span>
-            For self-hosted deployments, you have complete control—use PostgreSQL, MySQL, or SQLite
-            on your own infrastructure.
+            For self-hosted deployments, you have complete control—use
+            PostgreSQL, MySQL, or SQLite on your own infrastructure.
           </span>
         </>
       ),
@@ -186,30 +196,32 @@ export default function Home() {
               <span className="relative z-10">Understand your users, </span>
               <span className="relative whitespace-nowrap px-1">
                 <span className="relative z-10">not just your code.</span>
-                <div className="animate-grow absolute left-0 top-1 z-0 size-full w-0 -rotate-1 bg-white/20" />
+                <div className="animate-grow absolute left-0 top-1 z-0 size-full w-0 -rotate-1 bg-purple-900" />
               </span>
             </h1>
             <div>
               <p className="mb-8 text-xl font-medium text-muted-foreground">
-                Complete analytics solution for React, React Native, Expo, and Next.js.
-                Track user behavior, monitor app health, and make data-driven decisions.
+                Complete analytics solution for React, React Native, Expo, and
+                Next.js. Track user behavior, monitor app health, and make
+                data-driven decisions.
               </p>
             </div>
             <div>
-              <Link href="/#join">
+              <Link href="/join">
                 <Button
                   size="lg"
-                  className="animate-glow mb-2 py-7 text-xl !font-bold"
+                  className="mb-2 py-7 text-xl !font-bold min-w-xs animate-glow"
                 >
-                  <ThunderIcon /> Start Tracking Free →
+                  <ThunderIcon className="size-5" /> Start Free
                 </Button>
               </Link>
             </div>
           </div>
           <div className="">
             <Image
-              src="/assets/images/upsell.png"
+              src="/assets/images/icon.png"
               alt="upsell"
+              className="transition-all opacity-50 hover:scale-105 hover:opacity-100"
               width={500}
               height={500}
             />
@@ -219,7 +231,7 @@ export default function Home() {
           {twits.map(({ text, name, handle, avatar, url }) => (
             <div
               key={name}
-              className="flex h-60 w-full flex-col justify-between  border-2 p-6"
+              className="flex h-60 w-full flex-col justify-between border-2 p-6"
             >
               {text}
               <div className="flex items-end justify-between">
@@ -254,8 +266,9 @@ export default function Home() {
               Everything you need to understand your users 📊
             </h2>
             <p className="mx-auto max-w-2xl text-lg font-medium text-muted-foreground sm:text-center sm:text-xl">
-              From event tracking to real-time dashboards, React Analytics gives you
-              the complete toolkit to monitor user behavior across all your React applications:
+              From event tracking to real-time dashboards, React Analytics gives
+              you the complete toolkit to monitor user behavior across all your
+              React applications:
             </p>
           </div>
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 sm:gap-8">
@@ -266,10 +279,7 @@ export default function Home() {
               >
                 <div className="flex items-center gap-4">
                   <div
-                    className={cn(
-                      "w-fit relative  p-2 animate-glow",
-                      color,
-                    )}
+                    className={cn("w-fit relative  p-2 animate-glow", color)}
                   >
                     <Icon className="relative z-20 size-12 stroke-1" />
                     <span
@@ -281,9 +291,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div>
-                  <h3 className="mb-2 text-xl font-semibold">
-                    {title}
-                  </h3>
+                  <h3 className="mb-2 text-xl font-semibold">{title}</h3>
                   <p className="text-base font-medium text-muted-foreground">
                     {description}
                   </p>
@@ -296,14 +304,17 @@ export default function Home() {
           <h2 className="mb-4 text-4xl font-bold sm:text-center sm:text-5xl">
             This is{" "}
             <span className="relative">
-              <span className="relative z-10 text-background">so much more</span>
+              <span className="relative z-10 text-background">
+                so much more
+              </span>
               <div className="animate-grow absolute left-0 top-0 z-0 size-full w-0 -rotate-1 bg-primary" />
             </span>{" "}
             than just event tracking
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-lg font-medium text-muted-foreground sm:text-center sm:text-xl">
-            From automatic navigation tracking to real-time dashboards, custom event properties to
-            user identification... everything you need to truly understand your users.
+            From automatic navigation tracking to real-time dashboards, custom
+            event properties to user identification... everything you need to
+            truly understand your users.
           </p>
           <HomeStarterFeatures />
         </section>
@@ -314,7 +325,8 @@ export default function Home() {
                 Open Source & Self-Hostable 🔓
               </h2>
               <p className="mx-auto max-w-2xl text-lg font-medium text-muted-foreground sm:text-xl">
-                Full transparency and control. Host on your infrastructure or use our managed service.
+                Full transparency and control. Host on your infrastructure or
+                use our managed service.
               </p>
             </div>
             <div className="grid gap-8 sm:grid-cols-2">
@@ -324,8 +336,8 @@ export default function Home() {
                   <h3 className="text-2xl font-semibold">MIT Licensed</h3>
                 </div>
                 <p className="mb-6 text-lg text-muted-foreground">
-                  Complete source code available on GitHub. Fork it, customize it,
-                  contribute to it—it's yours to use however you need.
+                  Complete source code available on GitHub. Fork it, customize
+                  it, contribute to it—it's yours to use however you need.
                 </p>
                 <a
                   href="https://github.com/jvidalv/react-analytics"
@@ -342,8 +354,9 @@ export default function Home() {
                   <h3 className="text-2xl font-semibold">Self-Host</h3>
                 </div>
                 <p className="mb-6 text-lg text-muted-foreground">
-                  Deploy to your own servers, keep your data private, and maintain complete control.
-                  Full documentation and Docker support included.
+                  Deploy to your own servers, keep your data private, and
+                  maintain complete control. Full documentation and Docker
+                  support included.
                 </p>
                 <a
                   href="https://github.com/jvidalv/react-analytics#self-hosting"
@@ -357,14 +370,18 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section id="pricing" className="relative bg-foreground/5 px-6 py-16 sm:py-36">
+        <section
+          id="pricing"
+          className="relative bg-foreground/5 px-6 py-16 sm:py-36"
+        >
           <span className="absolute h-0 opacity-0">Pricing</span>
           <h2 className="mb-4 text-4xl font-bold sm:text-center sm:text-5xl">
             Simple, transparent pricing
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-lg font-medium text-muted-foreground sm:text-center sm:text-xl">
-            Start free and scale as you grow. All plans include our complete analytics library
-            and real-time dashboard. Open source and self-hostable—you own your data.
+            Start free and scale as you grow. All plans include our complete
+            analytics library and real-time dashboard. Open source and
+            self-hostable—you own your data.
           </p>
           <div className="mx-auto grid max-w-7xl gap-8 sm:grid-cols-3">
             {PRICE_PLANS.map(
@@ -491,8 +508,8 @@ export default function Home() {
                 Frequently Asked Questions
               </h2>
               <p className="mx-auto mb-8 max-w-2xl text-lg font-medium text-muted-foreground sm:text-xl">
-                Everything you need to know about React Analytics, from self-hosting
-                to supported platforms and data privacy.
+                Everything you need to know about React Analytics, from
+                self-hosting to supported platforms and data privacy.
               </p>
             </div>
             <ul className="flex flex-col gap-4">

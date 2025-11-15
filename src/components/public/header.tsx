@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import ThunderIcon from "@/components/custom/thunder-icon";
@@ -9,16 +8,10 @@ export const PublicHeader = () => {
     <header className="mx-auto flex max-w-7xl items-center px-4 py-5">
       <nav className="flex w-full items-center justify-between">
         <Link href="/">
-          <Image
-            src="/assets/images/logo.png"
-            alt="Logo"
-            width={110}
-            height={40}
-            priority
-          />
+          <img src="/assets/images/logo.png" alt="Logo" width={80} />
         </Link>
         <div className="flex items-center gap-2 sm:gap-4">
-          <Link href="/#join">
+          <Link href="/join">
             <Button variant="outline">
               <ThunderIcon className="text-white" /> Start Tracking
             </Button>
