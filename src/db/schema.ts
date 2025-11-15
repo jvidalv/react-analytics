@@ -17,7 +17,6 @@ export const users = pgTable("user", {
   emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text(),
   plan: text().default("free"),
-  aiModel: text().default("gpt-4o"), // New AI Model field
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
@@ -26,7 +25,7 @@ export const transactions = pgTable("transactions", {
   id: uuid().primaryKey().defaultRandom(),
   email: text().notNull(),
   productId: text().notNull(),
-  productName: text().default("straw").notNull(),
+  productName: text().default("free").notNull(),
   createdAt: timestamp().notNull().defaultNow(),
 });
 

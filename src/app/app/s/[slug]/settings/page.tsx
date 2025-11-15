@@ -4,7 +4,6 @@ import * as React from "react";
 import { useState, FormEvent, useEffect } from "react";
 import { useGetAppFromSlug } from "@/domains/app/app.utils";
 import { App, useUpdateApp } from "@/domains/app/app.api";
-import { APP_FEATURES, FeatureKey } from "@/lib/features";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
@@ -16,14 +15,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { InputColor } from "@/components/custom/input-color";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Save } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getColor } from "@/lib/colors";
-import { cn } from "@/lib/utils";
 import { mutate } from "swr";
 
 export default function SettingsPage() {
@@ -49,19 +44,6 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent>
           <BasicInfoForm app={app} />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Features</CardTitle>
-          <CardDescription>
-            Enabling or disabling features will modify the tailored experience
-            within the dashboard.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <FeaturesForm app={app} />
         </CardContent>
       </Card>
 
@@ -105,32 +87,6 @@ function BasicInfoForm({ app }: { app: App }) {
   return (
     <form onSubmit={handleSubmit} className="grid gap-4">
       <div className="flex flex-col gap-1.5">
-        <Label>Logo</Label>
-        <Avatar
-          className={cn(
-            "flex size-16 items-center justify-center text-2xl font-semibold capitalize",
-            getColor(app.id),
-          )}
-          style={{
-            background: app.primaryColor || undefined,
-          }}
-        >
-          {app.logoUrl && <AvatarImage src={app.logoUrl} alt="logo" />}
-          <AvatarFallback
-            className="text-2xl font-semibold capitalize"
-            style={{
-              background: app.primaryColor || undefined,
-            }}
-          >
-            {app.name?.[0]}
-          </AvatarFallback>
-        </Avatar>
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <Label>Slug</Label>
-        <Input disabled defaultValue={app.slug} placeholder="app-slug" />
-      </div>
-      <div className="flex flex-col gap-1.5">
         <Label>Name</Label>
         <Input
           defaultValue={name}
@@ -170,44 +126,6 @@ function BasicInfoForm({ app }: { app: App }) {
         type="submit"
         className="mt-4 w-fit"
       >
-        Save <Save />
-      </Button>
-    </form>
-  );
-}
-
-function FeaturesForm({ app }: { app: App }) {
-  const { toast } = useToast();
-  const { updateApp, isUpdating } = useUpdateApp();
-  const [features, setFeatures] = useState<FeatureKey[]>(app.features || []);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    await updateApp({ ...app, features });
-    void mutate("/api/app/all");
-    toast({ title: "App updated", description: "Features updated." });
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="grid gap-4">
-      <ToggleGroup
-        type="multiple"
-        value={features}
-        onValueChange={(features: FeatureKey[]) => setFeatures(features)}
-        className="flex-wrap items-start justify-start"
-      >
-        {APP_FEATURES.map((feat) => (
-          <ToggleGroupItem
-            key={feat.key}
-            value={feat.key}
-            aria-label={`Toggle ${feat.name}`}
-          >
-            <feat.Icon />
-            {feat.name}
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
-      <Button isLoading={isUpdating} type="submit" className="mt-4 w-fit">
         Save <Save />
       </Button>
     </form>
