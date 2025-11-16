@@ -9,9 +9,32 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { logout } from "@/app/actions";
 import { queryClient } from "@/lib/query-client";
-import { useAppSlugFromLocalStorage } from "@/domains/app/app.utils";
+import { create } from "zustand";
 import { useIsDocs } from "@/hooks/use-is-docs";
 import { useUserApps } from "@/domains/app/app.api";
+
+interface UseAppSlugFromLocalStorage {
+  appSlug: string | null;
+  setAppSlug: (slug: string) => void;
+  removeAppSlug: () => void;
+}
+
+const useAppSlugFromLocalStorage = create<UseAppSlugFromLocalStorage>(
+  (set) => ({
+    appSlug:
+      typeof window !== "undefined"
+        ? localStorage.getItem("last-app-slug")
+        : null,
+    setAppSlug: (slug: string) => {
+      localStorage.setItem("last-app-slug", slug);
+      set({ appSlug: slug });
+    },
+    removeAppSlug: () => {
+      localStorage.removeItem("last-app-slug");
+      set({ appSlug: null });
+    },
+  }),
+);
 
 export function AppLayoutClient({
   children,

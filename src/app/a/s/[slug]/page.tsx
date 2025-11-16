@@ -7,7 +7,7 @@ import { UsersAggregates } from "./users/users.aggregates";
 import { UsersPageDropdown } from "./users/users.page-dropdown";
 
 import { useTitle } from "@/hooks/use-title";
-import { useGetAppFromSlug } from "@/domains/app/app.utils";
+import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
 import { useAnalyticsUsers } from "@/domains/app/users/users.api";
 import { useAnalyticsApiKeys } from "@/domains/analytics/analytics-api-keys.api";
 import { useScrollPosition } from "@/hooks/use-scroll-position";
@@ -65,8 +65,9 @@ const HeaderWrapper = ({
 export default function AnalyticsPage() {
   useTitle("Users");
   const { me } = useMe();
-  const { app, isLoadingApp } = useGetAppFromSlug();
-  const { apiKeys, isLoading: isLoadingApiKeys } = useAnalyticsApiKeys(app?.slug);
+  const appSlug = useAppSlugFromParams();
+  const { app, isLoading: isLoadingApp } = useAppBySlug(appSlug);
+  const { apiKeys, isLoading: isLoadingApiKeys } = useAnalyticsApiKeys(appSlug);
   const searchParams = useSearchParams();
   const identifyId = searchParams.get("identifyId");
   const page = parseInt(searchParams.get("page") || "1", 10);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetAppFromSlug } from "@/domains/app/app.utils";
+import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
 import { useAnalyticsApiKeys } from "@/domains/analytics/analytics-api-keys.api";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -53,10 +53,11 @@ function ApiKeyDisplay({
 }
 
 export default function ApiKeysPage() {
-  const { app, isLoadingApp } = useGetAppFromSlug();
+  const appSlug = useAppSlugFromParams();
+  const { app, isLoading: isLoadingApp } = useAppBySlug(appSlug);
   const { me } = useMe();
   const { toggleDevMode } = useToggleDevMode();
-  const { apiKeys, isLoading } = useAnalyticsApiKeys(app?.slug);
+  const { apiKeys, isLoading } = useAnalyticsApiKeys(appSlug);
 
   if (isLoadingApp || isLoading || !app) {
     return (

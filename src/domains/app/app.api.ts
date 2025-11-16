@@ -1,6 +1,22 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetcherProtected } from "@/lib/fetcher";
 import { FeatureKey } from "@/lib/features";
+import { useParams } from "next/navigation";
+
+/**
+ * Hook to get the app slug from URL parameters
+ * @throws Error if slug is not found in URL parameters
+ */
+export const useAppSlugFromParams = (): string => {
+  const params = useParams();
+  const slug = params.slug as string;
+
+  if (!slug) {
+    throw new Error("App slug not found in URL parameters");
+  }
+
+  return slug;
+};
 
 export type App = {
   id: string;

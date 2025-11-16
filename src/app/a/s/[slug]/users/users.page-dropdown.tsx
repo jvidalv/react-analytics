@@ -20,13 +20,14 @@ import {
   BookText,
 } from "lucide-react";
 import { useClipboard } from "@/hooks/use-clipboard";
-import { useGetAppFromSlug } from "@/domains/app/app.utils";
+import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
 import { useAnalyticsApiKeys } from "@/domains/analytics/analytics-api-keys.api";
 import { useSensitive } from "@/hooks/use-sensitive";
 
 export function UsersPageDropdown() {
-  const { app } = useGetAppFromSlug();
-  const { apiKeys } = useAnalyticsApiKeys(app?.slug);
+  const appSlug = useAppSlugFromParams();
+  const { app } = useAppBySlug(appSlug);
+  const { apiKeys } = useAnalyticsApiKeys(appSlug);
   const [copiedProdKey, copyProdKey] = useClipboard();
   const [copiedDevKey, copyDevKey] = useClipboard();
   const { enabled: sensitiveEnabled, toggle: toggleSensitive } = useSensitive();

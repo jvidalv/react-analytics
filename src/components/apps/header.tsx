@@ -26,7 +26,7 @@ import {
   PlanType,
 } from "@/domains/plan/plan.utils";
 import { useScrollPosition } from "@/hooks/use-scroll-position";
-import { useGetAppFromSlug } from "@/domains/app/app.utils";
+import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
@@ -165,9 +165,8 @@ const UserDropdown = ({ onLogout }: { onLogout: () => void }) => {
 
 const Apps = () => {
   const { apps } = useUserApps();
-  const { app: appFromSlug, isLoadingApp } = useGetAppFromSlug();
-
-  const app = appFromSlug;
+  const appSlug = useAppSlugFromParams();
+  const { app, isLoading: isLoadingApp } = useAppBySlug(appSlug);
 
   return (
     <DropdownMenu>

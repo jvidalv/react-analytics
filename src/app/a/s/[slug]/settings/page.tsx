@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import { useState, FormEvent, useEffect } from "react";
-import { useGetAppFromSlug } from "@/domains/app/app.utils";
-import { App, useUpdateApp } from "@/domains/app/app.api";
+import { App, useAppBySlug, useAppSlugFromParams, useUpdateApp } from "@/domains/app/app.api";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
@@ -22,9 +21,10 @@ import { Save } from "lucide-react";
 import { mutate } from "swr";
 
 export default function SettingsPage() {
-  const { app } = useGetAppFromSlug();
+  const appSlug = useAppSlugFromParams();
+  const { app, isLoading } = useAppBySlug(appSlug);
 
-  if (!app)
+  if (isLoading || !app)
     return (
       <div className="space-y-6">
         <Skeleton className="h-[550px] w-full" />
@@ -43,7 +43,7 @@ export default function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <BasicInfoForm app={app} />
+          <BasicInfoForm app={app} appSlug={appSlug} />
         </CardContent>
       </Card>
 
@@ -55,16 +55,16 @@ export default function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <PersonalizationForm app={app} />
+          <PersonalizationForm app={app} appSlug={appSlug} />
         </CardContent>
       </Card>
     </div>
   );
 }
 
-function BasicInfoForm({ app }: { app: App }) {
+function BasicInfoForm({ app, appSlug }: { app: App; appSlug: string }) {
   const { toast } = useToast();
-  const { updateApp, isUpdating } = useUpdateApp();
+  const { updateApp, isUpdating } = useUpdateApp(appSlug);
 
   const [name, setName] = useState(app.name);
   const [description, setDescription] = useState(app.description ?? undefined);
@@ -131,9 +131,9 @@ function BasicInfoForm({ app }: { app: App }) {
   );
 }
 
-function PersonalizationForm({ app }: { app: App }) {
+function PersonalizationForm({ app, appSlug }: { app: App; appSlug: string }) {
   const { toast } = useToast();
-  const { updateApp, isUpdating } = useUpdateApp();
+  const { updateApp, isUpdating } = useUpdateApp(appSlug);
   const [color, setColor] = useState(app.primaryColor ?? undefined);
 
   const handleSubmit = async (e: FormEvent) => {
