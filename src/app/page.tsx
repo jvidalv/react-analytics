@@ -300,24 +300,6 @@ export default function Home() {
             ))}
           </ul>
         </section>
-        <section className="bg-foreground/5 px-6 py-24 sm:py-36">
-          <h2 className="mb-4 text-4xl font-bold sm:text-center sm:text-5xl">
-            This is{" "}
-            <span className="relative">
-              <span className="relative z-10 text-background">
-                so much more
-              </span>
-              <div className="animate-grow absolute left-0 top-0 z-0 size-full w-0 -rotate-1 bg-primary" />
-            </span>{" "}
-            than just event tracking
-          </h2>
-          <p className="mx-auto mb-8 max-w-2xl text-lg font-medium text-muted-foreground sm:text-center sm:text-xl">
-            From automatic navigation tracking to real-time dashboards, custom
-            event properties to user identification... everything you need to
-            truly understand your users.
-          </p>
-          <HomeStarterFeatures />
-        </section>
         <section className="px-6 py-24 sm:py-36">
           <div className="mx-auto max-w-5xl">
             <div className="mb-10 text-center">
