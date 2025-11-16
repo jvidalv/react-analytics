@@ -1,7 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetcherProtected } from "@/lib/fetcher";
-import { FeatureKey } from "@/lib/features";
 import { useParams } from "next/navigation";
+import type { App as AppType } from "@/api/schemas/app.schema";
+
+// Re-export App type from schema for convenience
+export type App = AppType;
 
 /**
  * Hook to get the app slug from URL parameters
@@ -16,20 +19,6 @@ export const useAppSlugFromParams = (): string => {
   }
 
   return slug;
-};
-
-export type App = {
-  id: string;
-  userId: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  primaryColor: string | null;
-  websiteUrl: string | null;
-  email: string | null;
-  features: string[];
-  createdAt: string;
-  updatedAt: string;
 };
 
 // Query key functions for cache invalidation

@@ -1,4 +1,4 @@
-import { t } from "elysia";
+import { t, Static } from "elysia";
 
 // Full app object for responses
 export const AppSchema = t.Object({
@@ -14,6 +14,8 @@ export const AppSchema = t.Object({
   createdAt: t.String({ format: "date-time" }),
   updatedAt: t.String({ format: "date-time" }),
 });
+
+export type App = Static<typeof AppSchema>;
 
 // POST /app/create request body
 export const CreateAppBodySchema = t.Object({
