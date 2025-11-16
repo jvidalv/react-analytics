@@ -12,6 +12,7 @@ import {
   useAnalyticsAggregates,
   AggregateType,
   useAnalyticsUserStats,
+  useCountryAggregates,
 } from "@/domains/app/users/stats/users-stats.api";
 import countries from "@/lib/countries";
 import {
@@ -52,7 +53,15 @@ const aggregateTypeOptions = [
   },
 ];
 
-export function UsersAggregates({ apiKey }: { apiKey?: string }) {
+export function UsersAggregates({
+  apiKey,
+  appSlug,
+  devModeEnabled,
+}: {
+  apiKey?: string;
+  appSlug?: string;
+  devModeEnabled?: boolean;
+}) {
   const [type, setType] = useState<AggregateType | "stats">("stats");
 
   return (
@@ -81,7 +90,11 @@ export function UsersAggregates({ apiKey }: { apiKey?: string }) {
       </Select>
       <div className="divide-y">
         {type === "stats" ? (
-          <Stats apiKey={apiKey} />
+          <Stats
+            apiKey={apiKey}
+            appSlug={appSlug}
+            devModeEnabled={devModeEnabled}
+          />
         ) : (
           <AggregatesDisplay type={type} apiKey={apiKey} />
         )}
@@ -141,7 +154,15 @@ const AggregatesDisplay = ({
   );
 };
 
-const Stats = ({ apiKey }: { apiKey?: string }) => {
+const Stats = ({
+  apiKey,
+  appSlug,
+  devModeEnabled,
+}: {
+  apiKey?: string;
+  appSlug?: string;
+  devModeEnabled?: boolean;
+}) => {
   const { stats, isLoading } = useAnalyticsUserStats(apiKey);
 
   return (
@@ -184,13 +205,22 @@ const Stats = ({ apiKey }: { apiKey?: string }) => {
           </Badge>
         </div>
       </div>
-      <CountryAggregatesDisplay apiKey={apiKey} />
+      <CountryAggregatesDisplay
+        appSlug={appSlug}
+        devModeEnabled={devModeEnabled}
+      />
     </>
   );
 };
 
-const CountryAggregatesDisplay = ({ apiKey }: { apiKey?: string }) => {
-  const { aggregates, isLoading } = useAnalyticsAggregates(apiKey, "country");
+const CountryAggregatesDisplay = ({
+  appSlug,
+  devModeEnabled,
+}: {
+  appSlug?: string;
+  devModeEnabled?: boolean;
+}) => {
+  const { aggregates, isLoading } = useCountryAggregates(appSlug, devModeEnabled);
 
   if (isLoading) return <Skeleton className="h-10 w-full" />;
 

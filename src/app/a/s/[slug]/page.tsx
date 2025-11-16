@@ -19,6 +19,8 @@ import {
   useAnalyticsUserStats,
   usePlatformAggregates,
   useIdentificationAggregates,
+  useCountryAggregates,
+  useErrorRateAggregates,
 } from "@/domains/app/users/stats/users-stats.api";
 import { UsersErrorChart } from "@/app/a/s/[slug]/users/users.error-chart";
 import { useMe } from "@/domains/user/me.api";
@@ -27,6 +29,7 @@ import { TrendingUp, TrendingDown, Globe } from "lucide-react";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
 import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";
+import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
 
 const TableSkeleton = () => (
   <div className="divide-y  border">
@@ -70,14 +73,20 @@ export default function AnalyticsPage() {
   useAnalyticsUserStats(apiKey);
   const { overview, isLoading: isLoadingOverview } = useAnalyticsOverview(
     app?.slug,
-    me?.devModeEnabled
+    me?.devModeEnabled,
   );
   const { platforms, isLoading: isLoadingPlatforms } = usePlatformAggregates(
     app?.slug,
-    me?.devModeEnabled
+    me?.devModeEnabled,
   );
   const { identification, isLoading: isLoadingIdentification } =
     useIdentificationAggregates(app?.slug, me?.devModeEnabled);
+  const { aggregates: countries, isLoading: isLoadingCountries } =
+    useCountryAggregates(app?.slug, me?.devModeEnabled);
+  const { errorRate, isLoading: isLoadingErrorRate } = useErrorRateAggregates(
+    app?.slug,
+    me?.devModeEnabled,
+  );
 
   const scrollY = useScrollPosition();
   const shouldMinifyHeader = scrollY > 20;
@@ -100,7 +109,7 @@ export default function AnalyticsPage() {
     <>
       <HeaderWrapper>
         {/* Analytics Overview */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Total Users */}
           <div className="border p-6">
             {isLoadingOverview || isLoadingPlatforms ? (
@@ -169,21 +178,23 @@ export default function AnalyticsPage() {
                   {overview?.mau.toLocaleString() ?? "—"}
                 </p>
                 {overview && overview.mauChange !== 0 && (
-                  <div
-                    className={cn(
-                      "mt-2 flex items-center gap-1 text-sm",
-                      overview.mauChange > 0
-                        ? "text-green-600"
-                        : "text-red-600"
-                    )}
-                  >
-                    {overview.mauChange > 0 ? (
-                      <TrendingUp className="size-4" />
-                    ) : (
-                      <TrendingDown className="size-4" />
-                    )}
-                    <span>{Math.abs(overview.mauChange).toFixed(1)}%</span>
-                  </div>
+                  <TooltipWrapper content="Change vs. previous 30 days">
+                    <div
+                      className={cn(
+                        "mt-2 flex items-center gap-1 text-sm",
+                        overview.mauChange > 0
+                          ? "text-green-600"
+                          : "text-red-600",
+                      )}
+                    >
+                      {overview.mauChange > 0 ? (
+                        <TrendingUp className="size-4" />
+                      ) : (
+                        <TrendingDown className="size-4" />
+                      )}
+                      <span>{Math.abs(overview.mauChange).toFixed(1)}%</span>
+                    </div>
+                  </TooltipWrapper>
                 )}
               </>
             )}
@@ -209,101 +220,283 @@ export default function AnalyticsPage() {
                   {overview?.dau.toLocaleString() ?? "—"}
                 </p>
                 {overview && overview.dauChange !== 0 && (
-                  <div
-                    className={cn(
-                      "mt-2 flex items-center gap-1 text-sm",
-                      overview.dauChange > 0
-                        ? "text-green-600"
-                        : "text-red-600"
-                    )}
-                  >
-                    {overview.dauChange > 0 ? (
-                      <TrendingUp className="size-4" />
-                    ) : (
-                      <TrendingDown className="size-4" />
-                    )}
-                    <span>{Math.abs(overview.dauChange).toFixed(1)}%</span>
-                  </div>
+                  <TooltipWrapper content="Change vs. previous 24 hours">
+                    <div
+                      className={cn(
+                        "mt-2 flex items-center gap-1 text-sm",
+                        overview.dauChange > 0
+                          ? "text-green-600"
+                          : "text-red-600",
+                      )}
+                    >
+                      {overview.dauChange > 0 ? (
+                        <TrendingUp className="size-4" />
+                      ) : (
+                        <TrendingDown className="size-4" />
+                      )}
+                      <span>{Math.abs(overview.dauChange).toFixed(1)}%</span>
+                    </div>
+                  </TooltipWrapper>
                 )}
               </>
             )}
           </div>
         </div>
 
-        {/* User Conversion */}
-        <div className="border p-6">
-          {isLoadingIdentification ? (
-            <>
-              <Skeleton className="mb-2 h-4 w-32" />
-              <Skeleton className="h-8 w-24" />
-              <Skeleton className="mt-2 h-4 w-16" />
-            </>
-          ) : (
-            <>
-              <div className="mb-2 flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
-                  User Conversion
-                </p>
-                <p className="text-xs text-muted-foreground">UC</p>
-              </div>
-              <p className="text-3xl font-bold">
-                {identification?.identificationRate.toFixed(1)}%
-              </p>
-              {identification && identification.growth.change !== 0 && (
-                <div
-                  className={cn(
-                    "mt-2 flex items-center gap-1 text-sm",
-                    identification.growth.change > 0
-                      ? "text-green-600"
-                      : "text-red-600"
-                  )}
-                >
-                  {identification.growth.change > 0 ? (
-                    <TrendingUp className="size-4" />
-                  ) : (
-                    <TrendingDown className="size-4" />
-                  )}
-                  <span>
-                    {Math.abs(identification.growth.change).toFixed(1)}%
-                  </span>
+        {/* Identification Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Identified Users */}
+          <div className="border p-6">
+            {isLoadingIdentification ? (
+              <>
+                <Skeleton className="mb-2 h-4 w-24" />
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="mt-2 h-4 w-32" />
+              </>
+            ) : (
+              <>
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Identified Users
+                  </p>
+                  <p className="text-xs text-muted-foreground">IU</p>
                 </div>
-              )}
-            </>
-          )}
+                <p className="text-3xl font-bold">
+                  {identification?.identified.toLocaleString() ?? "—"}
+                </p>
+                {/* Platform Breakdown */}
+                <div className="mt-2 flex items-center gap-4 text-sm">
+                  <TooltipWrapper content="Web Users">
+                    <div className="flex items-center gap-1.5">
+                      <Globe className="size-4 text-muted-foreground" />
+                      <span className="font-medium">
+                        {identification?.platforms.web.identified.toLocaleString() ??
+                          "—"}
+                      </span>
+                    </div>
+                  </TooltipWrapper>
+                  <TooltipWrapper content="iOS Users">
+                    <div className="flex items-center gap-1.5">
+                      <IosIcon className="size-4" />
+                      <span className="font-medium">
+                        {identification?.platforms.ios.identified.toLocaleString() ??
+                          "—"}
+                      </span>
+                    </div>
+                  </TooltipWrapper>
+                  <TooltipWrapper content="Android Users">
+                    <div className="flex items-center gap-1.5">
+                      <AndroidIcon className="size-4" />
+                      <span className="font-medium">
+                        {identification?.platforms.android.identified.toLocaleString() ??
+                          "—"}
+                      </span>
+                    </div>
+                  </TooltipWrapper>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Anonymous Users */}
+          <div className="border p-6">
+            {isLoadingIdentification ? (
+              <>
+                <Skeleton className="mb-2 h-4 w-24" />
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="mt-2 h-4 w-32" />
+              </>
+            ) : (
+              <>
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Anonymous Users
+                  </p>
+                  <p className="text-xs text-muted-foreground">AU</p>
+                </div>
+                <p className="text-3xl font-bold">
+                  {identification?.anonymous.toLocaleString() ?? "—"}
+                </p>
+                {/* Platform Breakdown */}
+                <div className="mt-2 flex items-center gap-4 text-sm">
+                  <TooltipWrapper content="Web Users">
+                    <div className="flex items-center gap-1.5">
+                      <Globe className="size-4 text-muted-foreground" />
+                      <span className="font-medium">
+                        {identification?.platforms.web.anonymous.toLocaleString() ??
+                          "—"}
+                      </span>
+                    </div>
+                  </TooltipWrapper>
+                  <TooltipWrapper content="iOS Users">
+                    <div className="flex items-center gap-1.5">
+                      <IosIcon className="size-4" />
+                      <span className="font-medium">
+                        {identification?.platforms.ios.anonymous.toLocaleString() ??
+                          "—"}
+                      </span>
+                    </div>
+                  </TooltipWrapper>
+                  <TooltipWrapper content="Android Users">
+                    <div className="flex items-center gap-1.5">
+                      <AndroidIcon className="size-4" />
+                      <span className="font-medium">
+                        {identification?.platforms.android.anonymous.toLocaleString() ??
+                          "—"}
+                      </span>
+                    </div>
+                  </TooltipWrapper>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* User Conversion */}
+          <div className="border p-6">
+            {isLoadingIdentification ? (
+              <>
+                <Skeleton className="mb-2 h-4 w-32" />
+                <Skeleton className="h-8 w-24" />
+                <Skeleton className="mt-2 h-4 w-16" />
+              </>
+            ) : (
+              <>
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    User Conversion
+                  </p>
+                  <p className="text-xs text-muted-foreground">UC</p>
+                </div>
+                <p className="text-3xl font-bold">
+                  {identification?.identificationRate.toFixed(1)}%
+                </p>
+                {identification && identification.growth.change !== 0 && (
+                  <TooltipWrapper content="Change vs. previous 30 days">
+                    <div
+                      className={cn(
+                        "mt-2 flex items-center gap-1 text-sm",
+                        identification.growth.change > 0
+                          ? "text-green-600"
+                          : "text-red-600",
+                      )}
+                    >
+                      {identification.growth.change > 0 ? (
+                        <TrendingUp className="size-4" />
+                      ) : (
+                        <TrendingDown className="size-4" />
+                      )}
+                      <span>
+                        {Math.abs(identification.growth.change).toFixed(1)}%
+                      </span>
+                    </div>
+                  </TooltipWrapper>
+                )}
+              </>
+            )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-6 gap-8">
-          <div className="col-span-2 flex flex-col gap-4">
-            <UsersAggregates
-              apiKey={apiKey}
-              appSlug={app?.slug}
-              devModeEnabled={me?.devModeEnabled}
-            />
-            <UsersErrorChart apiKey={apiKey} />
-          </div>
-          <div className="col-span-4">
-            {analyticsUsers.totalCount === 0 && (
-              <UsersEmptyState apiKeys={apiKeys} apiKey={apiKey} />
+        {/* Additional Metrics Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Top Countries */}
+          <div className="border p-6">
+            {isLoadingCountries ? (
+              <>
+                <Skeleton className="mb-2 h-4 w-24" />
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="mt-2 h-4 w-32" />
+              </>
+            ) : (
+              <>
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">Top Countries</p>
+                  <p className="text-xs text-muted-foreground">TC</p>
+                </div>
+                {countries && countries.length > 0 ? (
+                  <>
+                    {/* Top Country */}
+                    <TooltipWrapper
+                      content={getCountryName(countries[0].value)}
+                    >
+                      <p className="text-3xl font-bold">
+                        {countryCodeToFlag(countries[0].value)}{" "}
+                        {countries[0].count.toLocaleString()}
+                      </p>
+                    </TooltipWrapper>
+                    {/* Countries 2-4 */}
+                    {countries.length > 1 && (
+                      <div className="mt-2 flex items-center gap-4 text-sm">
+                        {countries.slice(1, 4).map((country, idx) => (
+                          <TooltipWrapper
+                            key={idx}
+                            content={getCountryName(country.value)}
+                          >
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-base">
+                                {countryCodeToFlag(country.value)}
+                              </span>
+                              <span className="font-medium">
+                                {country.count.toLocaleString()}
+                              </span>
+                            </div>
+                          </TooltipWrapper>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-3xl font-bold">—</p>
+                )}
+              </>
             )}
-            {analyticsUsers.isLoading && <TableSkeleton />}
-            {!!analyticsUsers.totalCount && <UsersUsersTable apiKey={apiKey} />}
           </div>
+
+          {/* Error Rate */}
+          <div className="border p-6">
+            {isLoadingErrorRate ? (
+              <>
+                <Skeleton className="mb-2 h-4 w-24" />
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="mt-2 h-4 w-16" />
+              </>
+            ) : (
+              <>
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">Error Rate</p>
+                  <p className="text-xs text-muted-foreground">ER</p>
+                </div>
+                <p className="text-3xl font-bold">
+                  {errorRate?.errorRate.toFixed(2)}%
+                </p>
+                {errorRate && errorRate.growth.change !== 0 && (
+                  <TooltipWrapper content="Change vs. previous 30 days">
+                    <div
+                      className={cn(
+                        "mt-2 flex items-center gap-1 text-sm",
+                        errorRate.growth.change < 0
+                          ? "text-green-600"
+                          : "text-red-600",
+                      )}
+                    >
+                      {errorRate.growth.change < 0 ? (
+                        <TrendingDown className="size-4" />
+                      ) : (
+                        <TrendingUp className="size-4" />
+                      )}
+                      <span>
+                        {Math.abs(errorRate.growth.change).toFixed(2)}%
+                      </span>
+                    </div>
+                  </TooltipWrapper>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Placeholder Card */}
+          <div className="border bg-muted/20 p-6"></div>
         </div>
       </HeaderWrapper>
-      <div
-        className={cn(
-          "fixed min-h-screen right-0 top-0 border-l opacity-0 bg-background translate-x-36 transition-all",
-          identifyId && "translate-x-0 opacity-100 pointer-events-auto",
-          !identifyId && "pointer-events-none [&>*]:opacity-0",
-        )}
-        style={{ width: barWidth }}
-      >
-        <div
-          className={cn("transition-all pt-24", shouldMinifyHeader && "pt-14")}
-        >
-          <UsersSidebarDetails apiKey={apiKey} />
-        </div>
-      </div>
     </>
   );
 }
