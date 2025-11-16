@@ -161,11 +161,61 @@ yarn test         # Run tests (in analytics package)
 
 ### When Writing Code
 1. Follow TypeScript patterns from CLAUDE.md
-2. Use Drizzle ORM for database queries
-   - **Note**: Drizzle has a native `count()` function. Use it instead of `.select({ count: sql<number>`count(*)` })`
-3. Validate inputs (see BUGBOT.md security section)
-4. Add proper error handling
-5. Include relevant tests
+2. **ALWAYS use Drizzle ORM query builder syntax** - Never use raw SQL
+   - Use `.select()`, `.from()`, `.where()`, etc. instead of `db.execute(sql`...`)`
+   - Drizzle provides type-safe query building with full TypeScript support
+   - **Exception**: Only use raw SQL for complex queries Drizzle cannot express (document why)
+
+   **DO ✅:**
+   ```typescript
+   // Use Drizzle query builder with countDistinct
+   const [row] = await db
+     .select({ count: countDistinct(table.identifyId) })
+     .from(table)
+     .where(eq(table.apiKey, apiKey));
+   ```
+
+   **DON'T ❌:**
+   ```typescript
+   // Never use raw SQL with table interpolation
+   const table = getAnalyticsTable(isTest);
+   await db.execute(sql`SELECT COUNT(*) FROM ${table} WHERE ...`);
+
+   // Never use .distinct() on count() - it doesn't exist
+   .select({ count: count(table.id).distinct() }) // ❌ Error!
+   ```
+
+   **Note**: Drizzle has native functions like `countDistinct()`, `count()`, `sum()`, `avg()`, etc. Always prefer these over raw SQL.
+
+   **Date/Time Operations:**
+   - **NEVER use `sql` template literals for date intervals**
+   - **ALWAYS use JavaScript Date calculations** for date arithmetic
+
+   **DO ✅:**
+   ```typescript
+   // Calculate dates in JavaScript
+   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+   // Use with standard Drizzle operators
+   gte(table.date, thirtyDaysAgo)
+   ```
+
+   **DON'T ❌:**
+   ```typescript
+   // Never use sql template for date intervals
+   gte(table.date, sql`NOW() - INTERVAL '30 days'`) // ❌ Not type-safe!
+   ```
+
+   **Why:** JavaScript Date calculations are type-safe, database-agnostic, more testable, and consistent with codebase patterns.
+
+3. **ALWAYS run `npx tsc --noEmit` before marking tasks complete**
+   - Validates TypeScript type safety
+   - Catches errors early before build/deploy
+   - Ensures code quality and prevents runtime errors
+
+4. Validate inputs (see BUGBOT.md security section)
+5. Add proper error handling
+6. Include relevant tests
 
 ### When Debugging
 1. Check BUGBOT.md common issues first

@@ -190,7 +190,7 @@ export default function DashboardPage() {
           {!isLoading && (
             <CreateAppForm show={openCreate} cancelCreate={handleCloseCreate} />
           )}
-          <div className="flex size-16 items-center justify-center   bg-neutral-800 text-muted-foreground transition-all group-hover:rotate-90 group-hover:scale-105">
+          <div className="flex size-16 items-center justify-center bg-neutral-800 text-muted-foreground transition-all group-hover:rotate-90 group-hover:scale-105">
             <Plus className="size-8 stroke-1" />
           </div>
           {!openCreate && (

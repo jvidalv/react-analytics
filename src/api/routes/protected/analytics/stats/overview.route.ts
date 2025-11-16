@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { db } from "@/db";
-import { sql } from "drizzle-orm";
+import { countDistinct, eq, and, gte, lt } from "drizzle-orm";
 import { getAnalyticsTable } from "@/api/utils/analytics";
 
 // Response schema
@@ -22,51 +22,69 @@ export const overviewRoute = new Elysia().get(
     // Get correct table (production or test)
     const table = getAnalyticsTable(isTest);
 
-    // Query total users (all time)
-    const totalUsersResult = await db.execute(sql`
-      SELECT COUNT(DISTINCT identify_id) as count
-      FROM ${table}
-      WHERE api_key = ${apiKey}
-    `);
-    const totalUsers = Number(totalUsersResult.rows[0]?.count || 0);
+    // Calculate date thresholds using JavaScript Date
+    const now = Date.now();
+    const oneDayAgo = new Date(now - 1 * 24 * 60 * 60 * 1000);
+    const twoDaysAgo = new Date(now - 2 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
+    const sixtyDaysAgo = new Date(now - 60 * 24 * 60 * 60 * 1000);
+
+    // Query total users (all time) using Drizzle query builder
+    const [totalUsersRow] = await db
+      .select({ count: countDistinct(table.identifyId) })
+      .from(table)
+      .where(eq(table.apiKey, apiKey));
+    const totalUsers = Number(totalUsersRow?.count || 0);
 
     // Query MAU (current period - last 30 days)
-    const mauCurrentResult = await db.execute(sql`
-      SELECT COUNT(DISTINCT identify_id) as count
-      FROM ${table}
-      WHERE api_key = ${apiKey}
-        AND date >= NOW() - INTERVAL '30 days'
-    `);
-    const mauCurrent = Number(mauCurrentResult.rows[0]?.count || 0);
+    const [mauCurrentRow] = await db
+      .select({ count: countDistinct(table.identifyId) })
+      .from(table)
+      .where(
+        and(
+          eq(table.apiKey, apiKey),
+          gte(table.date, thirtyDaysAgo)
+        )
+      );
+    const mauCurrent = Number(mauCurrentRow?.count || 0);
 
     // Query MAU (previous period - 30-60 days ago)
-    const mauPreviousResult = await db.execute(sql`
-      SELECT COUNT(DISTINCT identify_id) as count
-      FROM ${table}
-      WHERE api_key = ${apiKey}
-        AND date >= NOW() - INTERVAL '60 days'
-        AND date < NOW() - INTERVAL '30 days'
-    `);
-    const mauPrevious = Number(mauPreviousResult.rows[0]?.count || 0);
+    const [mauPreviousRow] = await db
+      .select({ count: countDistinct(table.identifyId) })
+      .from(table)
+      .where(
+        and(
+          eq(table.apiKey, apiKey),
+          gte(table.date, sixtyDaysAgo),
+          lt(table.date, thirtyDaysAgo)
+        )
+      );
+    const mauPrevious = Number(mauPreviousRow?.count || 0);
 
     // Query DAU (current period - last 24 hours)
-    const dauCurrentResult = await db.execute(sql`
-      SELECT COUNT(DISTINCT identify_id) as count
-      FROM ${table}
-      WHERE api_key = ${apiKey}
-        AND date >= NOW() - INTERVAL '1 day'
-    `);
-    const dauCurrent = Number(dauCurrentResult.rows[0]?.count || 0);
+    const [dauCurrentRow] = await db
+      .select({ count: countDistinct(table.identifyId) })
+      .from(table)
+      .where(
+        and(
+          eq(table.apiKey, apiKey),
+          gte(table.date, oneDayAgo)
+        )
+      );
+    const dauCurrent = Number(dauCurrentRow?.count || 0);
 
     // Query DAU (previous period - 24-48 hours ago)
-    const dauPreviousResult = await db.execute(sql`
-      SELECT COUNT(DISTINCT identify_id) as count
-      FROM ${table}
-      WHERE api_key = ${apiKey}
-        AND date >= NOW() - INTERVAL '2 days'
-        AND date < NOW() - INTERVAL '1 day'
-    `);
-    const dauPrevious = Number(dauPreviousResult.rows[0]?.count || 0);
+    const [dauPreviousRow] = await db
+      .select({ count: countDistinct(table.identifyId) })
+      .from(table)
+      .where(
+        and(
+          eq(table.apiKey, apiKey),
+          gte(table.date, twoDaysAgo),
+          lt(table.date, oneDayAgo)
+        )
+      );
+    const dauPrevious = Number(dauPreviousRow?.count || 0);
 
     // Calculate period-over-period changes
     const mauChange =

@@ -59,16 +59,16 @@ const DevelopmentModeToggle = () => {
   }, [setDevelopmentMode]);
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center gap-2">
+      <Label htmlFor="development-mode" className="text-sm">
+        DEV
+      </Label>
       <Switch
         id="development-mode"
         className="data-[state=checked]:bg-orange-500"
         onCheckedChange={toggleDevelopmentMode}
         checked={isDevelopmentMode}
       />
-      <Label htmlFor="development-mode" className="text-sm">
-        DEV
-      </Label>
     </div>
   );
 };
@@ -188,10 +188,7 @@ const Apps = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="group h-9 w-full border-0 px-2 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-        >
+        <button className="flex gap-2 items-center transition-all bg-transparent hover:bg-sidebar-accent group h-9 w-full border-0 px-2 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
           <div className="-ml-1 flex aspect-square size-8 items-center justify-center ">
             {isLoadingApp ? (
               <Skeleton className="size-5 " />
@@ -217,8 +214,7 @@ const Apps = () => {
               )}
             </span>
           </div>
-          <ChevronsUpDown className="group:text-foreground ml-auto text-muted-foreground transition-all" />
-        </Button>
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-[--radix-dropdown-menu-trigger-width] min-w-56 "
