@@ -494,7 +494,9 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Placeholder Card */}
-          <div className="border bg-muted/20 p-6"></div>
+          <div className="border bg-muted/20 p-6 flex items-center justify-center text-5xl">
+            🕺🏽
+          </div>
         </div>
       </HeaderWrapper>
     </>
