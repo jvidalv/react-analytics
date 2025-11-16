@@ -258,7 +258,7 @@ const Apps = () => {
           );
         })}
         <DropdownMenuSeparator />
-        <Link href="/a/dashboard?create=true">
+        <Link href="/a?create=true">
           <DropdownMenuItem className="gap-2 p-2">
             <div className="flex size-6 items-center justify-center  border bg-background">
               <Plus className="size-4" />
@@ -331,7 +331,7 @@ export function AppsHeader({ onLogout }: { onLogout: () => void }) {
       <div className="flex h-16 items-center justify-between">
         <nav className="flex items-center gap-4 ">
           <Link
-            href="/a/dashboard"
+            href="/a"
             className="transition-all hover:scale-125 hover:text-primary"
           >
             <img src="/assets/images/icon.png" className="size-6" />

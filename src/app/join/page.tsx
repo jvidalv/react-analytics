@@ -24,7 +24,7 @@ export default async function JoinPage({
 
   if (session?.user) {
     const params = await searchParams;
-    const redirectTo = params.redirect_to || "/a/dashboard";
+    const redirectTo = params.redirect_to || "/a";
     redirect(redirectTo);
   }
   return (

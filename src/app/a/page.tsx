@@ -130,7 +130,7 @@ export default function DashboardPage() {
   const handleCloseCreate = () => {
     setOpenCreate(false);
     if (create) {
-      router.replace("/a/dashboard");
+      router.replace("/a");
     }
   };
 

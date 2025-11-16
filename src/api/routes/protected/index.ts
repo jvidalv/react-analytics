@@ -7,6 +7,7 @@ import { db } from "@/db";
 import { getUserMeRoute } from "./get-user-me.route";
 import { postUserMeRoute } from "./post-user-me.route";
 import { appRoutes } from "./app";
+import { analyticsRoutes } from "./analytics";
 
 export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .onBeforeHandle(async ({ set, store }) => {
@@ -39,4 +40,5 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
   })
   .use(getUserMeRoute)
   .use(postUserMeRoute)
-  .use(appRoutes);
+  .use(appRoutes)
+  .use(analyticsRoutes);

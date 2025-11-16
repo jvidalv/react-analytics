@@ -6,7 +6,7 @@ import { handleSignIn } from "@/app/join/actions";
 
 export function SignInButton({ provider }: { provider: "google" | "github" }) {
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect_to") || "/a/dashboard";
+  const redirectTo = searchParams.get("redirect_to") || "/a";
 
   return (
     <form action={handleSignIn}>
