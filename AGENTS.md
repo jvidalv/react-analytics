@@ -208,14 +208,43 @@ yarn test         # Run tests (in analytics package)
 
    **Why:** JavaScript Date calculations are type-safe, database-agnostic, more testable, and consistent with codebase patterns.
 
-3. **ALWAYS run `npx tsc --noEmit` before marking tasks complete**
+3. **NEVER manually cast API responses when using Eden Treaty**
+   - Eden Treaty provides automatic end-to-end type safety
+   - Backend schemas in `@/api/schemas/*.schema.ts` are the source of truth
+   - Use `Static<typeof Schema>` to derive TypeScript types from Elysia schemas
+
+   **DO ✅:**
+   ```typescript
+   // Backend schema exports type
+   export const AppSchema = t.Object({ /* ... */ });
+   export type App = Static<typeof AppSchema>;
+
+   // Frontend API - NO casting needed
+   const { data, error } = await fetcherProtected.app({ slug }).get();
+   return data.message; // ✅ Automatically typed
+   ```
+
+   **DON'T ❌:**
+   ```typescript
+   // Never manually cast responses
+   return data.message as App; // ❌
+   return data.message as User[]; // ❌
+
+   // Never create duplicate frontend types
+   export type App = { id: string; name: string }; // ❌
+   ```
+
+   **See CLAUDE.md → Eden Treaty Type Inference for full details**
+
+4. **ALWAYS run `npx tsc --noEmit` before marking tasks complete**
    - Validates TypeScript type safety
    - Catches errors early before build/deploy
    - Ensures code quality and prevents runtime errors
+   - **This is critical** - TypeScript errors must be fixed before completion
 
-4. Validate inputs (see BUGBOT.md security section)
-5. Add proper error handling
-6. Include relevant tests
+5. Validate inputs (see BUGBOT.md security section)
+6. Add proper error handling
+7. Include relevant tests
 
 ### When Debugging
 1. Check BUGBOT.md common issues first

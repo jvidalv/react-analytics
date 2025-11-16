@@ -77,7 +77,7 @@ react-analytics/
   - Navigation paths
   - Aggregated statistics
 - **Filtering**: By date range, event type, user ID
-- **Privacy**: Sensitive mode to hide user data
+- **Privacy**: Sensitive mode to hide user data (configured in Settings)
 
 ### 3. Multi-App Management
 - **App Creation**: Users can create multiple apps
@@ -540,9 +540,17 @@ For large changes affecting multiple areas:
 
 This project uses AI tools (Claude Code, GitHub Copilot, etc.) to assist with development.
 
-**Important**: Do NOT add co-author attribution or "Generated with Claude Code" footers to commit messages. Commits should be clean and professional without AI attribution.
+**Commit Attribution**: All commits should include Claude Code attribution footer:
 
-The use of AI tools is documented here in CLAUDE.md, not in individual commits.
+```
+<commit message>
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+This maintains transparency about AI-assisted development and acknowledges the collaboration between human developers and AI tools.
 
 ## Code Patterns & Conventions
 
@@ -574,6 +582,81 @@ The use of AI tools is documented here in CLAUDE.md, not in individual commits.
 - Group routes by feature in `/src/api/routes/[public|protected]/`
 - Protected routes use middleware to fetch user and store in Elysia store
 - Export route instances that can be composed with `.use()`
+
+### Eden Treaty Type Inference
+Eden Treaty provides automatic end-to-end type safety from backend to frontend without manual type casting.
+
+**Core Principles:**
+- **Never cast API responses** - Eden Treaty infers types automatically from backend schemas
+- **Backend schemas are source of truth** - All types derive from `@/api/schemas/*.schema.ts`
+- **Use `Static<typeof Schema>`** - Generate TypeScript types from Elysia TypeBox schemas
+- **No manual type definitions** - Don't create duplicate frontend types
+
+**DO ✅:**
+```typescript
+// Backend schema (source of truth)
+import { t, Static } from "elysia";
+
+export const AppSchema = t.Object({
+  id: t.String({ format: "uuid" }),
+  name: t.String(),
+  description: t.Union([t.String(), t.Null()]),
+  // ...
+});
+
+export type App = Static<typeof AppSchema>;
+
+// Frontend API hook - NO type casting needed
+export const useAppBySlug = (slug?: string) => {
+  const { data: app } = useQuery({
+    queryFn: async () => {
+      const { data, error } = await fetcherProtected.app({ slug }).get();
+      if (error) throw error;
+      return data.message; // ✅ Automatically typed as App
+    },
+  });
+  return { app };
+};
+
+// Frontend component - import type from schema
+import type { App } from "@/api/schemas/app.schema";
+```
+
+**DON'T ❌:**
+```typescript
+// ❌ Never manually cast responses
+return data.message as App;
+return data.message as App[];
+return data.message as User;
+
+// ❌ Never create duplicate frontend types
+export type App = {
+  id: string;
+  name: string;
+  // duplicating backend schema
+};
+```
+
+**Pattern for Re-exporting Types:**
+```typescript
+// In @/domains/app/app.api.ts
+import type { App as AppType } from "@/api/schemas/app.schema";
+
+// Re-export for convenience
+export type App = AppType;
+
+// Now components can import from either location
+```
+
+**Handling Null vs Undefined:**
+```typescript
+// Backend returns null for nullable fields
+description: t.Union([t.String(), t.Null()])
+
+// Forms expect undefined - convert at usage
+const [description, setDescription] = useState(app.description ?? undefined);
+<Input defaultValue={description ?? undefined} />
+```
 
 ### Component Structure
 - Server Components by default
