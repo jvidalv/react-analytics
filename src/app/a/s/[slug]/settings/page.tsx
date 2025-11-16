@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Save } from "lucide-react";
 import { mutate } from "swr";
+import { Switch } from "@/components/ui/switch";
+import { useSensitive } from "@/hooks/use-sensitive";
 
 export default function SettingsPage() {
   const appSlug = useAppSlugFromParams();
@@ -56,6 +58,18 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent>
           <PersonalizationForm app={app} appSlug={appSlug} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Sensitive Mode</CardTitle>
+          <CardDescription>
+            Hide sensitive information like user emails and names in the dashboard.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <SensitiveModeToggle />
         </CardContent>
       </Card>
     </div>
@@ -153,5 +167,27 @@ function PersonalizationForm({ app, appSlug }: { app: App; appSlug: string }) {
         Save <Save />
       </Button>
     </form>
+  );
+}
+
+function SensitiveModeToggle() {
+  const { enabled, toggle } = useSensitive();
+
+  return (
+    <div className="flex items-center justify-between">
+      <div>
+        <Label htmlFor="sensitive-mode" className="text-sm font-medium">
+          Enable Sensitive Mode
+        </Label>
+        <p className="text-sm text-muted-foreground">
+          When enabled, sensitive information will be hidden in the dashboard
+        </p>
+      </div>
+      <Switch
+        id="sensitive-mode"
+        checked={enabled}
+        onCheckedChange={toggle}
+      />
+    </div>
   );
 }

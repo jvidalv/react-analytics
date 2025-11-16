@@ -4,23 +4,29 @@ import { UsersEmptyState } from "./users/users.empty-state";
 import { UsersUsersTable } from "./users/users.users-table";
 import { UsersSidebarDetails } from "./users/users.sidebar-details";
 import { UsersAggregates } from "./users/users.aggregates";
-import { UsersPageDropdown } from "./users/users.page-dropdown";
 
 import { useTitle } from "@/hooks/use-title";
 import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
 import { useAnalyticsUsers } from "@/domains/app/users/users.api";
 import { useAnalyticsApiKeys } from "@/domains/analytics/analytics-api-keys.api";
 import { useScrollPosition } from "@/hooks/use-scroll-position";
-import { PropsWithChildren, ReactNode } from "react";
+import { PropsWithChildren } from "react";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAnalyticsUserStats } from "@/domains/app/users/stats/users-stats.api";
+import {
+  useAnalyticsUserStats,
+  usePlatformAggregates,
+  useIdentificationAggregates,
+} from "@/domains/app/users/stats/users-stats.api";
 import { UsersErrorChart } from "@/app/a/s/[slug]/users/users.error-chart";
 import { useMe } from "@/domains/user/me.api";
 import { useAnalyticsOverview } from "@/domains/analytics/analytics.api";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, Globe } from "lucide-react";
+import IosIcon from "@/components/custom/ios-icon";
+import AndroidIcon from "@/components/custom/android-icon";
+import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";
 
 const TableSkeleton = () => (
   <div className="divide-y  border">
@@ -42,21 +48,9 @@ const TableSkeleton = () => (
   </div>
 );
 
-const HeaderWrapper = ({
-  children,
-  rightHeader,
-}: PropsWithChildren<{ rightHeader?: ReactNode }>) => {
+const HeaderWrapper = ({ children }: PropsWithChildren) => {
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-8 transition-all">
-      <div className="flex items-end justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Users</h1>
-          <p className="text-muted-foreground">
-            Understand how your users use your app.
-          </p>
-        </div>
-        {rightHeader}
-      </div>
       {children}
     </div>
   );
@@ -78,6 +72,12 @@ export default function AnalyticsPage() {
     app?.slug,
     me?.devModeEnabled
   );
+  const { platforms, isLoading: isLoadingPlatforms } = usePlatformAggregates(
+    app?.slug,
+    me?.devModeEnabled
+  );
+  const { identification, isLoading: isLoadingIdentification } =
+    useIdentificationAggregates(app?.slug, me?.devModeEnabled);
 
   const scrollY = useScrollPosition();
   const shouldMinifyHeader = scrollY > 20;
@@ -98,24 +98,53 @@ export default function AnalyticsPage() {
 
   return (
     <>
-      <HeaderWrapper rightHeader={<UsersPageDropdown />}>
+      <HeaderWrapper>
         {/* Analytics Overview */}
         <div className="grid grid-cols-3 gap-6">
           {/* Total Users */}
           <div className="border p-6">
-            {isLoadingOverview ? (
+            {isLoadingOverview || isLoadingPlatforms ? (
               <>
                 <Skeleton className="mb-2 h-4 w-24" />
                 <Skeleton className="h-8 w-32" />
+                <Skeleton className="mt-2 h-4 w-32" />
               </>
             ) : (
               <>
-                <p className="mb-2 text-sm text-muted-foreground">
-                  Total Users
-                </p>
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">Total Users</p>
+                  <p className="text-xs text-muted-foreground">TU</p>
+                </div>
                 <p className="text-3xl font-bold">
                   {overview?.totalUsers.toLocaleString() ?? "—"}
                 </p>
+                {/* Platform Breakdown */}
+                <div className="mt-2 flex items-center gap-4 text-sm">
+                  <TooltipWrapper content="Web Users">
+                    <div className="flex items-center gap-1.5">
+                      <Globe className="size-4 text-muted-foreground" />
+                      <span className="font-medium">
+                        {platforms?.web.toLocaleString() ?? "—"}
+                      </span>
+                    </div>
+                  </TooltipWrapper>
+                  <TooltipWrapper content="iOS Users">
+                    <div className="flex items-center gap-1.5">
+                      <IosIcon className="size-4" />
+                      <span className="font-medium">
+                        {platforms?.ios.toLocaleString() ?? "—"}
+                      </span>
+                    </div>
+                  </TooltipWrapper>
+                  <TooltipWrapper content="Android Users">
+                    <div className="flex items-center gap-1.5">
+                      <AndroidIcon className="size-4" />
+                      <span className="font-medium">
+                        {platforms?.android.toLocaleString() ?? "—"}
+                      </span>
+                    </div>
+                  </TooltipWrapper>
+                </div>
               </>
             )}
           </div>
@@ -130,9 +159,12 @@ export default function AnalyticsPage() {
               </>
             ) : (
               <>
-                <p className="mb-2 text-sm text-muted-foreground">
-                  Monthly Active Users
-                </p>
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Monthly Active Users
+                  </p>
+                  <p className="text-xs text-muted-foreground">MAU</p>
+                </div>
                 <p className="text-3xl font-bold">
                   {overview?.mau.toLocaleString() ?? "—"}
                 </p>
@@ -167,9 +199,12 @@ export default function AnalyticsPage() {
               </>
             ) : (
               <>
-                <p className="mb-2 text-sm text-muted-foreground">
-                  Daily Active Users
-                </p>
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Daily Active Users
+                  </p>
+                  <p className="text-xs text-muted-foreground">DAU</p>
+                </div>
                 <p className="text-3xl font-bold">
                   {overview?.dau.toLocaleString() ?? "—"}
                 </p>
@@ -195,9 +230,55 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
+        {/* User Conversion */}
+        <div className="border p-6">
+          {isLoadingIdentification ? (
+            <>
+              <Skeleton className="mb-2 h-4 w-32" />
+              <Skeleton className="h-8 w-24" />
+              <Skeleton className="mt-2 h-4 w-16" />
+            </>
+          ) : (
+            <>
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  User Conversion
+                </p>
+                <p className="text-xs text-muted-foreground">UC</p>
+              </div>
+              <p className="text-3xl font-bold">
+                {identification?.identificationRate.toFixed(1)}%
+              </p>
+              {identification && identification.growth.change !== 0 && (
+                <div
+                  className={cn(
+                    "mt-2 flex items-center gap-1 text-sm",
+                    identification.growth.change > 0
+                      ? "text-green-600"
+                      : "text-red-600"
+                  )}
+                >
+                  {identification.growth.change > 0 ? (
+                    <TrendingUp className="size-4" />
+                  ) : (
+                    <TrendingDown className="size-4" />
+                  )}
+                  <span>
+                    {Math.abs(identification.growth.change).toFixed(1)}%
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
         <div className="grid grid-cols-6 gap-8">
           <div className="col-span-2 flex flex-col gap-4">
-            <UsersAggregates apiKey={apiKey} />
+            <UsersAggregates
+              apiKey={apiKey}
+              appSlug={app?.slug}
+              devModeEnabled={me?.devModeEnabled}
+            />
             <UsersErrorChart apiKey={apiKey} />
           </div>
           <div className="col-span-4">

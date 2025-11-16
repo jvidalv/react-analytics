@@ -16,13 +16,11 @@ import {
   KeySquare,
   Check,
   Copy,
-  EyeOff,
   BookText,
 } from "lucide-react";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
 import { useAnalyticsApiKeys } from "@/domains/analytics/analytics-api-keys.api";
-import { useSensitive } from "@/hooks/use-sensitive";
 
 export function UsersPageDropdown() {
   const appSlug = useAppSlugFromParams();
@@ -30,7 +28,6 @@ export function UsersPageDropdown() {
   const { apiKeys } = useAnalyticsApiKeys(appSlug);
   const [copiedProdKey, copyProdKey] = useClipboard();
   const [copiedDevKey, copyDevKey] = useClipboard();
-  const { enabled: sensitiveEnabled, toggle: toggleSensitive } = useSensitive();
 
   return (
     <DropdownMenu>
@@ -70,12 +67,6 @@ export function UsersPageDropdown() {
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-          <DropdownMenuItem onClick={toggleSensitive}>
-            <EyeOff className="mr-2 size-4" />
-            {sensitiveEnabled
-              ? "Turn off sensitive mode"
-              : "Turn on sensitive mode"}
-          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() =>
