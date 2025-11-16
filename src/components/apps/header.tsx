@@ -268,6 +268,13 @@ function AppHeader() {
       },
     },
     {
+      name: "Users",
+      href: `/a/s/${params.slug}/users`,
+      get current() {
+        return pathname === this.href;
+      },
+    },
+    {
       name: "Settings",
       href: `/a/s/${params.slug}/settings`,
       get current() {
