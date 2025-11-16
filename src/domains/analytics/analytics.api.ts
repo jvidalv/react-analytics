@@ -1,18 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetcherProtected } from "@/lib/fetcher";
 
-export const getAnalyticsOverviewQueryKey = (appSlug?: string) =>
-  ["analytics", appSlug, "stats", "overview"] as const;
+export const getAnalyticsOverviewQueryKey = (
+  appSlug?: string,
+  devModeEnabled?: boolean,
+) => ["analytics", appSlug, "stats", "overview", devModeEnabled] as const;
 
-export const useAnalyticsOverview = (appSlug?: string) => {
-  const enabled = !!appSlug;
+export const useAnalyticsOverview = (
+  appSlug?: string,
+  devModeEnabled?: boolean,
+) => {
+  const enabled = !!appSlug && devModeEnabled !== undefined;
 
   const {
     data: overview,
     isPending: isLoading,
     refetch,
   } = useQuery({
-    queryKey: getAnalyticsOverviewQueryKey(appSlug),
+    queryKey: getAnalyticsOverviewQueryKey(appSlug, devModeEnabled),
     queryFn: async () => {
       if (!appSlug) return null;
 

@@ -75,7 +75,8 @@ export default function AnalyticsPage() {
   const analyticsUsers = useAnalyticsUsers(apiKey, page);
   useAnalyticsUserStats(apiKey);
   const { overview, isLoading: isLoadingOverview } = useAnalyticsOverview(
-    app?.slug
+    app?.slug,
+    me?.devModeEnabled
   );
 
   const scrollY = useScrollPosition();
