@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { db } from "@/db";
-import { apps } from "@/db/schema";
+import { apps, analyticsApiKeys } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getUserFromStore } from "@/api/utils/auth";
 import { SuccessResponse } from "@/api/schemas/common.schema";
@@ -61,7 +61,20 @@ export const postCreateAppRoute = new Elysia().post(
       websiteUrl: null,
     };
 
-    await db.insert(apps).values(newApp);
+    // Create app and analytics API keys in a transaction
+    await db.transaction(async (tx) => {
+      // Insert the app
+      await tx.insert(apps).values(newApp);
+
+      // Create analytics API keys for the app
+      const newApiKeys = {
+        id: uuidv7(),
+        userId: user.id,
+        appId: newApp.id,
+      };
+
+      await tx.insert(analyticsApiKeys).values(newApiKeys);
+    });
 
     // Get the created app with timestamps
     const [createdApp] = await db
