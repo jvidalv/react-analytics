@@ -4,6 +4,10 @@ import { ColumnDef } from "@tanstack/react-table";
 import { User } from "@/domains/app/users/users-list.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
+import { Globe } from "lucide-react";
+import IosIcon from "@/components/custom/ios-icon";
+import AndroidIcon from "@/components/custom/android-icon";
+import { countryCodeToFlag } from "@/lib/country-utils";
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -45,13 +49,30 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "lastSeen",
-    header: "Last Seen",
+    header: () => <div className="text-right">Info</div>,
     cell: ({ row }) => {
+      const user = row.original;
       const lastSeen = row.getValue("lastSeen") as string;
+
+      const platformIcon = {
+        iOS: <IosIcon className="size-4" />,
+        Android: <AndroidIcon className="size-4" />,
+        Web: <Globe className="size-4 text-muted-foreground" />,
+      }[user.platform];
+
       return (
-        <span className="text-sm text-muted-foreground">
-          {formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}
-        </span>
+        <div className="flex flex-col items-end gap-0.5 text-right">
+          <span className="text-sm text-muted-foreground">
+            {formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}
+          </span>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            {platformIcon}
+            {user.country && (
+              <span className="text-base">{countryCodeToFlag(user.country)}</span>
+            )}
+            <span>{user.appVersion}</span>
+          </div>
+        </div>
       );
     },
   },

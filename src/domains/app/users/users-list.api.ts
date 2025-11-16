@@ -9,6 +9,9 @@ export type User = {
   avatar: string | null;
   isIdentified: boolean;
   lastSeen: string;
+  country: string | null;
+  platform: 'iOS' | 'Android' | 'Web';
+  appVersion: string;
 };
 
 export type UsersList = {

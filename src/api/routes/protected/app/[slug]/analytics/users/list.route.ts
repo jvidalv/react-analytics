@@ -81,12 +81,27 @@ export const usersListRoute = new Elysia().get(
           properties->'data'->>'avatarUrl',
           properties->'data'->>'avatar'
         ) as avatar,
+        app_version,
+        info->'requestMetadata'->>'country' as country,
+        CASE
+          WHEN info->>'platform' = 'ios' THEN 'iOS'
+          WHEN info->>'platform' = 'android' THEN 'Android'
+          WHEN info->>'platform' = 'web' AND (
+            info->'requestMetadata'->>'userAgent' LIKE '%iPhone%' OR
+            info->'requestMetadata'->>'userAgent' LIKE '%iPad%'
+          ) THEN 'iOS'
+          WHEN info->>'platform' = 'web' AND
+            info->'requestMetadata'->>'userAgent' LIKE '%Android%' THEN 'Android'
+          ELSE 'Web'
+        END as platform,
         date as last_seen
       FROM (
         SELECT DISTINCT ON (identify_id)
           identify_id,
           user_id,
           properties,
+          app_version,
+          info,
           date
         FROM ${targetTable}
         WHERE api_key = ${apiKey}
@@ -108,6 +123,9 @@ export const usersListRoute = new Elysia().get(
       avatar: row.avatar || null,
       isIdentified: row.user_id !== null,
       lastSeen: row.last_seen ? new Date(row.last_seen).toISOString() : new Date().toISOString(),
+      country: row.country || null,
+      platform: row.platform || 'Web',
+      appVersion: row.app_version || '0.0.0',
     }));
 
     return {
