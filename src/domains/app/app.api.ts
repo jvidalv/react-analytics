@@ -8,18 +8,21 @@ export type App = AppType;
 
 /**
  * Hook to get the app slug from URL parameters
- * @throws Error if slug is not found in URL parameters
+ * @param optional - If true, returns undefined instead of throwing when slug is not found
+ * @throws Error if slug is not found in URL parameters (when optional = false)
  */
-export const useAppSlugFromParams = (): string => {
+export function useAppSlugFromParams(optional: true): string | undefined;
+export function useAppSlugFromParams(optional?: false): string;
+export function useAppSlugFromParams(optional?: boolean): string | undefined {
   const params = useParams();
   const slug = params.slug as string;
 
-  if (!slug) {
+  if (!slug && !optional) {
     throw new Error("App slug not found in URL parameters");
   }
 
   return slug;
-};
+}
 
 // Query key functions for cache invalidation
 export const getAppQueryKey = (slug?: string) => ["app", slug] as const;

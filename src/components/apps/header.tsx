@@ -165,7 +165,7 @@ const UserDropdown = ({ onLogout }: { onLogout: () => void }) => {
 
 const Apps = () => {
   const { apps } = useUserApps();
-  const appSlug = useAppSlugFromParams();
+  const appSlug = useAppSlugFromParams(true);
   const { app, isLoading: isLoadingApp } = useAppBySlug(appSlug);
 
   return (
