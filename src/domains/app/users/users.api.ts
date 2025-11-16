@@ -1,25 +1,5 @@
 import useSWR from "swr";
 
-export type ApiKeys = {
-  id: string;
-  userId: string;
-  appId: string;
-  apiKey: string;
-  apiKeyTest: string;
-};
-
-export const useAnalyticsApiKeys = (appId?: string) => {
-  const { data, mutate, isLoading } = useSWR<ApiKeys>(
-    appId ? `/api/analytics/api-keys?appId=${appId}` : null,
-  );
-
-  return {
-    apiKeys: data,
-    isLoading,
-    refetch: mutate,
-  };
-};
-
 export type AnalyticsUserDeviceInformation = {
   platform: string;
   osVersion: string;

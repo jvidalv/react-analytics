@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { useParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Cog } from "lucide-react";
+import { Cog, Key } from "lucide-react";
 import * as React from "react";
 import { useTitle } from "@/hooks/use-title";
 
@@ -25,6 +25,14 @@ export default function SettingsLayout({
       href: `/a/s/${params.slug}/settings`,
       get active() {
         return this.href === pathname;
+      },
+    },
+    {
+      name: "API Keys",
+      icon: Key,
+      href: `/a/s/${params.slug}/settings/api-keys`,
+      get active() {
+        return pathname.includes("/settings/api-keys");
       },
     },
   ];

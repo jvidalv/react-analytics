@@ -11,7 +11,6 @@ import { logout } from "@/app/actions";
 import { queryClient } from "@/lib/query-client";
 import { useAppSlugFromLocalStorage } from "@/domains/app/app.utils";
 import { useIsDocs } from "@/hooks/use-is-docs";
-import { useAnalyticsApiKeys } from "@/domains/app/users/users.api";
 import { useUserApps } from "@/domains/app/app.api";
 
 export function AppLayoutClient({
@@ -32,7 +31,6 @@ function AppsLayoutContent({ children }: { children: ReactNode }) {
   const params = useParams();
   const hasSelectedApp = !!params.slug;
 
-  useAnalyticsApiKeys();
   useUserApps();
 
   const { setAppSlug } = useAppSlugFromLocalStorage();

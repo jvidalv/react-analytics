@@ -7,11 +7,11 @@ export type App = {
   userId: string;
   name: string;
   slug: string;
-  description?: string;
-  primaryColor?: string;
-  websiteUrl?: string;
-  email?: string;
-  features: FeatureKey[];
+  description: string | null;
+  primaryColor: string | null;
+  websiteUrl: string | null;
+  email: string | null;
+  features: string[];
   createdAt: string;
   updatedAt: string;
 };
@@ -34,7 +34,7 @@ export const useUserApps = () => {
         throw error;
       }
 
-      return data.message as App[];
+      return data.message;
     },
   });
 
@@ -63,7 +63,7 @@ export const useAppBySlug = (slug?: string) => {
         throw error;
       }
 
-      return data.message as App;
+      return data.message;
     },
     enabled,
   });
@@ -92,7 +92,7 @@ export const useCreateApp = () => {
         throw error;
       }
 
-      return data.message as App;
+      return data.message;
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -129,7 +129,7 @@ export const useUpdateApp = (slug?: string) => {
         throw error;
       }
 
-      return data.message as App;
+      return data.message;
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({

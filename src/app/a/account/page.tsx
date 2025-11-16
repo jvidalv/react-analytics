@@ -19,7 +19,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { PRICE_PLANS } from "@/domains/plan/api.plan";
-import { getPlanDisplayName, getPlanEmoji } from "@/domains/plan/plan.utils";
+import { getPlanDisplayName, getPlanEmoji, PlanType } from "@/domains/plan/plan.utils";
 
 export default function AccountPage() {
   const { me } = useMe();
@@ -43,7 +43,7 @@ export default function AccountPage() {
 function AccountForm({ user }: { user: User }) {
   const { toast } = useToast();
   const { updateUser, isUpdating } = useUpdateUser();
-  const [name, setName] = useState(user.name);
+  const [name, setName] = useState(user.name ?? undefined);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -66,7 +66,7 @@ function AccountForm({ user }: { user: User }) {
             <div className="flex flex-col gap-1.5">
               <Label>Avatar</Label>
               <Avatar className="flex size-32 items-center justify-center">
-                <AvatarImage src={user.image} alt="avatar" />
+                <AvatarImage src={user.image ?? undefined} alt="avatar" />
                 <AvatarFallback>
                   {(user.name || user.email || "?")[0].toUpperCase()}
                 </AvatarFallback>
@@ -87,7 +87,7 @@ function AccountForm({ user }: { user: User }) {
                 <Input
                   placeholder="Your name"
                   onChange={(e) => setName(e.target.value)}
-                  defaultValue={name}
+                  defaultValue={name ?? undefined}
                   type="text"
                 />
               </div>
@@ -129,8 +129,8 @@ function PlanSection({ user }: { user: User }) {
                   "bg-indigo-900/50 border-indigo-400/30  text-indigo-400 ",
               )}
             >
-              <span className="mr-2 font-medium">{getPlanDisplayName(user.plan)}</span>
-              {getPlanEmoji(user.plan)}
+              <span className="mr-2 font-medium">{getPlanDisplayName(user.plan as PlanType)}</span>
+              {getPlanEmoji(user.plan as PlanType)}
             </div>
           </div>
           {(user.plan === "free" || user.plan === "starter") && (

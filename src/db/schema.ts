@@ -18,7 +18,7 @@ export const users = pgTable("user", {
   emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text(),
   plan: text().default("free"),
-  devModeEnabled: boolean("dev_mode_enabled").default(false).notNull(),
+  devModeEnabled: boolean().default(true).notNull(),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
@@ -100,8 +100,8 @@ export const analyticsApiKeys = pgTable("analytics_api_keys", {
   appId: uuid()
     .notNull()
     .references(() => apps.id, { onDelete: "cascade" }),
-  apiKey: uuid("api_key").notNull().defaultRandom().unique(),
-  apiKeyTest: uuid("api_key_test").notNull().defaultRandom().unique(),
+  apiKey: text("api_key").notNull().unique(),
+  apiKeyTest: text("api_key_test").notNull().unique(),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
@@ -121,7 +121,7 @@ export const analytics = pgTable(
     appVersion: text("app_version").default("0.0.0").notNull(),
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow(),
-    apiKey: uuid()
+    apiKey: text()
       .notNull()
       .references(() => analyticsApiKeys.apiKey, { onDelete: "cascade" }),
   },
@@ -154,7 +154,7 @@ export const analyticsTest = pgTable(
     appVersion: text("app_version").default("0.0.0").notNull(),
     createdAt: timestamp().notNull().defaultNow(),
     updatedAt: timestamp().notNull().defaultNow(),
-    apiKey: uuid()
+    apiKey: text()
       .notNull()
       .references(() => analyticsApiKeys.apiKeyTest, { onDelete: "cascade" }),
   },

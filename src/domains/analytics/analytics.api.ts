@@ -1,14 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetcherProtected } from "@/lib/fetcher";
 
-export type AnalyticsOverview = {
-  totalUsers: number;
-  mau: number;
-  dau: number;
-  mauChange: number;
-  dauChange: number;
-};
-
 export const getAnalyticsOverviewQueryKey = (appSlug?: string) =>
   ["analytics", appSlug, "stats", "overview"] as const;
 
@@ -32,7 +24,7 @@ export const useAnalyticsOverview = (appSlug?: string) => {
         throw error;
       }
 
-      return data as AnalyticsOverview;
+      return data;
     },
     enabled,
   });

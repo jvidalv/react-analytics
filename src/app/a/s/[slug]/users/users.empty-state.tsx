@@ -2,7 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Check, Copy, ExternalLink, ChartNoAxesCombined } from "lucide-react";
 import { useClipboard } from "@/hooks/use-clipboard";
-import { ApiKeys } from "@/domains/app/users/users.api";
+import { ApiKeys } from "@/domains/analytics/analytics-api-keys.api";
 import Link from "next/link";
 
 export function UsersEmptyState({

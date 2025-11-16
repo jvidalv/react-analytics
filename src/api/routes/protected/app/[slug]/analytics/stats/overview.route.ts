@@ -40,12 +40,7 @@ export const overviewRoute = new Elysia().get(
     const [mauCurrentRow] = await db
       .select({ count: countDistinct(table.identifyId) })
       .from(table)
-      .where(
-        and(
-          eq(table.apiKey, apiKey),
-          gte(table.date, thirtyDaysAgo)
-        )
-      );
+      .where(and(eq(table.apiKey, apiKey), gte(table.date, thirtyDaysAgo)));
     const mauCurrent = Number(mauCurrentRow?.count || 0);
 
     // Query MAU (previous period - 30-60 days ago)
@@ -56,8 +51,8 @@ export const overviewRoute = new Elysia().get(
         and(
           eq(table.apiKey, apiKey),
           gte(table.date, sixtyDaysAgo),
-          lt(table.date, thirtyDaysAgo)
-        )
+          lt(table.date, thirtyDaysAgo),
+        ),
       );
     const mauPrevious = Number(mauPreviousRow?.count || 0);
 
@@ -65,12 +60,7 @@ export const overviewRoute = new Elysia().get(
     const [dauCurrentRow] = await db
       .select({ count: countDistinct(table.identifyId) })
       .from(table)
-      .where(
-        and(
-          eq(table.apiKey, apiKey),
-          gte(table.date, oneDayAgo)
-        )
-      );
+      .where(and(eq(table.apiKey, apiKey), gte(table.date, oneDayAgo)));
     const dauCurrent = Number(dauCurrentRow?.count || 0);
 
     // Query DAU (previous period - 24-48 hours ago)
@@ -81,8 +71,8 @@ export const overviewRoute = new Elysia().get(
         and(
           eq(table.apiKey, apiKey),
           gte(table.date, twoDaysAgo),
-          lt(table.date, oneDayAgo)
-        )
+          lt(table.date, oneDayAgo),
+        ),
       );
     const dauPrevious = Number(dauPreviousRow?.count || 0);
 
@@ -102,12 +92,12 @@ export const overviewRoute = new Elysia().get(
     };
   },
   {
-    response: StatsOverviewResponseSchema,
+    // response: StatsOverviewResponseSchema,
     detail: {
       summary: "Get analytics overview stats",
       description:
         "Returns core KPIs: Total Users, MAU, DAU with period-over-period changes",
       tags: ["Analytics"],
     },
-  }
+  },
 );

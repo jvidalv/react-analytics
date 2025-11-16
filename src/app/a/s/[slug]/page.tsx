@@ -8,10 +8,8 @@ import { UsersPageDropdown } from "./users/users.page-dropdown";
 
 import { useTitle } from "@/hooks/use-title";
 import { useGetAppFromSlug } from "@/domains/app/app.utils";
-import {
-  useAnalyticsApiKeys,
-  useAnalyticsUsers,
-} from "@/domains/app/users/users.api";
+import { useAnalyticsUsers } from "@/domains/app/users/users.api";
+import { useAnalyticsApiKeys } from "@/domains/analytics/analytics-api-keys.api";
 import { useScrollPosition } from "@/hooks/use-scroll-position";
 import { PropsWithChildren, ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
@@ -21,6 +19,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAnalyticsUserStats } from "@/domains/app/users/stats/users-stats.api";
 import { UsersErrorChart } from "@/app/a/s/[slug]/users/users.error-chart";
 import { useMe } from "@/domains/user/me.api";
+import { useAnalyticsOverview } from "@/domains/analytics/analytics.api";
+import { TrendingUp, TrendingDown } from "lucide-react";
 
 const TableSkeleton = () => (
   <div className="divide-y  border">
@@ -66,13 +66,16 @@ export default function AnalyticsPage() {
   useTitle("Users");
   const { me } = useMe();
   const { app, isLoadingApp } = useGetAppFromSlug();
-  const { apiKeys, isLoading: isLoadingApiKeys } = useAnalyticsApiKeys(app?.id);
+  const { apiKeys, isLoading: isLoadingApiKeys } = useAnalyticsApiKeys(app?.slug);
   const searchParams = useSearchParams();
   const identifyId = searchParams.get("identifyId");
   const page = parseInt(searchParams.get("page") || "1", 10);
   const apiKey = me?.devModeEnabled ? apiKeys?.apiKeyTest : apiKeys?.apiKey;
   const analyticsUsers = useAnalyticsUsers(apiKey, page);
   useAnalyticsUserStats(apiKey);
+  const { overview, isLoading: isLoadingOverview } = useAnalyticsOverview(
+    app?.slug
+  );
 
   const scrollY = useScrollPosition();
   const shouldMinifyHeader = scrollY > 20;
@@ -94,6 +97,102 @@ export default function AnalyticsPage() {
   return (
     <>
       <HeaderWrapper rightHeader={<UsersPageDropdown />}>
+        {/* Analytics Overview */}
+        <div className="grid grid-cols-3 gap-6">
+          {/* Total Users */}
+          <div className="border p-6">
+            {isLoadingOverview ? (
+              <>
+                <Skeleton className="mb-2 h-4 w-24" />
+                <Skeleton className="h-8 w-32" />
+              </>
+            ) : (
+              <>
+                <p className="mb-2 text-sm text-muted-foreground">
+                  Total Users
+                </p>
+                <p className="text-3xl font-bold">
+                  {overview?.totalUsers.toLocaleString() ?? "—"}
+                </p>
+              </>
+            )}
+          </div>
+
+          {/* MAU */}
+          <div className="border p-6">
+            {isLoadingOverview ? (
+              <>
+                <Skeleton className="mb-2 h-4 w-24" />
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="mt-2 h-4 w-16" />
+              </>
+            ) : (
+              <>
+                <p className="mb-2 text-sm text-muted-foreground">
+                  Monthly Active Users
+                </p>
+                <p className="text-3xl font-bold">
+                  {overview?.mau.toLocaleString() ?? "—"}
+                </p>
+                {overview && overview.mauChange !== 0 && (
+                  <div
+                    className={cn(
+                      "mt-2 flex items-center gap-1 text-sm",
+                      overview.mauChange > 0
+                        ? "text-green-600"
+                        : "text-red-600"
+                    )}
+                  >
+                    {overview.mauChange > 0 ? (
+                      <TrendingUp className="size-4" />
+                    ) : (
+                      <TrendingDown className="size-4" />
+                    )}
+                    <span>{Math.abs(overview.mauChange).toFixed(1)}%</span>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* DAU */}
+          <div className="border p-6">
+            {isLoadingOverview ? (
+              <>
+                <Skeleton className="mb-2 h-4 w-24" />
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="mt-2 h-4 w-16" />
+              </>
+            ) : (
+              <>
+                <p className="mb-2 text-sm text-muted-foreground">
+                  Daily Active Users
+                </p>
+                <p className="text-3xl font-bold">
+                  {overview?.dau.toLocaleString() ?? "—"}
+                </p>
+                {overview && overview.dauChange !== 0 && (
+                  <div
+                    className={cn(
+                      "mt-2 flex items-center gap-1 text-sm",
+                      overview.dauChange > 0
+                        ? "text-green-600"
+                        : "text-red-600"
+                    )}
+                  >
+                    {overview.dauChange > 0 ? (
+                      <TrendingUp className="size-4" />
+                    ) : (
+                      <TrendingDown className="size-4" />
+                    )}
+                    <span>{Math.abs(overview.dauChange).toFixed(1)}%</span>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
         <div className="grid grid-cols-6 gap-8">
           <div className="col-span-2 flex flex-col gap-4">
             <UsersAggregates apiKey={apiKey} />

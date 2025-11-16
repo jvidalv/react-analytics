@@ -8,6 +8,7 @@ import { AppSchema, CreateAppBodySchema } from "@/api/schemas/app.schema";
 import { uuidv7 } from "uuidv7";
 import { APP_FEATURES, FeatureKey } from "@/lib/features";
 import { generateRandomHexColor } from "@/lib/colors";
+import { generateApiKey } from "@/lib/api-keys";
 
 const VALID_FEATURE_KEYS = new Set(APP_FEATURES.map((feature) => feature.key));
 
@@ -71,6 +72,8 @@ export const postCreateAppRoute = new Elysia().post(
         id: uuidv7(),
         userId: user.id,
         appId: newApp.id,
+        apiKey: generateApiKey(slug, false), // Production key
+        apiKeyTest: generateApiKey(slug, true), // Test/dev key
       };
 
       await tx.insert(analyticsApiKeys).values(newApiKeys);

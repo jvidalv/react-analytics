@@ -6,11 +6,11 @@ export type UserPlans = PlanType;
 
 export type User = {
   id: string;
-  name: string;
+  name: string | null;
   email: string;
   emailVerified: string | null;
-  image?: string;
-  plan: UserPlans;
+  image: string | null;
+  plan: string;
   devModeEnabled: boolean;
   createdAt: string;
   updatedAt: string;
@@ -33,7 +33,7 @@ export const useMe = () => {
         throw error;
       }
 
-      return data.message as User;
+      return data.message;
     },
   });
 

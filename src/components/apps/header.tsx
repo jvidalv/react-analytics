@@ -23,6 +23,7 @@ import {
   getPlanDisplayName,
   getPlanEmoji,
   shouldOfferUpgrade,
+  PlanType,
 } from "@/domains/plan/plan.utils";
 import { useScrollPosition } from "@/hooks/use-scroll-position";
 import { useGetAppFromSlug } from "@/domains/app/app.utils";
@@ -73,8 +74,8 @@ const Plan = () => {
           "bg-indigo-900/50 border-indigo-400/30  text-indigo-400 ",
       )}
     >
-      <span className="mr-2 font-medium">{getPlanDisplayName(me.plan)}</span>
-      {getPlanEmoji(me.plan)}
+      <span className="mr-2 font-medium">{getPlanDisplayName(me.plan as PlanType)}</span>
+      {getPlanEmoji(me.plan as PlanType)}
     </div>
   );
 };
@@ -126,7 +127,7 @@ const UserDropdown = ({ onLogout }: { onLogout: () => void }) => {
             </div>
           </div>
         </DropdownMenuLabel>
-        {shouldOfferUpgrade(me.plan) && (
+        {shouldOfferUpgrade(me.plan as PlanType) && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>

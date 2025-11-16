@@ -21,12 +21,12 @@ import {
 } from "lucide-react";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { useGetAppFromSlug } from "@/domains/app/app.utils";
-import { useAnalyticsApiKeys } from "@/domains/app/users/users.api";
+import { useAnalyticsApiKeys } from "@/domains/analytics/analytics-api-keys.api";
 import { useSensitive } from "@/hooks/use-sensitive";
 
 export function UsersPageDropdown() {
   const { app } = useGetAppFromSlug();
-  const { apiKeys } = useAnalyticsApiKeys(app?.id);
+  const { apiKeys } = useAnalyticsApiKeys(app?.slug);
   const [copiedProdKey, copyProdKey] = useClipboard();
   const [copiedDevKey, copyDevKey] = useClipboard();
   const { enabled: sensitiveEnabled, toggle: toggleSensitive } = useSensitive();

@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { getAppFromStore } from "@/api/utils/app";
 import { getUserFromStore } from "@/api/utils/auth";
 import { statsRoutes } from "./stats";
+import { apiKeysRoute } from "./api-keys.route";
 
 // Define store type for analytics context
 type AnalyticsStore = {
@@ -41,4 +42,5 @@ export const analyticsRoutes = new Elysia({ prefix: "/analytics" })
     (store as AnalyticsStore).apiKey = apiKey;
     (store as AnalyticsStore).isTest = isTest;
   })
-  .use(statsRoutes);
+  .use(statsRoutes)
+  .use(apiKeysRoute);

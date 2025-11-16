@@ -67,14 +67,13 @@ function BasicInfoForm({ app }: { app: App }) {
   const { updateApp, isUpdating } = useUpdateApp();
 
   const [name, setName] = useState(app.name);
-  const [description, setDescription] = useState(app.description);
-  const [email, setEmail] = useState(app.email);
-  const [websiteUrl, setWebsiteUrl] = useState(app.websiteUrl);
+  const [description, setDescription] = useState(app.description ?? undefined);
+  const [email, setEmail] = useState(app.email ?? undefined);
+  const [websiteUrl, setWebsiteUrl] = useState(app.websiteUrl ?? undefined);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     await updateApp({
-      ...app,
       name,
       description,
       email,
@@ -97,7 +96,7 @@ function BasicInfoForm({ app }: { app: App }) {
       <div className="flex flex-col gap-1.5">
         <Label>Description</Label>
         <Textarea
-          defaultValue={description}
+          defaultValue={description ?? undefined}
           onChange={(e) => setDescription(e.target.value)}
           rows={4}
           placeholder="App description"
@@ -106,7 +105,7 @@ function BasicInfoForm({ app }: { app: App }) {
       <div className="flex flex-col gap-1.5">
         <Label>Email</Label>
         <Input
-          defaultValue={email}
+          defaultValue={email ?? undefined}
           type="email"
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
@@ -115,7 +114,7 @@ function BasicInfoForm({ app }: { app: App }) {
       <div className="flex flex-col gap-1.5">
         <Label>Website</Label>
         <Input
-          defaultValue={websiteUrl}
+          defaultValue={websiteUrl ?? undefined}
           type="url"
           onChange={(e) => setWebsiteUrl(e.target.value)}
           placeholder="https://yourapp.com"
@@ -135,11 +134,11 @@ function BasicInfoForm({ app }: { app: App }) {
 function PersonalizationForm({ app }: { app: App }) {
   const { toast } = useToast();
   const { updateApp, isUpdating } = useUpdateApp();
-  const [color, setColor] = useState(app.primaryColor);
+  const [color, setColor] = useState(app.primaryColor ?? undefined);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await updateApp({ ...app, primaryColor: color });
+    await updateApp({ primaryColor: color });
     void mutate("/api/app/all");
     toast({ title: "App updated", description: "Primary color updated." });
   };
@@ -148,7 +147,7 @@ function PersonalizationForm({ app }: { app: App }) {
     <form onSubmit={handleSubmit} className="grid gap-4">
       <div className="flex flex-col items-start gap-1.5">
         <Label>Primary Color</Label>
-        <InputColor defaultValue={color} onChangeText={setColor} />
+        <InputColor defaultValue={color ?? undefined} onChangeText={setColor} />
       </div>
       <Button isLoading={isUpdating} type="submit" className="mt-4 w-fit">
         Save <Save />
