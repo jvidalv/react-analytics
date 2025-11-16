@@ -75,13 +75,6 @@ export default function UsersPage() {
 
   return (
     <div className="mx-auto max-w-7xl">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Users</h1>
-        <p className="text-muted-foreground">
-          Manage and view all identified and anonymous users
-        </p>
-      </div>
-
       <div className="space-y-4">
         <div className="flex items-center gap-4">
           <Input
