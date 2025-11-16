@@ -6,6 +6,7 @@ import { getAppFromStore } from "@/api/utils/app";
 import { getUserFromStore } from "@/api/utils/auth";
 import { statsRoutes } from "./stats";
 import { apiKeysRoute } from "./api-keys.route";
+import { usersRoutes } from "./users";
 
 // Define store type for analytics context
 type AnalyticsStore = {
@@ -43,4 +44,5 @@ export const analyticsRoutes = new Elysia({ prefix: "/analytics" })
     (store as AnalyticsStore).isTest = isTest;
   })
   .use(statsRoutes)
-  .use(apiKeysRoute);
+  .use(apiKeysRoute)
+  .use(usersRoutes);
