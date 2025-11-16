@@ -9,24 +9,24 @@ export type AnalyticsOverview = {
   dauChange: number;
 };
 
-export const getAnalyticsOverviewQueryKey = (apiKey?: string) =>
-  ["analytics", apiKey, "stats", "overview"] as const;
+export const getAnalyticsOverviewQueryKey = (appSlug?: string) =>
+  ["analytics", appSlug, "stats", "overview"] as const;
 
-export const useAnalyticsOverview = (apiKey?: string) => {
-  const enabled = !!apiKey;
+export const useAnalyticsOverview = (appSlug?: string) => {
+  const enabled = !!appSlug;
 
   const {
     data: overview,
     isPending: isLoading,
     refetch,
   } = useQuery({
-    queryKey: getAnalyticsOverviewQueryKey(apiKey),
+    queryKey: getAnalyticsOverviewQueryKey(appSlug),
     queryFn: async () => {
-      if (!apiKey) return null;
+      if (!appSlug) return null;
 
       const { data, error } = await fetcherProtected
-        .analytics({ apiKey })
-        .stats.overview.get();
+        .app({ slug: appSlug })
+        .analytics.stats.overview.get();
 
       if (error) {
         throw error;

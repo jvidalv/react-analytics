@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { AppWithParsedFields } from "@/api/utils/app";
 import { getOneAppRoute } from "./get-one.route";
 import { putUpdateAppRoute } from "./put-update.route";
+import { analyticsRoutes } from "./analytics";
 
 export const appSlugRoutes = new Elysia({ prefix: "/:slug" })
   .onBeforeHandle(async ({ set, store, params }) => {
@@ -34,4 +35,5 @@ export const appSlugRoutes = new Elysia({ prefix: "/:slug" })
     Object.assign(store, { app: appWithParsedFields });
   })
   .use(getOneAppRoute)
-  .use(putUpdateAppRoute);
+  .use(putUpdateAppRoute)
+  .use(analyticsRoutes);

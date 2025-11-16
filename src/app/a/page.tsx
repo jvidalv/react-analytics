@@ -18,7 +18,6 @@ import { useRouter } from "next/navigation";
 import { mutate } from "swr";
 import { wait } from "@/lib/wait";
 import { useTitle } from "@/hooks/use-title";
-import { useAnalyticsApiKeys } from "@/domains/app/users/users.api";
 import { useAnalyticsOverview } from "@/domains/analytics/analytics.api";
 
 const CreateAppForm = ({
@@ -120,9 +119,8 @@ export default function DashboardPage() {
 
   // Get analytics data for the first app
   const firstApp = apps?.[0];
-  const { apiKeys } = useAnalyticsApiKeys(firstApp?.id);
   const { overview, isLoading: isLoadingOverview } = useAnalyticsOverview(
-    apiKeys?.apiKey
+    firstApp?.slug
   );
 
   const resources = [
