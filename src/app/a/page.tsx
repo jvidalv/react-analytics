@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { getColor, getContrastTextColor } from "@/lib/colors";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { BookText, Plus } from "lucide-react";
+import { BookText, Plus, TrendingUp, TrendingDown } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,8 @@ import { useRouter } from "next/navigation";
 import { mutate } from "swr";
 import { wait } from "@/lib/wait";
 import { useTitle } from "@/hooks/use-title";
+import { useAnalyticsApiKeys } from "@/domains/app/users/users.api";
+import { useAnalyticsOverview } from "@/domains/analytics/analytics.api";
 
 const CreateAppForm = ({
   show,
@@ -115,6 +117,14 @@ export default function DashboardPage() {
 
   const { apps, isLoading } = useUserApps();
   const [openCreate, setOpenCreate] = useState(false);
+
+  // Get analytics data for the first app
+  const firstApp = apps?.[0];
+  const { apiKeys } = useAnalyticsApiKeys(firstApp?.id);
+  const { overview, isLoading: isLoadingOverview } = useAnalyticsOverview(
+    apiKeys?.apiKey
+  );
+
   const resources = [
     {
       href: "/docs",
@@ -141,8 +151,115 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto max-w-7xl">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Apps</h1>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
       </div>
+
+      {/* Analytics Overview */}
+      {firstApp && (
+        <div className="mb-8">
+          <h2 className="mb-4 text-xl font-semibold">Overview</h2>
+          <div className="grid grid-cols-3 gap-6">
+            {/* Total Users */}
+            <div className="border p-6">
+              {isLoadingOverview ? (
+                <>
+                  <Skeleton className="mb-2 h-4 w-24" />
+                  <Skeleton className="h-8 w-32" />
+                </>
+              ) : (
+                <>
+                  <p className="mb-2 text-sm text-muted-foreground">
+                    Total Users
+                  </p>
+                  <p className="text-3xl font-bold">
+                    {overview?.totalUsers.toLocaleString() ?? "—"}
+                  </p>
+                </>
+              )}
+            </div>
+
+            {/* MAU */}
+            <div className="border p-6">
+              {isLoadingOverview ? (
+                <>
+                  <Skeleton className="mb-2 h-4 w-24" />
+                  <Skeleton className="h-8 w-32" />
+                  <Skeleton className="mt-2 h-4 w-16" />
+                </>
+              ) : (
+                <>
+                  <p className="mb-2 text-sm text-muted-foreground">
+                    Monthly Active Users
+                  </p>
+                  <p className="text-3xl font-bold">
+                    {overview?.mau.toLocaleString() ?? "—"}
+                  </p>
+                  {overview && overview.mauChange !== 0 && (
+                    <div
+                      className={cn(
+                        "mt-2 flex items-center gap-1 text-sm",
+                        overview.mauChange > 0
+                          ? "text-green-600"
+                          : "text-red-600"
+                      )}
+                    >
+                      {overview.mauChange > 0 ? (
+                        <TrendingUp className="size-4" />
+                      ) : (
+                        <TrendingDown className="size-4" />
+                      )}
+                      <span>
+                        {Math.abs(overview.mauChange).toFixed(1)}%
+                      </span>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* DAU */}
+            <div className="border p-6">
+              {isLoadingOverview ? (
+                <>
+                  <Skeleton className="mb-2 h-4 w-24" />
+                  <Skeleton className="h-8 w-32" />
+                  <Skeleton className="mt-2 h-4 w-16" />
+                </>
+              ) : (
+                <>
+                  <p className="mb-2 text-sm text-muted-foreground">
+                    Daily Active Users
+                  </p>
+                  <p className="text-3xl font-bold">
+                    {overview?.dau.toLocaleString() ?? "—"}
+                  </p>
+                  {overview && overview.dauChange !== 0 && (
+                    <div
+                      className={cn(
+                        "mt-2 flex items-center gap-1 text-sm",
+                        overview.dauChange > 0
+                          ? "text-green-600"
+                          : "text-red-600"
+                      )}
+                    >
+                      {overview.dauChange > 0 ? (
+                        <TrendingUp className="size-4" />
+                      ) : (
+                        <TrendingDown className="size-4" />
+                      )}
+                      <span>
+                        {Math.abs(overview.dauChange).toFixed(1)}%
+                      </span>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <h2 className="mb-4 text-xl font-semibold">Apps</h2>
       <div className="mb-8 grid grid-cols-2 gap-6">
         {isLoading && (
           <>

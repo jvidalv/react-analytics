@@ -148,13 +148,13 @@ const UserDropdown = ({ onLogout }: { onLogout: () => void }) => {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <a
-                href={`${process.env.NEXT_PUBLIC_METAL_PLAN}&prefilled_email=${me.email}`}
+                href={`${process.env.NEXT_PUBLIC_PRO_PLAN}&prefilled_email=${me.email}`}
                 target="_blank"
               >
                 <DropdownMenuItem className="cursor-pointer font-medium text-violet-500">
                   <Sparkles />
-                  Upgrade to Metal
-                  <span>🪙</span>
+                  Upgrade to Pro
+                  <span>⚡</span>
                 </DropdownMenuItem>
               </a>
             </DropdownMenuGroup>
