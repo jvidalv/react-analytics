@@ -14,7 +14,7 @@ export const postUserMeRoute = new Elysia().post(
   async ({ body, store, set }) => {
     const user = getUserFromStore(store);
 
-    const validFields = ["name", "image", "aiModel"] as const;
+    const validFields = ["name", "image"] as const;
     const updateData: Record<string, string> = {};
 
     for (const key of validFields) {

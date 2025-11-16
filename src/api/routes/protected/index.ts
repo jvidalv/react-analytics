@@ -4,10 +4,10 @@ import { StoreUser } from "@/api/utils/auth";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { getUserMeRoute } from "./get-user-me.route";
-import { postUserMeRoute } from "./post-user-me.route";
+import { getUserMeRoute } from "./user/get-user-me.route";
+import { postUserMeRoute } from "./user/post-user-me.route";
+import { postUserModeRoute } from "./user/post-user-mode.route";
 import { appRoutes } from "./app";
-import { analyticsRoutes } from "./analytics";
 
 export const protectedRoutes = new Elysia({ prefix: "/protected" })
   .onBeforeHandle(async ({ set, store }) => {
@@ -40,5 +40,5 @@ export const protectedRoutes = new Elysia({ prefix: "/protected" })
   })
   .use(getUserMeRoute)
   .use(postUserMeRoute)
-  .use(appRoutes)
-  .use(analyticsRoutes);
+  .use(postUserModeRoute)
+  .use(appRoutes);

@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronsUpDown, LogOut, Plus, Sparkles, User } from "lucide-react";
 import * as React from "react";
-import { useLayoutEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useUserApps } from "@/domains/app/app.api";
@@ -19,7 +18,7 @@ import { useParams, usePathname } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { getColor } from "@/lib/colors";
-import { useMe } from "@/domains/user/me.api";
+import { useMe, useToggleDevMode } from "@/domains/user/me.api";
 import {
   getPlanDisplayName,
   getPlanEmoji,
@@ -29,34 +28,18 @@ import { useScrollPosition } from "@/hooks/use-scroll-position";
 import { useGetAppFromSlug } from "@/domains/app/app.utils";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { create } from "zustand";
-
-const DEV_MODE_STORAGE_KEY = "users::development-mode";
-
-interface DevelopmentModeState {
-  isDevelopmentMode: boolean;
-  setDevelopmentMode: (status: boolean) => void;
-  toggleDevelopmentMode: (status: boolean) => void;
-}
-
-export const useUsersDevelopmentMode = create<DevelopmentModeState>((set) => ({
-  isDevelopmentMode: false,
-  setDevelopmentMode: (status: boolean) =>
-    set(() => ({ isDevelopmentMode: status })),
-  toggleDevelopmentMode: (status: boolean) => {
-    if (status) localStorage.setItem(DEV_MODE_STORAGE_KEY, "true");
-    else localStorage.removeItem(DEV_MODE_STORAGE_KEY);
-    set(() => ({ isDevelopmentMode: status }));
-  },
-}));
 
 const DevelopmentModeToggle = () => {
-  const { isDevelopmentMode, setDevelopmentMode, toggleDevelopmentMode } =
-    useUsersDevelopmentMode((s) => s);
+  const { me } = useMe();
+  const { toggleDevMode } = useToggleDevMode();
 
-  useLayoutEffect(() => {
-    setDevelopmentMode(!!localStorage.getItem(DEV_MODE_STORAGE_KEY));
-  }, [setDevelopmentMode]);
+  if (!me) {
+    return null;
+  }
+
+  const handleToggle = async (checked: boolean) => {
+    await toggleDevMode(checked);
+  };
 
   return (
     <div className="flex items-center gap-2">
@@ -66,8 +49,8 @@ const DevelopmentModeToggle = () => {
       <Switch
         id="development-mode"
         className="data-[state=checked]:bg-orange-500"
-        onCheckedChange={toggleDevelopmentMode}
-        checked={isDevelopmentMode}
+        onCheckedChange={handleToggle}
+        checked={me.devModeEnabled}
       />
     </div>
   );

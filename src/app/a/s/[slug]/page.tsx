@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAnalyticsUserStats } from "@/domains/app/users/stats/users-stats.api";
 import { UsersErrorChart } from "@/app/a/s/[slug]/users/users.error-chart";
-import { useUsersDevelopmentMode } from "@/components/apps/header";
+import { useMe } from "@/domains/user/me.api";
 
 const TableSkeleton = () => (
   <div className="divide-y  border">
@@ -64,13 +64,13 @@ const HeaderWrapper = ({
 
 export default function AnalyticsPage() {
   useTitle("Users");
-  const { isDevelopmentMode } = useUsersDevelopmentMode((s) => s);
+  const { me } = useMe();
   const { app, isLoadingApp } = useGetAppFromSlug();
   const { apiKeys, isLoading: isLoadingApiKeys } = useAnalyticsApiKeys(app?.id);
   const searchParams = useSearchParams();
   const identifyId = searchParams.get("identifyId");
   const page = parseInt(searchParams.get("page") || "1", 10);
-  const apiKey = isDevelopmentMode ? apiKeys?.apiKeyTest : apiKeys?.apiKey;
+  const apiKey = me?.devModeEnabled ? apiKeys?.apiKeyTest : apiKeys?.apiKey;
   const analyticsUsers = useAnalyticsUsers(apiKey, page);
   useAnalyticsUserStats(apiKey);
 

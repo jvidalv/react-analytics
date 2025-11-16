@@ -6,6 +6,7 @@ import {
   integer,
   uuid,
   index,
+  boolean,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
 import { jsonb } from "drizzle-orm/pg-core";
@@ -17,6 +18,7 @@ export const users = pgTable("user", {
   emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text(),
   plan: text().default("free"),
+  devModeEnabled: boolean("dev_mode_enabled").default(false).notNull(),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });

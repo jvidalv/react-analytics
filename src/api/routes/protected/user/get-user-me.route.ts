@@ -39,7 +39,7 @@ export const getUserMeRoute = new Elysia().get(
         emailVerified: user.emailVerified?.toISOString() ?? null,
         image: user.image,
         plan: userPlan,
-        aiModel: user.aiModel ?? "gpt-4o",
+        devModeEnabled: user.devModeEnabled,
         createdAt: user.createdAt.toISOString(),
         updatedAt: user.updatedAt.toISOString(),
       },

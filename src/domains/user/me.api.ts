@@ -11,7 +11,7 @@ export type User = {
   emailVerified: string | null;
   image?: string;
   plan: UserPlans;
-  aiModel: string;
+  devModeEnabled: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -51,7 +51,6 @@ export const useUpdateUser = () => {
     mutationFn: async (updatedFields: {
       name?: string;
       image?: string;
-      aiModel?: string;
     }) => {
       const { data, error } =
         await fetcherProtected.user.me.post(updatedFields);
@@ -70,5 +69,31 @@ export const useUpdateUser = () => {
   return {
     updateUser,
     isUpdating,
+  };
+};
+
+export const useToggleDevMode = () => {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync: toggleDevMode, isPending: isToggling } = useMutation({
+    mutationFn: async (devModeEnabled: boolean) => {
+      const { data, error } = await fetcherProtected.user.mode.post({
+        devModeEnabled,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      // Invalidate and refetch user data
+      void queryClient.invalidateQueries({ queryKey: getUserQueryKey() });
+
+      return data.message;
+    },
+  });
+
+  return {
+    toggleDevMode,
+    isToggling,
   };
 };
