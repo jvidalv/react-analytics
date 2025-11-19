@@ -1,6 +1,7 @@
 "use client";
 
 import { UsersOnboarding } from "./users/users.onboarding";
+import { NewJoinersTable } from "./overview/overview.new-joiners-table";
 
 import { useTitle } from "@/hooks/use-title";
 import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
@@ -19,6 +20,7 @@ import {
 } from "@/domains/app/users/stats/users-stats.api";
 import { useMe } from "@/domains/user/me.api";
 import { useAnalyticsOverview } from "@/domains/analytics/analytics.api";
+import { useNewJoiners } from "@/domains/analytics/new-joiners.api";
 import { TrendingUp, TrendingDown, Globe } from "lucide-react";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
@@ -79,15 +81,25 @@ export default function OverviewPage() {
     app?.slug,
     me?.devModeEnabled,
   );
+  const { newJoiners, isLoading: isLoadingNewJoiners } = useNewJoiners(
+    app?.slug,
+    me?.devModeEnabled,
+  );
 
   if (isLoadingApp || isLoadingApiKeys) {
     return (
       <PageWrapper>
-        <div className="grid h-[1000px] grid-cols-6 gap-8">
-          <Skeleton className="col-span-2 h-[196px] w-full" />
-          <div className="col-span-4">
-            <TableSkeleton />
-          </div>
+        {/* Overview Cards Skeleton - 3x3 grid */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <Skeleton key={i} className="h-[145.5px] w-full" />
+          ))}
+        </div>
+
+        {/* New Joiners Table Skeleton */}
+        <div className="space-y-4">
+          <Skeleton className="h-7 w-32" />
+          <TableSkeleton />
         </div>
       </PageWrapper>
     );
@@ -498,6 +510,17 @@ export default function OverviewPage() {
           <div className="border bg-muted/20 p-6 flex items-center justify-center text-5xl">
             🕺🏽
           </div>
+        </div>
+
+        {/* New Joiners Section */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">New Joiners</h2>
+          <NewJoinersTable
+            today={newJoiners?.today}
+            lastWeek={newJoiners?.lastWeek}
+            lastMonth={newJoiners?.lastMonth}
+            isLoading={isLoadingNewJoiners}
+          />
         </div>
       </PageWrapper>
     </>
