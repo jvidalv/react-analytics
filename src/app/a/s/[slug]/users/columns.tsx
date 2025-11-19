@@ -9,6 +9,7 @@ import { Eye, Globe, Info, Maximize2 } from "lucide-react";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
 import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
+import { getAvatarFromUuid, getUuidLastDigits } from "@/lib/avatar-utils";
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -16,31 +17,41 @@ export const columns: ColumnDef<User>[] = [
     header: "Name",
     cell: ({ row }) => {
       const user = row.original;
-      const displayName = user.name || user.email || "Anonymous User";
-      const hasNameOrEmail = user.name || user.email;
-      const initials = displayName
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
+      const isAnonymous = !user.name && !user.email;
+
+      // For anonymous users: use last 8 digits of UUID as name
+      const displayName = user.name || user.email || getUuidLastDigits(user.identifyId);
+
+      const initials = isAnonymous
+        ? getUuidLastDigits(user.identifyId, 2).toUpperCase()
+        : displayName
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2);
+
+      // For anonymous users: use deterministic avatar from UUID
+      const avatarSrc = isAnonymous
+        ? getAvatarFromUuid(user.identifyId)
+        : user.avatar;
 
       return (
         <div className="flex items-center gap-3">
           <Avatar className="size-10">
-            {user.avatar && <AvatarImage src={user.avatar} alt={displayName} />}
+            {avatarSrc && <AvatarImage src={avatarSrc} alt={displayName} />}
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
             <span className="sensitive font-medium">{displayName}</span>
-            {hasNameOrEmail && user.email && user.name && (
+            {!isAnonymous && user.email && user.name && (
               <span className="sensitive text-sm text-muted-foreground">
                 {user.email}
               </span>
             )}
-            {!hasNameOrEmail && (
+            {isAnonymous && (
               <span className="text-xs text-muted-foreground">
-                {user.identifyId.slice(0, 8)}...
+                {user.identifyId}
               </span>
             )}
           </div>
