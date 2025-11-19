@@ -64,7 +64,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "platform",
     header: "Platform",
-    size: 120,
+    size: 110,
     cell: ({ row }) => {
       const user = row.original;
       const platformIcon = {
@@ -84,7 +84,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "country",
     header: "Country",
-    size: 150,
+    size: 130,
     cell: ({ row }) => {
       const user = row.original;
       return (
@@ -106,7 +106,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "appVersion",
     header: "Version",
-    size: 100,
+    size: 90,
     cell: ({ row }) => {
       const user = row.original;
       return (
@@ -119,7 +119,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "lastSeen",
     header: () => <div className="text-right">Actions</div>,
-    size: 250,
+    size: 230,
     cell: ({ row }) => {
       const lastSeen = row.getValue("lastSeen") as string;
       return (
