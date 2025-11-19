@@ -18,12 +18,11 @@ export const PRICE_PLANS: PricePlan[] = [
     price: "0",
     bulletPoints: [
       "1 project",
-      "30 days data retention",
       "10,000 events/month",
       "Basic analytics dashboard",
       "Event tracking (navigation, actions, errors)",
     ],
-    crossedBulletPoints: ["Unlimited projects", "Unlimited data retention"],
+    crossedBulletPoints: ["Unlimited projects"],
     ctaText: "Start Free",
     ctaButtonVariant: "outline",
     ctaUrl: process.env.NEXT_PUBLIC_FREE_PLAN,
@@ -34,7 +33,6 @@ export const PRICE_PLANS: PricePlan[] = [
     perMonth: true,
     bulletPoints: [
       "3 projects",
-      "Unlimited data retention",
       "100,000 events/month",
       "Advanced filtering & exports",
       "Email support",
@@ -50,11 +48,9 @@ export const PRICE_PLANS: PricePlan[] = [
     perMonth: true,
     bulletPoints: [
       "Unlimited projects",
-      "Unlimited data retention",
       "Unlimited events",
       "Advanced filtering & exports",
       "Priority support",
-      "Team collaboration",
     ],
     ctaText: "Get Pro",
     allThePrevious: true,

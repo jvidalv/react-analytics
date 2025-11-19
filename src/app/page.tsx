@@ -126,9 +126,8 @@ export default function Home() {
       content: (
         <>
           <span>
-            Yes! The free tier includes 1 project, 10,000 events per month, and
-            30 days of data retention. Perfect for side projects and small
-            applications.
+            Yes! The free tier includes 1 project and 10,000 events per month.
+            Perfect for side projects and small applications.
           </span>
           <span>
             Plus, being open source, you can self-host it completely free on
@@ -506,7 +505,6 @@ export default function Home() {
             </ul>
           </div>
         </section>
-        <MeSection />
         <JoinSection />
       </main>
       <PublicFooter />

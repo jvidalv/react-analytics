@@ -18,20 +18,46 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  filters?: {
+    page: number;
+    search: string;
+    platform: string;
+    country: string;
+    version: string;
+  };
+  setFilters?: (filters: Partial<{
+    page: number;
+    search: string;
+    platform: string;
+    country: string;
+    version: string;
+  }>) => void;
+  filterOptions?: {
+    countries: string[];
+    versions: string[];
+  };
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  filters,
+  setFilters,
+  filterOptions,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    meta: {
+      filters,
+      setFilters,
+      filterOptions,
+    },
   });
 
   return (
-    <div className="rounded-md border">
+    <div className="border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

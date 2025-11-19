@@ -4,6 +4,7 @@ import { UsersEmptyState } from "./users/users.empty-state";
 import { UsersUsersTable } from "./users/users.users-table";
 import { UsersSidebarDetails } from "./users/users.sidebar-details";
 import { UsersAggregates } from "./users/users.aggregates";
+import { UsersOnboarding } from "./users/users.onboarding";
 
 import { useTitle } from "@/hooks/use-title";
 import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
@@ -51,7 +52,7 @@ const TableSkeleton = () => (
   </div>
 );
 
-const HeaderWrapper = ({ children }: PropsWithChildren) => {
+const PageWrapper = ({ children }: PropsWithChildren) => {
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-8 transition-all">
       {children}
@@ -74,6 +75,11 @@ export default function AnalyticsPage() {
   const { overview, isLoading: isLoadingOverview } = useAnalyticsOverview(
     app?.slug,
     me?.devModeEnabled,
+    {
+      // Poll every 5 seconds when there are no users (onboarding state)
+      // Automatically stops polling once first events arrive
+      refetchInterval: (data) => (data?.totalUsers === 0 ? 5000 : false),
+    },
   );
   const { platforms, isLoading: isLoadingPlatforms } = usePlatformAggregates(
     app?.slug,
@@ -94,20 +100,29 @@ export default function AnalyticsPage() {
 
   if (isLoadingApp || isLoadingApiKeys) {
     return (
-      <HeaderWrapper>
+      <PageWrapper>
         <div className="grid h-[1000px] grid-cols-6 gap-8">
           <Skeleton className="col-span-2 h-[196px] w-full" />
           <div className="col-span-4">
             <TableSkeleton />
           </div>
         </div>
-      </HeaderWrapper>
+      </PageWrapper>
+    );
+  }
+
+  // Show onboarding when there are no users
+  if (!isLoadingOverview && overview?.totalUsers === 0) {
+    return (
+      <PageWrapper>
+        <UsersOnboarding apiKey={apiKeys?.apiKey} apiKeyTest={apiKeys?.apiKeyTest} />
+      </PageWrapper>
     );
   }
 
   return (
     <>
-      <HeaderWrapper>
+      <PageWrapper>
         {/* Analytics Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Total Users */}
@@ -498,7 +513,7 @@ export default function AnalyticsPage() {
             🕺🏽
           </div>
         </div>
-      </HeaderWrapper>
+      </PageWrapper>
     </>
   );
 }

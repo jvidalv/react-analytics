@@ -139,7 +139,7 @@ function App() {
   return (
     <div className="mx-auto w-full max-w-4xl space-y-8">
       {/* Header */}
-      <div className="text-center">
+      <div className="text-left">
         <h1 className="mb-3 text-4xl font-bold">Welcome to React Analytics! 👋</h1>
         <p className="text-lg text-muted-foreground">
           Get started in minutes with our universal analytics library
@@ -229,7 +229,7 @@ function App() {
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">Test Key</span>
-                  <span className="rounded bg-orange-500/20 px-2 py-0.5 text-xs text-orange-600">DEV</span>
+                  <span className="bg-orange-500/20 px-2 py-0.5 text-xs text-orange-600">DEV</span>
                 </div>
                 <div className="relative">
                   <pre className="overflow-x-auto border bg-muted/30 p-3 pr-12 font-mono text-xs">
@@ -252,7 +252,7 @@ function App() {
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">Production Key</span>
-                  <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-600">PROD</span>
+                  <span className="bg-green-500/20 px-2 py-0.5 text-xs text-green-600">PROD</span>
                 </div>
                 <div className="relative">
                   <pre className="overflow-x-auto border bg-muted/30 p-3 pr-12 font-mono text-xs">
@@ -306,7 +306,7 @@ function App() {
               </p>
             </div>
 
-            <div className="border bg-blue-500/5 p-6 text-center">
+            <div className="border p-6 text-left">
               <p className="mb-2 text-sm font-medium">⏳ Waiting for first event...</p>
               <p className="text-xs text-muted-foreground">
                 Refresh this page once you've started your app
@@ -315,11 +315,11 @@ function App() {
           </div>
 
           {/* Documentation Link */}
-          <div className="border-t pt-6 text-center">
+          <div className="border-t pt-6 text-left">
             <p className="mb-3 text-sm text-muted-foreground">
               Need help? Check out the full documentation
             </p>
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-start gap-4">
               <a
                 href="https://github.com/jvidalv/react-analytics"
                 target="_blank"

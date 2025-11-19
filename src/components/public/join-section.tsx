@@ -25,14 +25,15 @@ export const JoinSection = () => {
         </div>
         <div className="relative">
           <h2 className="mb-4 text-center text-4xl font-bold sm:text-5xl">
-            Start Tracking Today 🚀
+            Start Today 🚀
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-center text-lg font-medium text-muted-foreground sm:text-xl">
             Get started with{" "}
             <span className="text-foreground underline underline-offset-4">
               our free tier
             </span>{" "}
-            or self-host the open source version. Start understanding your users in minutes:
+            or self-host the open source version. Start understanding your users
+            in minutes.
           </p>
           <div className="mx-auto flex max-w-md justify-center">
             <Link href="/join">

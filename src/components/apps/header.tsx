@@ -29,6 +29,7 @@ import { useScrollPosition } from "@/hooks/use-scroll-position";
 import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useAnalyticsOverview } from "@/domains/analytics/analytics.api";
 
 const DevelopmentModeToggle = () => {
   const { me } = useMe();
@@ -254,6 +255,9 @@ function AppHeader() {
   const pathname = usePathname();
   const params = useParams();
   const hasSelectedApp = !!params.slug;
+  const { me } = useMe();
+  const appSlug = typeof params.slug === "string" ? params.slug : undefined;
+  const { overview } = useAnalyticsOverview(appSlug, me?.devModeEnabled);
 
   if (!hasSelectedApp) {
     return null;
@@ -283,9 +287,14 @@ function AppHeader() {
     },
   ];
 
+  // Only show Overview when there are no users (onboarding state)
+  const visibleLinks = overview?.totalUsers === 0
+    ? links.filter(link => link.name === "Overview")
+    : links;
+
   return (
     <nav className="pb-4">
-      {links.map((link) => (
+      {visibleLinks.map((link) => (
         <Link
           href={link.href}
           key={link.name}

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import { fetcherProtected } from "@/lib/fetcher";
 
 export const getAnalyticsOverviewQueryKey = (
@@ -6,9 +6,14 @@ export const getAnalyticsOverviewQueryKey = (
   devModeEnabled?: boolean,
 ) => ["analytics", appSlug, "stats", "overview", devModeEnabled] as const;
 
+type OverviewData = Awaited<
+  ReturnType<typeof fetcherProtected.app>["analytics"]["stats"]["overview"]["get"]
+>["data"];
+
 export const useAnalyticsOverview = (
   appSlug?: string,
   devModeEnabled?: boolean,
+  options?: Partial<UseQueryOptions<OverviewData>>,
 ) => {
   const enabled = !!appSlug && devModeEnabled !== undefined;
 
@@ -32,6 +37,7 @@ export const useAnalyticsOverview = (
       return data;
     },
     enabled,
+    ...options,
   });
 
   return { overview, isLoading, refetch };

@@ -3,11 +3,12 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { User } from "@/domains/app/users/users-list.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
-import { Globe } from "lucide-react";
+import { Eye, Globe, Info, Maximize2 } from "lucide-react";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
-import { countryCodeToFlag } from "@/lib/country-utils";
+import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -31,11 +32,11 @@ export const columns: ColumnDef<User>[] = [
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="font-medium">
-              {displayName}
-            </span>
+            <span className="sensitive font-medium">{displayName}</span>
             {hasNameOrEmail && user.email && user.name && (
-              <span className="text-sm text-muted-foreground">{user.email}</span>
+              <span className="sensitive text-sm text-muted-foreground">
+                {user.email}
+              </span>
             )}
             {!hasNameOrEmail && (
               <span className="text-xs text-muted-foreground">
@@ -48,12 +49,10 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: "lastSeen",
-    header: () => <div className="text-right">Info</div>,
+    accessorKey: "platform",
+    header: "Platform",
     cell: ({ row }) => {
       const user = row.original;
-      const lastSeen = row.getValue("lastSeen") as string;
-
       const platformIcon = {
         iOS: <IosIcon className="size-4" />,
         Android: <AndroidIcon className="size-4" />,
@@ -61,17 +60,80 @@ export const columns: ColumnDef<User>[] = [
       }[user.platform];
 
       return (
-        <div className="flex flex-col items-end gap-0.5 text-right">
+        <div className="flex items-center gap-1">
+          {platformIcon}
+          <span className="text-sm">{user.platform}</span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "country",
+    header: "Country",
+    cell: ({ row }) => {
+      const user = row.original;
+      return (
+        <div className="flex items-center gap-1">
+          {user.country ? (
+            <>
+              <span className="text-base">
+                {countryCodeToFlag(user.country)}
+              </span>
+              <span className="text-sm">{getCountryName(user.country)}</span>
+            </>
+          ) : (
+            <span className="text-sm text-muted-foreground">—</span>
+          )}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "appVersion",
+    header: "Version",
+    cell: ({ row }) => {
+      const user = row.original;
+      return (
+        <span className="font-mono text-sm text-foreground">
+          {user.appVersion}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "lastSeen",
+    header: () => <div className="text-right">Actions</div>,
+    cell: ({ row }) => {
+      const lastSeen = row.getValue("lastSeen") as string;
+      return (
+        <div className="flex items-center justify-end gap-2">
           <span className="text-sm text-muted-foreground">
             {formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}
           </span>
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            {platformIcon}
-            {user.country && (
-              <span className="text-base">{countryCodeToFlag(user.country)}</span>
-            )}
-            <span>{user.appVersion}</span>
-          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-8"
+            onClick={() => {
+              // TODO: Handle info action
+              console.log("Info clicked for user:", row.original);
+            }}
+          >
+            <Eye className="size-4" />
+            <span className="sr-only">View user information</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-8"
+            onClick={() => {
+              // TODO: Handle expand action
+              console.log("Expand clicked for user:", row.original);
+            }}
+          >
+            <Maximize2 className="size-4" />
+            <span className="sr-only">Expand user details</span>
+          </Button>
         </div>
       );
     },

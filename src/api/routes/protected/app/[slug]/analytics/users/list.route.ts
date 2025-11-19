@@ -37,6 +37,9 @@ export const usersListRoute = new Elysia().get(
     const page = parseInt(query.page || "1", 10);
     const limit = parseInt(query.limit || "50", 10);
     const search = query.search || "";
+    const platformFilter = query.platform || "";
+    const countryFilter = query.country || "";
+    const versionFilter = query.version || "";
 
     // Get correct table (production or test)
     const targetTable = getAnalyticsTable(isTest);
@@ -55,6 +58,31 @@ export const usersListRoute = new Elysia().get(
         )`
         : sql``;
 
+    // Build filter conditions
+    const platformCondition = platformFilter
+      ? sql`AND (
+          CASE
+            WHEN info->>'platform' = 'ios' THEN 'iOS'
+            WHEN info->>'platform' = 'android' THEN 'Android'
+            WHEN info->>'platform' = 'web' AND (
+              info->'requestMetadata'->>'userAgent' LIKE '%iPhone%' OR
+              info->'requestMetadata'->>'userAgent' LIKE '%iPad%'
+            ) THEN 'iOS'
+            WHEN info->>'platform' = 'web' AND
+              info->'requestMetadata'->>'userAgent' LIKE '%Android%' THEN 'Android'
+            ELSE 'Web'
+          END = ${platformFilter}
+        )`
+      : sql``;
+
+    const countryCondition = countryFilter
+      ? sql`AND info->'requestMetadata'->>'country' = ${countryFilter}`
+      : sql``;
+
+    const versionCondition = versionFilter
+      ? sql`AND app_version = ${versionFilter}`
+      : sql``;
+
     // Get total count
     const countResult = await db.execute(sql`
       SELECT COUNT(DISTINCT identify_id) as total
@@ -62,6 +90,9 @@ export const usersListRoute = new Elysia().get(
       WHERE api_key = ${apiKey}
         AND type = 'identify'
       ${searchCondition}
+      ${platformCondition}
+      ${countryCondition}
+      ${versionCondition}
     `);
 
     const total = Number((countResult[0] as any)?.total || 0);
@@ -107,6 +138,9 @@ export const usersListRoute = new Elysia().get(
         WHERE api_key = ${apiKey}
           AND type = 'identify'
           ${searchCondition}
+          ${platformCondition}
+          ${countryCondition}
+          ${versionCondition}
         ORDER BY identify_id, date DESC
       ) sub
       ORDER BY last_seen DESC
@@ -143,6 +177,9 @@ export const usersListRoute = new Elysia().get(
       page: t.Optional(t.String()),
       limit: t.Optional(t.String()),
       search: t.Optional(t.String()),
+      platform: t.Optional(t.String()),
+      country: t.Optional(t.String()),
+      version: t.Optional(t.String()),
     }),
     // response: UsersListResponseSchema,
     detail: {
