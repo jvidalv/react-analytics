@@ -10,6 +10,7 @@ import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
 import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
 import { getAvatarFromUuid, getUuidLastDigits } from "@/lib/avatar-utils";
+import { cn } from "@/lib/utils";
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -38,7 +39,7 @@ export const columns: ColumnDef<User>[] = [
 
       return (
         <div className="flex items-center gap-3">
-          <Avatar className="size-10">
+          <Avatar className={cn("size-10", isAnonymous && "bg-muted/20")}>
             {avatarSrc && <AvatarImage src={avatarSrc} alt={displayName} />}
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
