@@ -4,10 +4,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { User } from "@/domains/app/users/users-list.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import { Eye, Globe, Info, Maximize2, Copy, Check } from "lucide-react";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
+import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";
 import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
 import { getAvatarFromUuid, getUuidLastDigits } from "@/lib/avatar-utils";
 import { cn } from "@/lib/utils";
@@ -156,15 +157,30 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "lastSeen",
-    header: () => <div className="text-right">Actions</div>,
-    size: 230,
+    header: "Last Seen",
+    size: 150,
     cell: ({ row }) => {
       const lastSeen = row.getValue("lastSeen") as string;
+      const lastSeenDate = new Date(lastSeen);
+      return (
+        <TooltipWrapper content={format(lastSeenDate, "d MMM yyyy 'at' HH:mm")}>
+          <time
+            dateTime={lastSeenDate.toISOString()}
+            className="text-sm text-muted-foreground cursor-help"
+          >
+            {formatDistanceToNow(lastSeenDate, { addSuffix: true })}
+          </time>
+        </TooltipWrapper>
+      );
+    },
+  },
+  {
+    accessorKey: "actions",
+    header: () => <div className="text-right">Actions</div>,
+    size: 100,
+    cell: ({ row }) => {
       return (
         <div className="flex items-center justify-end gap-2">
-          <span className="text-sm text-muted-foreground mr-1">
-            {formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}
-          </span>
           <Button
             variant="outline"
             size="icon"
