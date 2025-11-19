@@ -158,7 +158,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "lastSeen",
     header: "Last Seen",
-    size: 150,
+    size: 120,
     cell: ({ row }) => {
       const lastSeen = row.getValue("lastSeen") as string;
       const lastSeenDate = new Date(lastSeen);
@@ -166,7 +166,7 @@ export const columns: ColumnDef<User>[] = [
         <TooltipWrapper content={format(lastSeenDate, "d MMM yyyy 'at' HH:mm")}>
           <time
             dateTime={lastSeenDate.toISOString()}
-            className="text-sm text-muted-foreground cursor-help"
+            className="text-sm text-foreground cursor-help"
           >
             {formatDistanceToNow(lastSeenDate, { addSuffix: true })}
           </time>
