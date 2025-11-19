@@ -1,6 +1,6 @@
 {
-  "id": "fcb667a4-acf2-4b4e-8230-63b7917e4442",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "24dc1da7-1401-4430-9411-5dd315033be1",
+  "prevId": "fcb667a4-acf2-4b4e-8230-63b7917e4442",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -80,15 +80,15 @@
         "account_user_id_user_id_fk": {
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -146,15 +146,15 @@
         "ai_requests_user_id_user_id_fk": {
           "name": "ai_requests_user_id_user_id_fk",
           "tableFrom": "ai_requests",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -263,9 +263,9 @@
             }
           ],
           "isUnique": false,
-          "concurrently": false,
+          "with": {},
           "method": "btree",
-          "with": {}
+          "concurrently": false
         },
         "idx_analytics_identify_id_type_date": {
           "name": "idx_analytics_identify_id_type_date",
@@ -290,24 +290,24 @@
             }
           ],
           "isUnique": false,
-          "concurrently": false,
+          "with": {},
           "method": "btree",
-          "with": {}
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "analytics_api_key_analytics_api_keys_api_key_fk": {
           "name": "analytics_api_key_analytics_api_keys_api_key_fk",
           "tableFrom": "analytics",
-          "tableTo": "analytics_api_keys",
           "columnsFrom": [
             "api_key"
           ],
+          "tableTo": "analytics_api_keys",
           "columnsTo": [
             "api_key"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -371,45 +371,45 @@
         "analytics_api_keys_user_id_user_id_fk": {
           "name": "analytics_api_keys_user_id_user_id_fk",
           "tableFrom": "analytics_api_keys",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "analytics_api_keys_app_id_apps_id_fk": {
           "name": "analytics_api_keys_app_id_apps_id_fk",
           "tableFrom": "analytics_api_keys",
-          "tableTo": "apps",
           "columnsFrom": [
             "app_id"
           ],
+          "tableTo": "apps",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "analytics_api_keys_api_key_unique": {
           "name": "analytics_api_keys_api_key_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "api_key"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "analytics_api_keys_api_key_test_unique": {
           "name": "analytics_api_keys_api_key_test_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "api_key_test"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       },
       "policies": {},
@@ -601,9 +601,9 @@
             }
           ],
           "isUnique": false,
-          "concurrently": false,
+          "with": {},
           "method": "btree",
-          "with": {}
+          "concurrently": false
         },
         "idx_analytics_test_identify_id_type_date": {
           "name": "idx_analytics_test_identify_id_type_date",
@@ -628,24 +628,24 @@
             }
           ],
           "isUnique": false,
-          "concurrently": false,
+          "with": {},
           "method": "btree",
-          "with": {}
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "analytics_test_api_key_analytics_api_keys_api_key_test_fk": {
           "name": "analytics_test_api_key_analytics_api_keys_api_key_test_fk",
           "tableFrom": "analytics_test",
-          "tableTo": "analytics_api_keys",
           "columnsFrom": [
             "api_key"
           ],
+          "tableTo": "analytics_api_keys",
           "columnsTo": [
             "api_key_test"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -819,25 +819,25 @@
         "apps_user_id_user_id_fk": {
           "name": "apps_user_id_user_id_fk",
           "tableFrom": "apps",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "apps_slug_unique": {
           "name": "apps_slug_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       },
       "policies": {},
@@ -872,15 +872,15 @@
         "session_user_id_user_id_fk": {
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -1005,10 +1005,10 @@
       "uniqueConstraints": {
         "user_email_unique": {
           "name": "user_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       },
       "policies": {},
@@ -1018,10 +1018,10 @@
   },
   "enums": {},
   "schemas": {},
+  "views": {},
   "sequences": {},
   "roles": {},
   "policies": {},
-  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},

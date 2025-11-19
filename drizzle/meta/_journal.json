@@ -5,8 +5,29 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1763550016291,
-      "tag": "0000_motionless_silver_centurion",
+      "when": 1763561351913,
+      "tag": "0000_vengeful_dormammu",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1763562878349,
+      "tag": "0001_fix-materialized-views",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763563976583,
+      "tag": "0002_fix-identified-users-data",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1763565336333,
+      "tag": "0003_fix-mv-use-identify-events",
       "breakpoints": true
     }
   ]

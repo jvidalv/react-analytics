@@ -1,7 +1,6 @@
 "use client";
 
 import { UsersOnboarding } from "./users/users.onboarding";
-import { NewJoinersTable } from "./overview/overview.new-joiners-table";
 
 import { useTitle } from "@/hooks/use-title";
 import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
@@ -9,8 +8,14 @@ import { useAnalyticsApiKeys } from "@/domains/analytics/analytics-api-keys.api"
 import { useScrollPosition } from "@/hooks/use-scroll-position";
 import { PropsWithChildren } from "react";
 import { cn } from "@/lib/utils";
+import { useQueryStates, parseAsInteger } from "nuqs";
+import Link from "next/link";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Copy, Check } from "lucide-react";
+import { formatDistanceToNow, format } from "date-fns";
 import {
   useAnalyticsUserStats,
   usePlatformAggregates,
@@ -20,8 +25,11 @@ import {
 } from "@/domains/app/users/stats/users-stats.api";
 import { useMe } from "@/domains/user/me.api";
 import { useAnalyticsOverview } from "@/domains/analytics/analytics.api";
-import { useNewJoiners } from "@/domains/analytics/new-joiners.api";
+import { useNewJoiners } from "@/domains/app/users/new-joiners.api";
 import { TrendingUp, TrendingDown, Globe } from "lucide-react";
+import { useClipboard } from "@/hooks/use-clipboard";
+import { toast } from "sonner";
+import { getAvatarFromUuid, getUuidLastDigits } from "@/lib/avatar-utils";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
 import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";
@@ -55,6 +63,100 @@ const PageWrapper = ({ children }: PropsWithChildren) => {
   );
 };
 
+// New Joiner Row Component
+const NewJoinerRow = ({ user }: { user: any }) => {
+  const [copiedId, copyIdToClipboard] = useClipboard();
+  const [copiedUserId, copyUserIdToClipboard] = useClipboard();
+
+  const displayName = user.name || user.email || user.identifyId;
+  const avatarEmoji = getAvatarFromUuid(user.identifyId);
+  const lastDigits = getUuidLastDigits(user.identifyId);
+  const firstSeenDate = new Date(user.firstSeen);
+
+  return (
+    <div
+      key={user.identifyId}
+      className="flex items-center justify-between p-4"
+    >
+      {/* User Info */}
+      <div className="flex items-center gap-3 flex-1">
+        <Avatar className="size-10">
+          {user.avatar ? (
+            <AvatarImage src={user.avatar} alt={displayName} />
+          ) : null}
+          <AvatarFallback className="text-base">
+            {avatarEmoji}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col">
+          <span className="font-medium">
+            {user.name || user.email || `User ${lastDigits}`}
+          </span>
+          {user.email && user.name && (
+            <span className="text-xs text-muted-foreground">
+              {user.email}
+            </span>
+          )}
+          {!user.name && !user.email && (
+            <span className="text-xs font-mono text-muted-foreground">
+              {user.identifyId}
+            </span>
+          )}
+          <span className="text-xs text-muted-foreground">
+            Joined {formatDistanceToNow(firstSeenDate, { addSuffix: true })}
+          </span>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex justify-end gap-2 w-[100px]">
+        <TooltipWrapper
+          content={copiedId ? "Copied!" : "Copy Identify ID"}
+        >
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8"
+            onClick={() => {
+              copyIdToClipboard(user.identifyId);
+              toast.success("Identify ID copied");
+            }}
+          >
+            {copiedId ? (
+              <Check className="size-4 text-green-600" />
+            ) : (
+              <Copy className="size-4" />
+            )}
+          </Button>
+        </TooltipWrapper>
+        {user.userId && (
+          <TooltipWrapper
+            content={copiedUserId ? "Copied!" : "Copy User ID"}
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8"
+              onClick={() => {
+                if (user.userId) {
+                  copyUserIdToClipboard(user.userId);
+                  toast.success("User ID copied");
+                }
+              }}
+            >
+              {copiedUserId ? (
+                <Check className="size-4 text-green-600" />
+              ) : (
+                <Copy className="size-4" />
+              )}
+            </Button>
+          </TooltipWrapper>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default function OverviewPage() {
   useTitle("Overview");
   const { me } = useMe();
@@ -81,9 +183,22 @@ export default function OverviewPage() {
     app?.slug,
     me?.devModeEnabled,
   );
-  const { newJoiners, isLoading: isLoadingNewJoiners } = useNewJoiners(
+
+  // New Joiners state and data
+  const [newJoinersFilters, setNewJoinersFilters] = useQueryStates(
+    {
+      njPage: parseAsInteger.withDefault(1),
+    },
+    {
+      history: "push",
+      shallow: false,
+    }
+  );
+
+  const { newJoinersList, isLoading: isLoadingNewJoiners } = useNewJoiners(
     app?.slug,
     me?.devModeEnabled,
+    newJoinersFilters.njPage,
   );
 
   if (isLoadingApp || isLoadingApiKeys) {
@@ -94,12 +209,6 @@ export default function OverviewPage() {
           {Array.from({ length: 9 }).map((_, i) => (
             <Skeleton key={i} className="h-[145.5px] w-full" />
           ))}
-        </div>
-
-        {/* New Joiners Table Skeleton */}
-        <div className="space-y-4">
-          <Skeleton className="h-7 w-32" />
-          <TableSkeleton />
         </div>
       </PageWrapper>
     );
@@ -514,13 +623,78 @@ export default function OverviewPage() {
 
         {/* New Joiners Section */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">New Joiners</h2>
-          <NewJoinersTable
-            today={newJoiners?.today}
-            lastWeek={newJoiners?.lastWeek}
-            lastMonth={newJoiners?.lastMonth}
-            isLoading={isLoadingNewJoiners}
-          />
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">
+              {isLoadingNewJoiners ? (
+                "New Joiners"
+              ) : newJoinersList?.pagination.total === 0 ? (
+                "No new joiners this week"
+              ) : newJoinersList?.pagination.total === 1 ? (
+                "1 new joiner this week"
+              ) : (
+                `${newJoinersList?.pagination.total} new joiners this week`
+              )}
+            </h2>
+            <Link
+              href={`/a/s/${appSlug}/users`}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              View all users →
+            </Link>
+          </div>
+
+          {isLoadingNewJoiners ? (
+            <TableSkeleton />
+          ) : (
+            <>
+              <div className="border">
+                <div className="divide-y">
+                  {newJoinersList?.users && newJoinersList.users.length > 0 ? (
+                    newJoinersList.users.map((user) => (
+                      <NewJoinerRow key={user.identifyId} user={user} />
+                    ))
+                  ) : (
+                    <div className="p-8 text-center text-muted-foreground">
+                      No new users found in this period.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Pagination - only show if more than 25 users */}
+              {newJoinersList?.pagination && newJoinersList.pagination.total > 25 && (
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-muted-foreground">
+                    Page {newJoinersList.pagination.page} of {newJoinersList.pagination.totalPages}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setNewJoinersFilters({ njPage: Math.max(1, newJoinersFilters.njPage - 1) })
+                      }
+                      disabled={newJoinersFilters.njPage === 1}
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setNewJoinersFilters({
+                          njPage: Math.min(newJoinersList.pagination.totalPages, newJoinersFilters.njPage + 1),
+                        })
+                      }
+                      disabled={newJoinersFilters.njPage === newJoinersList.pagination.totalPages}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </PageWrapper>
     </>
