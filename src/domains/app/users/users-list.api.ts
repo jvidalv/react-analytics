@@ -71,7 +71,7 @@ export const useUsersList = (
 
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: "50",
+        limit: "25",
       });
 
       if (search) {
