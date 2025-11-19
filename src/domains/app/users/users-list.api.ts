@@ -31,7 +31,8 @@ export const getUsersListQueryKey = (
   search?: string,
   platform?: string,
   country?: string,
-  version?: string
+  version?: string,
+  identified?: boolean
 ) =>
   [
     "analytics",
@@ -44,6 +45,7 @@ export const getUsersListQueryKey = (
     platform,
     country,
     version,
+    identified,
   ] as const;
 
 export const useUsersList = (
@@ -53,7 +55,8 @@ export const useUsersList = (
   search: string = "",
   platform: string = "",
   country: string = "",
-  version: string = ""
+  version: string = "",
+  identified?: boolean
 ) => {
   const enabled = !!appSlug && devModeEnabled !== undefined;
 
@@ -62,7 +65,7 @@ export const useUsersList = (
     isPending: isLoading,
     refetch,
   } = useQuery({
-    queryKey: getUsersListQueryKey(appSlug, devModeEnabled, page, search, platform, country, version),
+    queryKey: getUsersListQueryKey(appSlug, devModeEnabled, page, search, platform, country, version, identified),
     queryFn: async () => {
       if (!appSlug) return undefined;
 
@@ -85,6 +88,10 @@ export const useUsersList = (
 
       if (version) {
         params.append("version", version);
+      }
+
+      if (identified !== undefined) {
+        params.append("identified", identified.toString());
       }
 
       const { data, error } = await fetcherProtected

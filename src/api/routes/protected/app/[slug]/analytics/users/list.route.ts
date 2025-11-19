@@ -40,6 +40,7 @@ export const usersListRoute = new Elysia().get(
     const platformFilter = query.platform || "";
     const countryFilter = query.country || "";
     const versionFilter = query.version || "";
+    const identifiedFilter = query.identified;
 
     // Get correct table (production or test)
     const targetTable = getAnalyticsTable(isTest);
@@ -83,70 +84,155 @@ export const usersListRoute = new Elysia().get(
       ? sql`AND app_version = ${versionFilter}`
       : sql``;
 
+    const identifiedCondition =
+      identifiedFilter === "true"
+        ? sql`AND identify_id IN (
+          SELECT DISTINCT identify_id
+          FROM ${targetTable}
+          WHERE api_key = ${apiKey}
+            AND type = 'identify'
+            AND user_id IS NOT NULL
+        )`
+        : identifiedFilter === "false"
+        ? sql`AND identify_id NOT IN (
+          SELECT DISTINCT identify_id
+          FROM ${targetTable}
+          WHERE api_key = ${apiKey}
+            AND type = 'identify'
+            AND user_id IS NOT NULL
+        )`
+        : sql``;
+
     // Get total count
-    const countResult = await db.execute(sql`
-      SELECT COUNT(DISTINCT identify_id) as total
-      FROM ${targetTable}
-      WHERE api_key = ${apiKey}
-        AND type = 'identify'
-      ${searchCondition}
-      ${platformCondition}
-      ${countryCondition}
-      ${versionCondition}
-    `);
+    const countResult = await db.execute(
+      identifiedFilter === "false"
+        ? sql`
+          SELECT COUNT(DISTINCT identify_id) as total
+          FROM ${targetTable}
+          WHERE api_key = ${apiKey}
+          ${searchCondition}
+          ${platformCondition}
+          ${countryCondition}
+          ${versionCondition}
+          ${identifiedCondition}
+        `
+        : sql`
+          SELECT COUNT(DISTINCT identify_id) as total
+          FROM ${targetTable}
+          WHERE api_key = ${apiKey}
+            AND type = 'identify'
+          ${searchCondition}
+          ${platformCondition}
+          ${countryCondition}
+          ${versionCondition}
+          ${identifiedCondition}
+        `
+    );
 
     const total = Number((countResult[0] as any)?.total || 0);
     const totalPages = Math.ceil(total / limit);
 
     // Get users with pagination
-    const usersResult = await db.execute(sql`
-      SELECT
-        identify_id,
-        user_id,
-        COALESCE(
-          properties->'data'->>'name',
-          NULLIF(TRIM(COALESCE(properties->'data'->>'firstName', '') || ' ' || COALESCE(properties->'data'->>'lastName', '')), '')
-        ) as name,
-        properties->'data'->>'email' as email,
-        COALESCE(
-          properties->'data'->>'avatarUrl',
-          properties->'data'->>'avatar'
-        ) as avatar,
-        app_version,
-        info->'requestMetadata'->>'country' as country,
-        CASE
-          WHEN info->>'platform' = 'ios' THEN 'iOS'
-          WHEN info->>'platform' = 'android' THEN 'Android'
-          WHEN info->>'platform' = 'web' AND (
-            info->'requestMetadata'->>'userAgent' LIKE '%iPhone%' OR
-            info->'requestMetadata'->>'userAgent' LIKE '%iPad%'
-          ) THEN 'iOS'
-          WHEN info->>'platform' = 'web' AND
-            info->'requestMetadata'->>'userAgent' LIKE '%Android%' THEN 'Android'
-          ELSE 'Web'
-        END as platform,
-        date as last_seen
-      FROM (
-        SELECT DISTINCT ON (identify_id)
-          identify_id,
-          user_id,
-          properties,
-          app_version,
-          info,
-          date
-        FROM ${targetTable}
-        WHERE api_key = ${apiKey}
-          AND type = 'identify'
-          ${searchCondition}
-          ${platformCondition}
-          ${countryCondition}
-          ${versionCondition}
-        ORDER BY identify_id, date DESC
-      ) sub
-      ORDER BY last_seen DESC
-      LIMIT ${limit}
-      OFFSET ${offset}
-    `);
+    const usersResult = await db.execute(
+      identifiedFilter === "false"
+        ? sql`
+          SELECT
+            identify_id,
+            user_id,
+            COALESCE(
+              properties->'data'->>'name',
+              NULLIF(TRIM(COALESCE(properties->'data'->>'firstName', '') || ' ' || COALESCE(properties->'data'->>'lastName', '')), '')
+            ) as name,
+            properties->'data'->>'email' as email,
+            COALESCE(
+              properties->'data'->>'avatarUrl',
+              properties->'data'->>'avatar'
+            ) as avatar,
+            app_version,
+            info->'requestMetadata'->>'country' as country,
+            CASE
+              WHEN info->>'platform' = 'ios' THEN 'iOS'
+              WHEN info->>'platform' = 'android' THEN 'Android'
+              WHEN info->>'platform' = 'web' AND (
+                info->'requestMetadata'->>'userAgent' LIKE '%iPhone%' OR
+                info->'requestMetadata'->>'userAgent' LIKE '%iPad%'
+              ) THEN 'iOS'
+              WHEN info->>'platform' = 'web' AND
+                info->'requestMetadata'->>'userAgent' LIKE '%Android%' THEN 'Android'
+              ELSE 'Web'
+            END as platform,
+            date as last_seen
+          FROM (
+            SELECT DISTINCT ON (identify_id)
+              identify_id,
+              user_id,
+              properties,
+              app_version,
+              info,
+              date
+            FROM ${targetTable}
+            WHERE api_key = ${apiKey}
+              ${searchCondition}
+              ${platformCondition}
+              ${countryCondition}
+              ${versionCondition}
+              ${identifiedCondition}
+            ORDER BY identify_id, date DESC
+          ) sub
+          ORDER BY last_seen DESC
+          LIMIT ${limit}
+          OFFSET ${offset}
+        `
+        : sql`
+          SELECT
+            identify_id,
+            user_id,
+            COALESCE(
+              properties->'data'->>'name',
+              NULLIF(TRIM(COALESCE(properties->'data'->>'firstName', '') || ' ' || COALESCE(properties->'data'->>'lastName', '')), '')
+            ) as name,
+            properties->'data'->>'email' as email,
+            COALESCE(
+              properties->'data'->>'avatarUrl',
+              properties->'data'->>'avatar'
+            ) as avatar,
+            app_version,
+            info->'requestMetadata'->>'country' as country,
+            CASE
+              WHEN info->>'platform' = 'ios' THEN 'iOS'
+              WHEN info->>'platform' = 'android' THEN 'Android'
+              WHEN info->>'platform' = 'web' AND (
+                info->'requestMetadata'->>'userAgent' LIKE '%iPhone%' OR
+                info->'requestMetadata'->>'userAgent' LIKE '%iPad%'
+              ) THEN 'iOS'
+              WHEN info->>'platform' = 'web' AND
+                info->'requestMetadata'->>'userAgent' LIKE '%Android%' THEN 'Android'
+              ELSE 'Web'
+            END as platform,
+            date as last_seen
+          FROM (
+            SELECT DISTINCT ON (identify_id)
+              identify_id,
+              user_id,
+              properties,
+              app_version,
+              info,
+              date
+            FROM ${targetTable}
+            WHERE api_key = ${apiKey}
+              AND type = 'identify'
+              ${searchCondition}
+              ${platformCondition}
+              ${countryCondition}
+              ${versionCondition}
+              ${identifiedCondition}
+            ORDER BY identify_id, date DESC
+          ) sub
+          ORDER BY last_seen DESC
+          LIMIT ${limit}
+          OFFSET ${offset}
+        `
+    );
 
     // Map results to user objects
     const users = (usersResult as any[]).map((row) => ({
@@ -180,6 +266,7 @@ export const usersListRoute = new Elysia().get(
       platform: t.Optional(t.String()),
       country: t.Optional(t.String()),
       version: t.Optional(t.String()),
+      identified: t.Optional(t.String()),
     }),
     // response: UsersListResponseSchema,
     detail: {

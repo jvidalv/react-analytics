@@ -16,8 +16,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTitle } from "@/hooks/use-title";
-import { useQueryStates, parseAsInteger, parseAsString } from "nuqs";
+import {
+  useQueryStates,
+  parseAsInteger,
+  parseAsString,
+  parseAsBoolean,
+} from "nuqs";
 import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
 
 const TableSkeleton = () => (
@@ -51,16 +57,20 @@ export default function UsersPage() {
   const appSlug = params.slug as string;
   const { me } = useMe();
 
-  const [filters, setFilters] = useQueryStates({
-    page: parseAsInteger.withDefault(1),
-    search: parseAsString.withDefault(""),
-    platform: parseAsString.withDefault(""),
-    country: parseAsString.withDefault(""),
-    version: parseAsString.withDefault(""),
-  }, {
-    history: "push",
-    shallow: false,
-  });
+  const [filters, setFilters] = useQueryStates(
+    {
+      page: parseAsInteger.withDefault(1),
+      search: parseAsString.withDefault(""),
+      platform: parseAsString.withDefault(""),
+      country: parseAsString.withDefault(""),
+      version: parseAsString.withDefault(""),
+      identified: parseAsBoolean.withDefault(true),
+    },
+    {
+      history: "push",
+      shallow: false,
+    },
+  );
 
   const { usersList, isLoading } = useUsersList(
     appSlug,
@@ -70,11 +80,12 @@ export default function UsersPage() {
     filters.platform,
     filters.country,
     filters.version,
+    filters.identified,
   );
 
   const { filters: filterOptions } = useUsersFilters(
     appSlug,
-    me?.devModeEnabled
+    me?.devModeEnabled,
   );
 
   if (isLoading && !usersList) {
@@ -89,131 +100,148 @@ export default function UsersPage() {
   const pagination = usersList?.pagination;
 
   return (
-    <div className="mx-auto max-w-7xl">
-      <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <Input
-            placeholder="Search by name or email..."
-            value={filters.search}
-            onChange={(e) => setFilters({ search: e.target.value, page: 1 })}
-            className="max-w-sm"
-          />
+    <div className="mx-auto max-w-7xl space-y-4">
+      <div className="flex items-center gap-2">
+        <Tabs
+          value={filters.identified ? "identified" : "anonymous"}
+          onValueChange={(value) => {
+            void setFilters({ identified: value === "identified", page: 1 });
+          }}
+        >
+          <TabsList>
+            <TabsTrigger value="identified" className="px-4">
+              🪪
+            </TabsTrigger>
+            <TabsTrigger value="anonymous" className="px-4">
+              🤖
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <Input
+          placeholder="Search..."
+          value={filters.search}
+          onChange={(e) => setFilters({ search: e.target.value, page: 1 })}
+          className="max-w-32"
+        />
 
-          <Select
-            value={filters.platform || "all"}
-            onValueChange={(value) => {
-              setFilters({ platform: value === "all" ? "" : value, page: 1 });
-            }}
-          >
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Platform" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Platforms</SelectItem>
-              <SelectItem value="iOS">iOS</SelectItem>
-              <SelectItem value="Android">Android</SelectItem>
-              <SelectItem value="Web">Web</SelectItem>
-            </SelectContent>
-          </Select>
+        <Select
+          value={filters.platform || "all"}
+          onValueChange={(value) => {
+            setFilters({ platform: value === "all" ? "" : value, page: 1 });
+          }}
+        >
+          <SelectTrigger className="w-[150px]">
+            <SelectValue placeholder="Platform" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Platforms</SelectItem>
+            <SelectItem value="iOS">iOS</SelectItem>
+            <SelectItem value="Android">Android</SelectItem>
+            <SelectItem value="Web">Web</SelectItem>
+          </SelectContent>
+        </Select>
 
-          <Select
-            value={filters.country || "all"}
-            onValueChange={(value) => {
-              setFilters({ country: value === "all" ? "" : value, page: 1 });
-            }}
-          >
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Country" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Countries</SelectItem>
-              {filterOptions?.countries?.map((country) => (
-                <SelectItem key={country} value={country}>
-                  <div className="flex w-full items-center justify-between gap-2">
-                    <span>{getCountryName(country)}</span>
-                    <span>{countryCodeToFlag(country)}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={filters.version || "all"}
-            onValueChange={(value) => {
-              setFilters({ version: value === "all" ? "" : value, page: 1 });
-            }}
-          >
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Version" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Versions</SelectItem>
-              {filterOptions?.versions?.map((version) => (
-                <SelectItem key={version} value={version}>
-                  {version}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {pagination && (
-            <div className="ml-auto text-sm text-muted-foreground">
-              <span className="text-foreground">
-                {(filters.page - 1) * pagination.limit + 1}
-              </span>{" "}
-              to{" "}
-              <span className="text-foreground">
-                {Math.min(filters.page * pagination.limit, pagination.total)}
-              </span>{" "}
-              of {pagination.total} users
-            </div>
-          )}
-        </div>
-
-        {isLoading ? (
-          <TableSkeleton />
-        ) : (
-          <>
-            <DataTable
-              columns={columns}
-              data={users}
-              filters={filters}
-              setFilters={setFilters}
-              filterOptions={filterOptions}
-            />
-
-            {/* Server-side pagination controls */}
-            {pagination && pagination.totalPages > 1 && (
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
-                  Page {pagination.page} of {pagination.totalPages}
+        <Select
+          value={filters.country || "all"}
+          onValueChange={(value) => {
+            setFilters({ country: value === "all" ? "" : value, page: 1 });
+          }}
+        >
+          <SelectTrigger className="w-[150px]">
+            <SelectValue placeholder="Country" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Countries</SelectItem>
+            {filterOptions?.countries?.map((country) => (
+              <SelectItem key={country} value={country}>
+                <div className="flex w-full items-center justify-between gap-2">
+                  <span>{getCountryName(country)}</span>
+                  <span>{countryCodeToFlag(country)}</span>
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setFilters({ page: Math.max(1, filters.page - 1) })}
-                    disabled={filters.page === 1}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      setFilters({ page: Math.min(pagination.totalPages, filters.page + 1) })
-                    }
-                    disabled={filters.page === pagination.totalPages}
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-            )}
-          </>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={filters.version || "all"}
+          onValueChange={(value) => {
+            setFilters({ version: value === "all" ? "" : value, page: 1 });
+          }}
+        >
+          <SelectTrigger className="w-[150px]">
+            <SelectValue placeholder="Version" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Versions</SelectItem>
+            {filterOptions?.versions?.map((version) => (
+              <SelectItem key={version} value={version}>
+                {version}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {pagination && (
+          <div className="ml-auto text-sm text-muted-foreground">
+            <span className="text-foreground">
+              {(filters.page - 1) * pagination.limit + 1}
+            </span>{" "}
+            to{" "}
+            <span className="text-foreground">
+              {Math.min(filters.page * pagination.limit, pagination.total)}
+            </span>{" "}
+            of {pagination.total} users
+          </div>
         )}
       </div>
+
+      {isLoading ? (
+        <TableSkeleton />
+      ) : (
+        <>
+          <DataTable
+            columns={columns}
+            data={users}
+            filters={filters}
+            setFilters={setFilters}
+            filterOptions={filterOptions}
+          />
+
+          {/* Server-side pagination controls */}
+          {pagination && pagination.totalPages > 1 && (
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">
+                Page {pagination.page} of {pagination.totalPages}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setFilters({ page: Math.max(1, filters.page - 1) })
+                  }
+                  disabled={filters.page === 1}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setFilters({
+                      page: Math.min(pagination.totalPages, filters.page + 1),
+                    })
+                  }
+                  disabled={filters.page === pagination.totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

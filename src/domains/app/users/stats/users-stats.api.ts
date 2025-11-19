@@ -131,7 +131,14 @@ export function useDailyErrors(apiKey?: string) {
 export const getCountryAggregatesQueryKey = (
   appSlug?: string,
   devModeEnabled?: boolean,
-) => ["analytics", appSlug, "stats", "country-aggregates", devModeEnabled] as const;
+) =>
+  [
+    "analytics",
+    appSlug,
+    "stats",
+    "country-aggregates",
+    devModeEnabled,
+  ] as const;
 
 export const useCountryAggregates = (
   appSlug?: string,
@@ -178,7 +185,14 @@ export type PlatformAggregates = {
 export const getPlatformAggregatesQueryKey = (
   appSlug?: string,
   devModeEnabled?: boolean,
-) => ["analytics", appSlug, "stats", "platform-aggregates", devModeEnabled] as const;
+) =>
+  [
+    "analytics",
+    appSlug,
+    "stats",
+    "platform-aggregates",
+    devModeEnabled,
+  ] as const;
 
 export const usePlatformAggregates = (
   appSlug?: string,
@@ -203,7 +217,7 @@ export const usePlatformAggregates = (
         throw error;
       }
 
-      return data as PlatformAggregates;
+      return data;
     },
     enabled,
   });

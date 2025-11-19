@@ -12,8 +12,6 @@ import { usersRoutes } from "./users";
 type AnalyticsStore = {
   apiKey: string;
   isTest: boolean;
-  apiKeyProd: string;
-  apiKeyTest: string;
 };
 
 export const analyticsRoutes = new Elysia({ prefix: "/analytics" })
@@ -44,8 +42,6 @@ export const analyticsRoutes = new Elysia({ prefix: "/analytics" })
     // Store for child routes to access
     (store as AnalyticsStore).apiKey = apiKey;
     (store as AnalyticsStore).isTest = isTest;
-    (store as AnalyticsStore).apiKeyProd = apiKeys.apiKey;
-    (store as AnalyticsStore).apiKeyTest = apiKeys.apiKeyTest;
   })
   .use(statsRoutes)
   .use(apiKeysRoute)

@@ -1,18 +1,12 @@
 "use client";
 
-import { UsersEmptyState } from "./users/users.empty-state";
-import { UsersUsersTable } from "./users/users.users-table";
-import { UsersSidebarDetails } from "./users/users.sidebar-details";
-import { UsersAggregates } from "./users/users.aggregates";
 import { UsersOnboarding } from "./users/users.onboarding";
 
 import { useTitle } from "@/hooks/use-title";
 import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
-import { useAnalyticsUsers } from "@/domains/app/users/users.api";
 import { useAnalyticsApiKeys } from "@/domains/analytics/analytics-api-keys.api";
 import { useScrollPosition } from "@/hooks/use-scroll-position";
 import { PropsWithChildren } from "react";
-import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,12 +17,8 @@ import {
   useCountryAggregates,
   useErrorRateAggregates,
 } from "@/domains/app/users/stats/users-stats.api";
-import { UsersErrorChart } from "@/app/a/s/[slug]/users/users.error-chart";
 import { useMe } from "@/domains/user/me.api";
-import {
-  useAnalyticsOverview,
-  useAnalyticsOverviewCombined,
-} from "@/domains/analytics/analytics.api";
+import { useAnalyticsOverview } from "@/domains/analytics/analytics.api";
 import { TrendingUp, TrendingDown, Globe } from "lucide-react";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
@@ -63,24 +53,15 @@ const PageWrapper = ({ children }: PropsWithChildren) => {
   );
 };
 
-export default function AnalyticsPage() {
-  useTitle("Users");
+export default function OverviewPage() {
+  useTitle("Overview");
   const { me } = useMe();
   const appSlug = useAppSlugFromParams();
   const { app, isLoading: isLoadingApp } = useAppBySlug(appSlug);
   const { apiKeys, isLoading: isLoadingApiKeys } = useAnalyticsApiKeys(appSlug);
-  const searchParams = useSearchParams();
-  const identifyId = searchParams.get("identifyId");
-  const page = parseInt(searchParams.get("page") || "1", 10);
   const apiKey = me?.devModeEnabled ? apiKeys?.apiKeyTest : apiKeys?.apiKey;
-  const analyticsUsers = useAnalyticsUsers(apiKey, page);
+
   useAnalyticsUserStats(apiKey);
-  // Use combined overview to check if ANY data exists (dev or prod)
-  const { overviewCombined, isLoading: isLoadingOverviewCombined } =
-    useAnalyticsOverviewCombined(app?.slug, {
-      // Poll every 5 seconds during onboarding
-      refetchInterval: (data) => (!data?.hasAnyData ? 5000 : false),
-    });
 
   const { overview, isLoading: isLoadingOverview } = useAnalyticsOverview(
     app?.slug,
@@ -99,10 +80,6 @@ export default function AnalyticsPage() {
     me?.devModeEnabled,
   );
 
-  const scrollY = useScrollPosition();
-  const shouldMinifyHeader = scrollY > 20;
-  const barWidth = 500;
-
   if (isLoadingApp || isLoadingApiKeys) {
     return (
       <PageWrapper>
@@ -116,8 +93,8 @@ export default function AnalyticsPage() {
     );
   }
 
-  // Show onboarding when there are no users in EITHER dev or prod
-  if (!isLoadingOverviewCombined && !overviewCombined?.hasAnyData) {
+  // Show onboarding when there are no users in current mode
+  if (!isLoadingOverview && overview?.totalUsers === 0) {
     return (
       <PageWrapper>
         <UsersOnboarding
