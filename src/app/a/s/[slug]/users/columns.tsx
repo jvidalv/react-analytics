@@ -16,6 +16,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "name",
     header: "Name",
+    size: 9999, // Make this column take maximum available space
     cell: ({ row }) => {
       const user = row.original;
       const isAnonymous = !user.name && !user.email;
