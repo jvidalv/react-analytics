@@ -26,6 +26,24 @@ import {
 } from "nuqs";
 import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
 
+const FiltersSkeleton = () => (
+  <div className="space-y-4">
+    {/* Tabs skeleton */}
+    <Skeleton className="h-10 w-[200px] rounded-md" />
+
+    {/* Filter bar */}
+    <div className="flex items-center gap-4">
+      <Skeleton className="h-10 w-full max-w-sm rounded-md" />
+      <Skeleton className="h-10 w-[150px] rounded-md" />
+      <Skeleton className="h-10 w-[150px] rounded-md" />
+      <Skeleton className="h-10 w-[150px] rounded-md" />
+      <div className="ml-auto">
+        <Skeleton className="h-4 w-[200px]" />
+      </div>
+    </div>
+  </div>
+);
+
 const TableSkeleton = () => (
   <div className="space-y-4">
     <div className="border">
@@ -56,7 +74,7 @@ const TableSkeleton = () => (
         <div key={i} className="flex items-center border-t px-4 h-16">
           {/* Name column */}
           <div className="flex-1 flex items-center gap-3">
-            <Skeleton className="size-10 rounded-full" />
+            <Skeleton className="size-10 rounded-md" />
             <div>
               <Skeleton className="h-4 w-32 mb-1.5" />
               <Skeleton className="h-3 w-48" />
@@ -128,7 +146,8 @@ export default function UsersPage() {
 
   if (isLoading && !usersList) {
     return (
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-7xl space-y-4">
+        <FiltersSkeleton />
         <TableSkeleton />
       </div>
     );
