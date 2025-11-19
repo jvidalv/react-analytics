@@ -5,61 +5,99 @@ import { User } from "@/domains/app/users/users-list.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
-import { Eye, Globe, Info, Maximize2 } from "lucide-react";
+import { Eye, Globe, Info, Maximize2, Copy, Check } from "lucide-react";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
 import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
 import { getAvatarFromUuid, getUuidLastDigits } from "@/lib/avatar-utils";
 import { cn } from "@/lib/utils";
+import { useClipboard } from "@/hooks/use-clipboard";
+import { toast } from "sonner";
+
+// Copyable text component with hover button
+function CopyableText({ text, className }: { text: string; className?: string }) {
+  const [copied, copyToClipboard] = useClipboard();
+
+  const handleCopy = () => {
+    copyToClipboard(text);
+    toast.success("Copied to clipboard");
+  };
+
+  return (
+    <div className="group relative inline-flex items-center gap-1.5">
+      <span
+        className={cn("cursor-pointer", className)}
+        onClick={handleCopy}
+      >
+        {text}
+      </span>
+      <button
+        onClick={handleCopy}
+        className="opacity-0 group-hover:opacity-100 transition-opacity"
+        aria-label="Copy to clipboard"
+      >
+        {copied ? (
+          <Check className="size-3 text-green-600" />
+        ) : (
+          <Copy className="size-3 text-muted-foreground hover:text-foreground" />
+        )}
+      </button>
+    </div>
+  );
+}
+
+// Name cell component
+function NameCell({ user }: { user: User }) {
+  const isAnonymous = !user.name && !user.email;
+
+  // For anonymous users: use last 8 digits of UUID as name
+  const displayName = user.name || user.email || getUuidLastDigits(user.identifyId);
+
+  const initials = isAnonymous
+    ? getUuidLastDigits(user.identifyId, 2).toUpperCase()
+    : displayName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+
+  // For anonymous users: use deterministic avatar from UUID
+  const avatarSrc = isAnonymous
+    ? getAvatarFromUuid(user.identifyId)
+    : user.avatar;
+
+  return (
+    <div className="flex items-center gap-3">
+      <Avatar className={cn("size-10", isAnonymous && "bg-muted/20")}>
+        {avatarSrc && <AvatarImage src={avatarSrc} alt={displayName} />}
+        <AvatarFallback>{initials}</AvatarFallback>
+      </Avatar>
+      <div className="flex flex-col">
+        <span className="sensitive font-medium">{displayName}</span>
+        {!isAnonymous && user.email && user.name && (
+          <CopyableText
+            text={user.email}
+            className="sensitive text-sm text-muted-foreground"
+          />
+        )}
+        {isAnonymous && (
+          <CopyableText
+            text={user.identifyId}
+            className="text-xs text-muted-foreground"
+          />
+        )}
+      </div>
+    </div>
+  );
+}
 
 export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "name",
     header: "Name",
     // No size specified - will take remaining space with table-fixed layout
-    cell: ({ row }) => {
-      const user = row.original;
-      const isAnonymous = !user.name && !user.email;
-
-      // For anonymous users: use last 8 digits of UUID as name
-      const displayName = user.name || user.email || getUuidLastDigits(user.identifyId);
-
-      const initials = isAnonymous
-        ? getUuidLastDigits(user.identifyId, 2).toUpperCase()
-        : displayName
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2);
-
-      // For anonymous users: use deterministic avatar from UUID
-      const avatarSrc = isAnonymous
-        ? getAvatarFromUuid(user.identifyId)
-        : user.avatar;
-
-      return (
-        <div className="flex items-center gap-3">
-          <Avatar className={cn("size-10", isAnonymous && "bg-muted/20")}>
-            {avatarSrc && <AvatarImage src={avatarSrc} alt={displayName} />}
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col">
-            <span className="sensitive font-medium">{displayName}</span>
-            {!isAnonymous && user.email && user.name && (
-              <span className="sensitive text-sm text-muted-foreground">
-                {user.email}
-              </span>
-            )}
-            {isAnonymous && (
-              <span className="text-xs text-muted-foreground">
-                {user.identifyId}
-              </span>
-            )}
-          </div>
-        </div>
-      );
-    },
+    cell: ({ row }) => <NameCell user={row.original} />,
   },
   {
     accessorKey: "platform",
