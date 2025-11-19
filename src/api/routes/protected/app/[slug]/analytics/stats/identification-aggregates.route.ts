@@ -32,30 +32,30 @@ export const identificationAggregatesRoute = new Elysia().get(
     const sixtyDaysAgo = new Date(now - 60 * 24 * 60 * 60 * 1000);
 
     // Query overall identification stats (all time) with platform breakdown
+    // Use subquery to determine if identify_id has ever been identified
     const overallResult = await db.execute(sql`
       SELECT
         COUNT(*) AS total,
-        COUNT(*) FILTER (WHERE user_id IS NOT NULL) AS identified,
-        COUNT(*) FILTER (WHERE user_id IS NULL) AS anonymous,
+        COUNT(*) FILTER (WHERE is_identified) AS identified,
+        COUNT(*) FILTER (WHERE NOT is_identified) AS anonymous,
 
         -- iOS breakdown
         COUNT(*) FILTER (WHERE platform = 'ios') AS ios_total,
-        COUNT(*) FILTER (WHERE platform = 'ios' AND user_id IS NOT NULL) AS ios_identified,
-        COUNT(*) FILTER (WHERE platform = 'ios' AND user_id IS NULL) AS ios_anonymous,
+        COUNT(*) FILTER (WHERE platform = 'ios' AND is_identified) AS ios_identified,
+        COUNT(*) FILTER (WHERE platform = 'ios' AND NOT is_identified) AS ios_anonymous,
 
         -- Android breakdown
         COUNT(*) FILTER (WHERE platform = 'android') AS android_total,
-        COUNT(*) FILTER (WHERE platform = 'android' AND user_id IS NOT NULL) AS android_identified,
-        COUNT(*) FILTER (WHERE platform = 'android' AND user_id IS NULL) AS android_anonymous,
+        COUNT(*) FILTER (WHERE platform = 'android' AND is_identified) AS android_identified,
+        COUNT(*) FILTER (WHERE platform = 'android' AND NOT is_identified) AS android_anonymous,
 
         -- Web breakdown
         COUNT(*) FILTER (WHERE platform = 'web') AS web_total,
-        COUNT(*) FILTER (WHERE platform = 'web' AND user_id IS NOT NULL) AS web_identified,
-        COUNT(*) FILTER (WHERE platform = 'web' AND user_id IS NULL) AS web_anonymous
+        COUNT(*) FILTER (WHERE platform = 'web' AND is_identified) AS web_identified,
+        COUNT(*) FILTER (WHERE platform = 'web' AND NOT is_identified) AS web_anonymous
       FROM (
         SELECT DISTINCT ON (identify_id)
           identify_id,
-          user_id,
           CASE
             WHEN info->>'platform' = 'ios' THEN 'ios'
             WHEN info->>'platform' = 'android' THEN 'android'
@@ -66,10 +66,18 @@ export const identificationAggregatesRoute = new Elysia().get(
             WHEN info->>'platform' = 'web' AND
               info->'requestMetadata'->>'userAgent' LIKE '%Android%' THEN 'android'
             ELSE 'web'
-          END AS platform
+          END AS platform,
+          -- Check if this identify_id has ever had an identify event with user_id
+          (
+            SELECT COUNT(*) > 0
+            FROM ${targetTable} t2
+            WHERE t2.api_key = ${apiKey}
+              AND t2.identify_id = ${targetTable}.identify_id
+              AND t2.type = 'identify'
+              AND t2.user_id IS NOT NULL
+          ) AS is_identified
         FROM ${targetTable}
         WHERE api_key = ${apiKey}
-          AND type = 'identify'
         ORDER BY identify_id, date DESC
       ) sub
     `);
