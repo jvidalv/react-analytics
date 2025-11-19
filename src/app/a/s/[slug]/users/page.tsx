@@ -27,19 +27,14 @@ import {
 import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
 
 const FiltersSkeleton = () => (
-  <div className="space-y-4">
-    {/* Tabs skeleton */}
-    <Skeleton className="h-10 w-[200px] rounded-md" />
-
-    {/* Filter bar */}
-    <div className="flex items-center gap-4">
-      <Skeleton className="h-10 w-full max-w-sm rounded-md" />
-      <Skeleton className="h-10 w-[150px] rounded-md" />
-      <Skeleton className="h-10 w-[150px] rounded-md" />
-      <Skeleton className="h-10 w-[150px] rounded-md" />
-      <div className="ml-auto">
-        <Skeleton className="h-4 w-[200px]" />
-      </div>
+  <div className="flex items-center gap-2">
+    <Skeleton className="h-9 w-[100px]" />
+    <Skeleton className="h-9 w-full max-w-32" />
+    <Skeleton className="h-9 w-[150px]" />
+    <Skeleton className="h-9 w-[150px]" />
+    <Skeleton className="h-9 w-[150px]" />
+    <div className="ml-auto">
+      <Skeleton className="h-4 w-[200px]" />
     </div>
   </div>
 );
@@ -74,7 +69,7 @@ const TableSkeleton = () => (
         <div key={i} className="flex items-center border-t px-4 h-16">
           {/* Name column */}
           <div className="flex-1 flex items-center gap-3">
-            <Skeleton className="size-10 rounded-md" />
+            <Skeleton className="size-10" />
             <div>
               <Skeleton className="h-4 w-32 mb-1.5" />
               <Skeleton className="h-3 w-48" />
@@ -98,8 +93,8 @@ const TableSkeleton = () => (
           </div>
           {/* Actions column */}
           <div className="w-[100px] flex justify-end gap-2">
-            <Skeleton className="size-8 rounded-md" />
-            <Skeleton className="size-8 rounded-md" />
+            <Skeleton className="size-8" />
+            <Skeleton className="size-8" />
           </div>
         </div>
       ))}
