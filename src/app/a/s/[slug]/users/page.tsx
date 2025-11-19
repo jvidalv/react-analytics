@@ -26,19 +26,6 @@ import {
 } from "nuqs";
 import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
 
-const FiltersSkeleton = () => (
-  <div className="flex items-center gap-2">
-    <Skeleton className="h-9 w-[100px]" />
-    <Skeleton className="h-9 w-full max-w-32" />
-    <Skeleton className="h-9 w-[150px]" />
-    <Skeleton className="h-9 w-[150px]" />
-    <Skeleton className="h-9 w-[150px]" />
-    <div className="ml-auto">
-      <Skeleton className="h-4 w-[200px]" />
-    </div>
-  </div>
-);
-
 const TableSkeleton = () => (
   <div className="space-y-4">
     <div className="border">
@@ -138,15 +125,6 @@ export default function UsersPage() {
     appSlug,
     me?.devModeEnabled,
   );
-
-  if (isLoading && !usersList) {
-    return (
-      <div className="mx-auto max-w-7xl space-y-4">
-        <FiltersSkeleton />
-        <TableSkeleton />
-      </div>
-    );
-  }
 
   const users = usersList?.users ?? [];
   const pagination = usersList?.pagination;

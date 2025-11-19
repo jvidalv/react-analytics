@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { db } from "@/db";
-import { sql } from "drizzle-orm";
-import { getAnalyticsTable } from "@/api/utils/analytics";
+import { sql, desc, count, like, or, and, eq } from "drizzle-orm";
+import { getAnalyticsTable, getIdentifiedUsersMv } from "@/api/utils/analytics";
 
 // Response schemas
 const UserSchema = t.Object({
@@ -44,9 +44,95 @@ export const usersListRoute = new Elysia().get(
 
     // Get correct table (production or test)
     const targetTable = getAnalyticsTable(isTest);
+    const identifiedUsersMv = getIdentifiedUsersMv(isTest);
 
     // Calculate offset
     const offset = (page - 1) * limit;
+
+    // Use materialized view for identified users (much faster!)
+    if (identifiedFilter === "true") {
+      // Build where conditions for materialized view
+      const conditions = [];
+      conditions.push(sql`${identifiedUsersMv.apiKey} = ${apiKey}`);
+
+      if (search) {
+        conditions.push(
+          sql`(
+            ${identifiedUsersMv.name} ILIKE ${'%' + search + '%'} OR
+            ${identifiedUsersMv.email} ILIKE ${'%' + search + '%'}
+          )`
+        );
+      }
+
+      if (platformFilter) {
+        conditions.push(sql`${identifiedUsersMv.platform} = ${platformFilter}`);
+      }
+
+      if (countryFilter) {
+        conditions.push(sql`${identifiedUsersMv.country} = ${countryFilter}`);
+      }
+
+      if (versionFilter) {
+        conditions.push(sql`${identifiedUsersMv.appVersion} = ${versionFilter}`);
+      }
+
+      const whereClause = conditions.length > 0
+        ? sql`WHERE ${sql.join(conditions, sql` AND `)}`
+        : sql``;
+
+      // Get total count
+      const countResult = await db.execute(
+        sql`SELECT COUNT(*) as total FROM ${identifiedUsersMv} ${whereClause}`
+      );
+
+      const total = Number((countResult[0] as any)?.total || 0);
+      const totalPages = Math.ceil(total / limit);
+
+      // Get users
+      const usersResult = await db.execute(
+        sql`
+          SELECT
+            identify_id,
+            user_id,
+            name,
+            email,
+            avatar,
+            app_version,
+            country,
+            platform,
+            last_seen
+          FROM ${identifiedUsersMv}
+          ${whereClause}
+          ORDER BY last_seen DESC
+          LIMIT ${limit}
+          OFFSET ${offset}
+        `
+      );
+
+      // Map results
+      const users = (usersResult as any[]).map((row) => ({
+        identifyId: row.identify_id,
+        userId: row.user_id,
+        name: row.name || null,
+        email: row.email || null,
+        avatar: row.avatar || null,
+        isIdentified: true,
+        lastSeen: row.last_seen ? new Date(row.last_seen).toISOString() : new Date().toISOString(),
+        country: row.country || null,
+        platform: row.platform || 'Web',
+        appVersion: row.app_version || '0.0.0',
+      }));
+
+      return {
+        users,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages,
+        },
+      };
+    }
 
     // Build search condition
     const searchCondition =

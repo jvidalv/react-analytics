@@ -169,3 +169,41 @@ export const analyticsTest = pgTable(
     ),
   }),
 );
+
+// Materialized view for identified users (production)
+export const analyticsIdentifiedUsersMv = pgTable(
+  "analytics_identified_users_mv",
+  {
+    apiKey: text("api_key").notNull(),
+    identifyId: text("identify_id").notNull(),
+    userId: text("user_id").notNull(),
+    name: text("name"),
+    email: text("email"),
+    avatar: text("avatar"),
+    platform: text("platform"),
+    country: text("country"),
+    appVersion: text("app_version"),
+    firstSeen: timestamp("first_seen", { mode: "date", withTimezone: true }).notNull(),
+    lastSeen: timestamp("last_seen", { mode: "date", withTimezone: true }).notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).notNull(),
+  },
+);
+
+// Materialized view for identified users (test)
+export const analyticsTestIdentifiedUsersMv = pgTable(
+  "analytics_test_identified_users_mv",
+  {
+    apiKey: text("api_key").notNull(),
+    identifyId: text("identify_id").notNull(),
+    userId: text("user_id").notNull(),
+    name: text("name"),
+    email: text("email"),
+    avatar: text("avatar"),
+    platform: text("platform"),
+    country: text("country"),
+    appVersion: text("app_version"),
+    firstSeen: timestamp("first_seen", { mode: "date", withTimezone: true }).notNull(),
+    lastSeen: timestamp("last_seen", { mode: "date", withTimezone: true }).notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).notNull(),
+  },
+);

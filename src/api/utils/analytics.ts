@@ -1,5 +1,11 @@
 import { db } from "@/db";
-import { analytics, analyticsTest, analyticsApiKeys } from "@/db/schema";
+import {
+  analytics,
+  analyticsTest,
+  analyticsApiKeys,
+  analyticsIdentifiedUsersMv,
+  analyticsTestIdentifiedUsersMv
+} from "@/db/schema";
 import { eq, and, gte, sql, count } from "drizzle-orm";
 import type { AnalyticsEvent, EventType } from "@/api/schemas/analytics.schema";
 import { MAX_PROPERTIES_LENGTH } from "@/api/schemas/analytics.schema";
@@ -8,11 +14,44 @@ import { uuidv7 } from "uuidv7";
 // Type for analytics table
 export type AnalyticsTable = typeof analytics | typeof analyticsTest;
 
+// Type for identified users materialized view
+export type IdentifiedUsersMvTable = typeof analyticsIdentifiedUsersMv | typeof analyticsTestIdentifiedUsersMv;
+
 /**
  * Get the appropriate analytics table based on API key
  */
 export const getAnalyticsTable = (isTestKey: boolean): AnalyticsTable => {
   return isTestKey ? analyticsTest : analytics;
+};
+
+/**
+ * Get the appropriate identified users materialized view based on API key
+ */
+export const getIdentifiedUsersMv = (isTestKey: boolean): IdentifiedUsersMvTable => {
+  return isTestKey ? analyticsTestIdentifiedUsersMv : analyticsIdentifiedUsersMv;
+};
+
+/**
+ * Refresh materialized views for identified users
+ * This should be called periodically (e.g., via cron) or after bulk data changes
+ */
+export const refreshIdentifiedUsersMaterializedViews = async () => {
+  try {
+    console.log("[Analytics] Refreshing identified users materialized views...");
+    const startTime = Date.now();
+
+    // Refresh both production and test views concurrently
+    await Promise.all([
+      db.execute(sql`REFRESH MATERIALIZED VIEW CONCURRENTLY analytics_identified_users_mv`),
+      db.execute(sql`REFRESH MATERIALIZED VIEW CONCURRENTLY analytics_test_identified_users_mv`),
+    ]);
+
+    const duration = Date.now() - startTime;
+    console.log(`[Analytics] Materialized views refreshed successfully in ${duration}ms`);
+  } catch (error) {
+    console.error("[Analytics] Failed to refresh materialized views:", error);
+    throw error;
+  }
 };
 
 /**

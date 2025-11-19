@@ -14,7 +14,6 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Copy, Check } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import {
   useAnalyticsUserStats,
@@ -27,9 +26,7 @@ import { useMe } from "@/domains/user/me.api";
 import { useAnalyticsOverview } from "@/domains/analytics/analytics.api";
 import { useNewJoiners } from "@/domains/app/users/new-joiners.api";
 import { TrendingUp, TrendingDown, Globe } from "lucide-react";
-import { useClipboard } from "@/hooks/use-clipboard";
-import { toast } from "sonner";
-import { getAvatarFromUuid, getUuidLastDigits } from "@/lib/avatar-utils";
+import { getUuidLastDigits } from "@/lib/avatar-utils";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
 import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";
@@ -63,95 +60,105 @@ const PageWrapper = ({ children }: PropsWithChildren) => {
   );
 };
 
+// Helper function to get initials from name or email
+const getInitials = (name?: string | null, email?: string | null): string => {
+  if (name) {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }
+  if (email) {
+    return email.slice(0, 2).toUpperCase();
+  }
+  return "??";
+};
+
 // New Joiner Row Component
 const NewJoinerRow = ({ user }: { user: any }) => {
-  const [copiedId, copyIdToClipboard] = useClipboard();
-  const [copiedUserId, copyUserIdToClipboard] = useClipboard();
-
   const displayName = user.name || user.email || user.identifyId;
-  const avatarEmoji = getAvatarFromUuid(user.identifyId);
   const lastDigits = getUuidLastDigits(user.identifyId);
   const firstSeenDate = new Date(user.firstSeen);
+  const initials = getInitials(user.name, user.email);
 
   return (
     <div
       key={user.identifyId}
-      className="flex items-center justify-between p-4"
+      className="flex items-center justify-between p-2 gap-4"
     >
       {/* User Info */}
-      <div className="flex items-center gap-3 flex-1">
-        <Avatar className="size-10">
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        <Avatar className="size-10 shrink-0">
           {user.avatar ? (
             <AvatarImage src={user.avatar} alt={displayName} />
           ) : null}
-          <AvatarFallback className="text-base">
-            {avatarEmoji}
+          <AvatarFallback className="text-sm font-medium">
+            {initials}
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col">
-          <span className="font-medium">
+        <div className="flex flex-col min-w-0">
+          <span className="font-medium truncate">
             {user.name || user.email || `User ${lastDigits}`}
           </span>
           {user.email && user.name && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-muted-foreground truncate">
               {user.email}
             </span>
           )}
           {!user.name && !user.email && (
-            <span className="text-xs font-mono text-muted-foreground">
+            <span className="text-xs font-mono text-muted-foreground truncate">
               {user.identifyId}
             </span>
           )}
-          <span className="text-xs text-muted-foreground">
-            Joined {formatDistanceToNow(firstSeenDate, { addSuffix: true })}
-          </span>
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex justify-end gap-2 w-[100px]">
-        <TooltipWrapper
-          content={copiedId ? "Copied!" : "Copy Identify ID"}
-        >
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-8"
-            onClick={() => {
-              copyIdToClipboard(user.identifyId);
-              toast.success("Identify ID copied");
-            }}
-          >
-            {copiedId ? (
-              <Check className="size-4 text-green-600" />
-            ) : (
-              <Copy className="size-4" />
-            )}
-          </Button>
-        </TooltipWrapper>
-        {user.userId && (
-          <TooltipWrapper
-            content={copiedUserId ? "Copied!" : "Copy User ID"}
-          >
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-8"
-              onClick={() => {
-                if (user.userId) {
-                  copyUserIdToClipboard(user.userId);
-                  toast.success("User ID copied");
-                }
-              }}
-            >
-              {copiedUserId ? (
-                <Check className="size-4 text-green-600" />
-              ) : (
-                <Copy className="size-4" />
-              )}
-            </Button>
+      {/* Platform */}
+      <div className="flex items-center gap-1.5 w-20 shrink-0">
+        {user.platform === "iOS" && (
+          <TooltipWrapper content="iOS">
+            <IosIcon className="size-4" />
           </TooltipWrapper>
         )}
+        {user.platform === "Android" && (
+          <TooltipWrapper content="Android">
+            <AndroidIcon className="size-4" />
+          </TooltipWrapper>
+        )}
+        {user.platform === "Web" && (
+          <TooltipWrapper content="Web">
+            <Globe className="size-4 text-muted-foreground" />
+          </TooltipWrapper>
+        )}
+        <span className="text-sm">{user.platform}</span>
+      </div>
+
+      {/* Country */}
+      <div className="w-16 shrink-0 text-center">
+        {user.country ? (
+          <TooltipWrapper content={getCountryName(user.country)}>
+            <span className="text-lg">{countryCodeToFlag(user.country)}</span>
+          </TooltipWrapper>
+        ) : (
+          <span className="text-xs text-muted-foreground">—</span>
+        )}
+      </div>
+
+      {/* Version */}
+      <div className="w-20 shrink-0">
+        <span className="text-xs px-2 py-1 bg-muted rounded">
+          {user.appVersion || "—"}
+        </span>
+      </div>
+
+      {/* Joined Time */}
+      <div className="w-32 text-right shrink-0">
+        <TooltipWrapper content={format(firstSeenDate, "PPpp")}>
+          <span className="text-sm text-muted-foreground">
+            {formatDistanceToNow(firstSeenDate, { addSuffix: true })}
+          </span>
+        </TooltipWrapper>
       </div>
     </div>
   );
