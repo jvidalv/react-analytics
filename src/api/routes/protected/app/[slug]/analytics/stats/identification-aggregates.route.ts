@@ -69,6 +69,7 @@ export const identificationAggregatesRoute = new Elysia().get(
           END AS platform
         FROM ${targetTable}
         WHERE api_key = ${apiKey}
+          AND type = 'identify'
         ORDER BY identify_id, date DESC
       ) sub
     `);
