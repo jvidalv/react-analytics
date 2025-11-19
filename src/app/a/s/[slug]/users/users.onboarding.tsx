@@ -160,6 +160,36 @@ function App() {
         </p>
       </div>
 
+      {/* Mode Indicator Banner */}
+      <div className="border bg-muted/30 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="mb-2 text-base font-semibold">
+              {devModeEnabled ? "🟠 Development Mode" : "🟢 Production Mode"}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {devModeEnabled
+                ? "You're viewing test data. Use the test API key below for local development."
+                : "You're viewing production data. Use the production API key below for your live app."}
+            </p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              💡 Tip: Toggle between modes anytime to separate development and production analytics.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Label htmlFor="dev-mode-toggle" className="text-sm font-medium">
+              {devModeEnabled ? "DEV" : "PROD"}
+            </Label>
+            <Switch
+              id="dev-mode-toggle"
+              checked={devModeEnabled}
+              onCheckedChange={handleToggleDevMode}
+              className={cn(devModeEnabled && "data-[state=checked]:bg-orange-500")}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Step 1: Choose Framework */}
       <div className="space-y-4">
         <div>
