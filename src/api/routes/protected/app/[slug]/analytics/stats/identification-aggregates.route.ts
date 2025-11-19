@@ -32,8 +32,15 @@ export const identificationAggregatesRoute = new Elysia().get(
     const sixtyDaysAgo = new Date(now - 60 * 24 * 60 * 60 * 1000);
 
     // Query overall identification stats (all time) with platform breakdown
-    // Use subquery to determine if identify_id has ever been identified
+    // Use CTE + LEFT JOIN for performance (eliminates correlated subquery)
     const overallResult = await db.execute(sql`
+      WITH identified_users AS (
+        SELECT DISTINCT identify_id
+        FROM ${targetTable}
+        WHERE api_key = ${apiKey}
+          AND type = 'identify'
+          AND user_id IS NOT NULL
+      )
       SELECT
         COUNT(*) AS total,
         COUNT(*) FILTER (WHERE is_identified) AS identified,
@@ -54,31 +61,24 @@ export const identificationAggregatesRoute = new Elysia().get(
         COUNT(*) FILTER (WHERE platform = 'web' AND is_identified) AS web_identified,
         COUNT(*) FILTER (WHERE platform = 'web' AND NOT is_identified) AS web_anonymous
       FROM (
-        SELECT DISTINCT ON (identify_id)
-          identify_id,
+        SELECT DISTINCT ON (t.identify_id)
+          t.identify_id,
           CASE
-            WHEN info->>'platform' = 'ios' THEN 'ios'
-            WHEN info->>'platform' = 'android' THEN 'android'
-            WHEN info->>'platform' = 'web' AND (
-              info->'requestMetadata'->>'userAgent' LIKE '%iPhone%' OR
-              info->'requestMetadata'->>'userAgent' LIKE '%iPad%'
+            WHEN t.info->>'platform' = 'ios' THEN 'ios'
+            WHEN t.info->>'platform' = 'android' THEN 'android'
+            WHEN t.info->>'platform' = 'web' AND (
+              t.info->'requestMetadata'->>'userAgent' LIKE '%iPhone%' OR
+              t.info->'requestMetadata'->>'userAgent' LIKE '%iPad%'
             ) THEN 'ios'
-            WHEN info->>'platform' = 'web' AND
-              info->'requestMetadata'->>'userAgent' LIKE '%Android%' THEN 'android'
+            WHEN t.info->>'platform' = 'web' AND
+              t.info->'requestMetadata'->>'userAgent' LIKE '%Android%' THEN 'android'
             ELSE 'web'
           END AS platform,
-          -- Check if this identify_id has ever had an identify event with user_id
-          (
-            SELECT COUNT(*) > 0
-            FROM ${targetTable} t2
-            WHERE t2.api_key = ${apiKey}
-              AND t2.identify_id = ${targetTable}.identify_id
-              AND t2.type = 'identify'
-              AND t2.user_id IS NOT NULL
-          ) AS is_identified
-        FROM ${targetTable}
-        WHERE api_key = ${apiKey}
-        ORDER BY identify_id, date DESC
+          (iu.identify_id IS NOT NULL) AS is_identified
+        FROM ${targetTable} t
+        LEFT JOIN identified_users iu ON iu.identify_id = t.identify_id
+        WHERE t.api_key = ${apiKey}
+        ORDER BY t.identify_id, t.date DESC
       ) sub
     `);
 
