@@ -16,7 +16,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "name",
     header: "Name",
-    size: 9999, // Make this column take maximum available space
+    // No size specified - will take remaining space with table-fixed layout
     cell: ({ row }) => {
       const user = row.original;
       const isAnonymous = !user.name && !user.email;
@@ -64,6 +64,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "platform",
     header: "Platform",
+    size: 120,
     cell: ({ row }) => {
       const user = row.original;
       const platformIcon = {
@@ -83,6 +84,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "country",
     header: "Country",
+    size: 150,
     cell: ({ row }) => {
       const user = row.original;
       return (
@@ -104,6 +106,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "appVersion",
     header: "Version",
+    size: 100,
     cell: ({ row }) => {
       const user = row.original;
       return (
@@ -116,6 +119,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "lastSeen",
     header: () => <div className="text-right">Actions</div>,
+    size: 250,
     cell: ({ row }) => {
       const lastSeen = row.getValue("lastSeen") as string;
       return (

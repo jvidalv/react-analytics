@@ -24,6 +24,7 @@ interface DataTableProps<TData, TValue> {
     platform: string;
     country: string;
     version: string;
+    identified: boolean;
   };
   setFilters?: (filters: Partial<{
     page: number;
@@ -31,6 +32,7 @@ interface DataTableProps<TData, TValue> {
     platform: string;
     country: string;
     version: string;
+    identified: boolean;
   }>) => void;
   filterOptions?: {
     countries: string[];
@@ -58,13 +60,18 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="border">
-      <Table>
+      <Table className="table-fixed">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
+                const width = header.getSize();
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className="text-muted-foreground"
+                    style={width !== 150 ? { width: `${width}px` } : undefined}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -84,11 +91,17 @@ export function DataTable<TData, TValue>({
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+                {row.getVisibleCells().map((cell) => {
+                  const width = cell.column.getSize();
+                  return (
+                    <TableCell
+                      key={cell.id}
+                      style={width !== 150 ? { width: `${width}px` } : undefined}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))
           ) : (
