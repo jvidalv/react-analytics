@@ -25,7 +25,10 @@ import {
 } from "@/domains/app/users/stats/users-stats.api";
 import { UsersErrorChart } from "@/app/a/s/[slug]/users/users.error-chart";
 import { useMe } from "@/domains/user/me.api";
-import { useAnalyticsOverview } from "@/domains/analytics/analytics.api";
+import {
+  useAnalyticsOverview,
+  useAnalyticsOverviewCombined,
+} from "@/domains/analytics/analytics.api";
 import { TrendingUp, TrendingDown, Globe } from "lucide-react";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
@@ -72,14 +75,16 @@ export default function AnalyticsPage() {
   const apiKey = me?.devModeEnabled ? apiKeys?.apiKeyTest : apiKeys?.apiKey;
   const analyticsUsers = useAnalyticsUsers(apiKey, page);
   useAnalyticsUserStats(apiKey);
+  // Use combined overview to check if ANY data exists (dev or prod)
+  const { overviewCombined, isLoading: isLoadingOverviewCombined } =
+    useAnalyticsOverviewCombined(app?.slug, {
+      // Poll every 5 seconds during onboarding
+      refetchInterval: (data) => (!data?.hasAnyData ? 5000 : false),
+    });
+
   const { overview, isLoading: isLoadingOverview } = useAnalyticsOverview(
     app?.slug,
     me?.devModeEnabled,
-    {
-      // Poll every 5 seconds when there are no users (onboarding state)
-      // Automatically stops polling once first events arrive
-      refetchInterval: (data) => (data?.totalUsers === 0 ? 5000 : false),
-    },
   );
   const { platforms, isLoading: isLoadingPlatforms } = usePlatformAggregates(
     app?.slug,
@@ -111,11 +116,15 @@ export default function AnalyticsPage() {
     );
   }
 
-  // Show onboarding when there are no users
-  if (!isLoadingOverview && overview?.totalUsers === 0) {
+  // Show onboarding when there are no users in EITHER dev or prod
+  if (!isLoadingOverviewCombined && !overviewCombined?.hasAnyData) {
     return (
       <PageWrapper>
-        <UsersOnboarding apiKey={apiKeys?.apiKey} apiKeyTest={apiKeys?.apiKeyTest} />
+        <UsersOnboarding
+          apiKey={apiKeys?.apiKey}
+          apiKeyTest={apiKeys?.apiKeyTest}
+          devModeEnabled={me?.devModeEnabled}
+        />
       </PageWrapper>
     );
   }
