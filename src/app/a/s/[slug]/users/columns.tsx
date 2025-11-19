@@ -107,7 +107,7 @@ export const columns: ColumnDef<User>[] = [
       const lastSeen = row.getValue("lastSeen") as string;
       return (
         <div className="flex items-center justify-end gap-2">
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-muted-foreground mr-1">
             {formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}
           </span>
           <Button
