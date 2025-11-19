@@ -43,7 +43,7 @@ const TableSkeleton = () => (
   <div className="space-y-4">
     <div className="border">
       {/* Table header */}
-      <div className="flex items-center border-b px-4 h-12">
+      <div className="flex items-center border-b px-2 h-12">
         <div className="flex-1">
           <Skeleton className="h-4 w-16" />
         </div>
@@ -66,7 +66,7 @@ const TableSkeleton = () => (
 
       {/* Table rows */}
       {Array.from({ length: 10 }).map((_, i) => (
-        <div key={i} className="flex items-center border-t px-4 h-16">
+        <div key={i} className="flex items-center border-t px-2 h-16">
           {/* Name column */}
           <div className="flex-1 flex items-center gap-3">
             <Skeleton className="size-10" />
