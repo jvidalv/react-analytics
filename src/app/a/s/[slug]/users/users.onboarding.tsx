@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { cn } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useToggleDevMode } from "@/domains/user/me.api";
 
 type Framework = "nextjs" | "expo" | "react-router" | "react";
 type PackageManager = "npm" | "yarn" | "pnpm" | "bun" | "expo";
@@ -12,9 +15,14 @@ type PackageManager = "npm" | "yarn" | "pnpm" | "bun" | "expo";
 interface OnboardingProps {
   apiKey?: string;
   apiKeyTest?: string;
+  devModeEnabled?: boolean;
 }
 
-export function UsersOnboarding({ apiKey, apiKeyTest }: OnboardingProps) {
+export function UsersOnboarding({
+  apiKey,
+  apiKeyTest,
+  devModeEnabled,
+}: OnboardingProps) {
   const [selectedFramework, setSelectedFramework] = useState<Framework | null>(null);
   const [selectedPM, setSelectedPM] = useState<PackageManager>("npm");
 
@@ -22,6 +30,12 @@ export function UsersOnboarding({ apiKey, apiKeyTest }: OnboardingProps) {
   const [copiedTestKey, copyTestKey] = useClipboard();
   const [copiedInstall, copyInstall] = useClipboard();
   const [copiedCode, copyCode] = useClipboard();
+
+  const { toggleDevMode } = useToggleDevMode();
+
+  const handleToggleDevMode = async (checked: boolean) => {
+    await toggleDevMode(checked);
+  };
 
   const frameworks = [
     { id: "nextjs" as Framework, name: "Next.js", icon: "▲" },
