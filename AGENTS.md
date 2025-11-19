@@ -132,7 +132,9 @@ yarn dev
 yarn dev          # Start development server
 yarn build        # Production build
 yarn db           # Start local PostgreSQL
-yarn db:push      # Push database schema
+yarn db:generate  # Generate database migration
+yarn db:migrate   # Apply database migrations
+yarn db:reset     # ⚠️ Drop all tables and run fresh migrations
 yarn test         # Run tests (in analytics package)
 ```
 
@@ -209,9 +211,10 @@ yarn test         # Run tests (in analytics package)
    **Why:** JavaScript Date calculations are type-safe, database-agnostic, more testable, and consistent with codebase patterns.
 
 3. **ALWAYS use db:generate + db:migrate for database schema changes**
-   - **NEVER use `yarn db:push`** - It's deprecated and bypasses migration tracking
+   - **NEVER bypass the migration system** - Always use generate → migrate workflow
    - ALWAYS generate migrations for schema changes
    - ALWAYS review generated SQL before applying
+   - Edit generated SQL when needed (e.g., for materialized views)
    - ALWAYS commit schema.ts and migration files together
 
    **DO ✅:**
@@ -225,8 +228,9 @@ yarn test         # Run tests (in analytics package)
    # 2. Generate migration
    yarn db:generate
 
-   # 3. Review the SQL
+   # 3. Review and edit the SQL if needed
    cat drizzle/0001_*.sql
+   # For materialized views: replace CREATE TABLE with CREATE MATERIALIZED VIEW
 
    # 4. Apply migration locally
    yarn db:migrate
@@ -238,8 +242,8 @@ yarn test         # Run tests (in analytics package)
 
    **DON'T ❌:**
    ```bash
-   # Never use db:push (deprecated)
-   yarn db:push  # ❌
+   # Never bypass migrations with push/raw SQL
+   yarn db:push  # ❌ Command removed
 
    # Never commit schema without migration files
    git add src/db/schema.ts  # ❌ Missing drizzle/ folder
@@ -249,7 +253,19 @@ yarn test         # Run tests (in analytics package)
    vim drizzle/0000_*.sql  # ❌ Create new migration instead
    ```
 
+   **Special Case - Materialized Views:**
+   ```bash
+   # Drizzle generates CREATE TABLE - you must manually edit
+   yarn db:generate
+   # Edit drizzle/XXXX.sql:
+   # Replace: CREATE TABLE "my_view" (...)
+   # With: CREATE MATERIALIZED VIEW my_view AS SELECT ...
+   yarn db:migrate
+   ```
+
    **Why:** Migrations provide version control for database schema, enable safe deployments, allow rollback capabilities, and maintain schema history. See CLAUDE.md → Database Schema Changes & Migrations for full details.
+
+   **Seed Data:**  The project includes 288k+ anonymized analytics events in `drizzle/seed-data/`. Use `yarn db:add-data <api-key> <api-key-test>` to inject after creating an app. See `DATABASE_SETUP.md` for details.
 
 4. **NEVER manually cast API responses when using Eden Treaty**
    - Eden Treaty provides automatic end-to-end type safety

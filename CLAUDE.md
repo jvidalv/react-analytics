@@ -382,7 +382,8 @@ yarn db                     # Start Docker Postgres
 yarn db:generate            # Generate migration from schema changes
 yarn db:migrate             # Run pending migrations
 yarn db:studio              # Visual database browser
-yarn db:push                # ⚠️ DEPRECATED - Use db:generate + db:migrate
+yarn db:reset               # ⚠️ DESTRUCTIVE - Drop all tables and run fresh migrations
+yarn db:add-data <api-key> <api-key-test>  # Inject anonymized seed data (288k+ events)
 
 # Analytics Package
 cd packages/analytics
@@ -409,7 +410,7 @@ yarn ngrok                  # Expose localhost via ngrok
 
 #### Workflow Overview
 
-This project uses **Drizzle ORM migrations** for all schema changes. The `db:push` command is deprecated and should not be used.
+This project uses **Drizzle ORM migrations** for all schema changes. **Never** bypass the migration system.
 
 #### Required Workflow
 
@@ -418,8 +419,9 @@ When making any changes to `src/db/schema.ts`:
 1. **Modify the schema** in `src/db/schema.ts`
 2. **Generate migration**: `yarn db:generate`
 3. **Review the SQL** in `drizzle/XXXX_*.sql`
-4. **Apply locally**: `yarn db:migrate`
-5. **Commit both files**: schema.ts + migration files
+4. **Edit if needed** (e.g., for materialized views)
+5. **Apply locally**: `yarn db:migrate`
+6. **Commit both files**: schema.ts + migration files
 
 ```bash
 # Example: Adding a new column
@@ -445,11 +447,38 @@ git commit -m "feat: add new column to users table"
 
 #### Important Rules
 
-- **NEVER use `yarn db:push`** - It's deprecated and bypasses migration tracking
+- **NEVER bypass migrations** - Always use the generate → migrate workflow
 - **ALWAYS generate migrations** for schema changes
 - **ALWAYS review generated SQL** before applying
 - **ALWAYS commit schema + migration files together**
 - **NEVER modify applied migrations** - Create new ones instead
+- **Edit generated migrations** when needed (e.g., materialized views, custom SQL)
+
+#### Special Cases: Materialized Views
+
+Drizzle generates `CREATE TABLE` for materialized views. You must manually edit:
+
+```bash
+# 1. Define view as table in schema.ts (for types)
+export const myView = pgTable("my_view", { /* columns */ });
+
+# 2. Generate migration
+yarn db:generate
+
+# 3. Edit generated SQL - replace CREATE TABLE with CREATE MATERIALIZED VIEW
+# Replace:
+CREATE TABLE "my_view" (...)
+# With:
+CREATE MATERIALIZED VIEW my_view AS
+SELECT ...
+FROM ...
+
+# 4. Add indexes
+CREATE UNIQUE INDEX idx_my_view_id ON my_view(id);
+
+# 5. Apply migration
+yarn db:migrate
+```
 
 #### Deployment
 
@@ -462,6 +491,7 @@ Migrations run automatically on Vercel:
 - **Location**: `drizzle/` folder at project root
 - **Format**: `drizzle/XXXX_name.sql` (auto-generated names)
 - **Meta**: `drizzle/meta/` contains snapshots and journal
+- **Seed Data**: `drizzle/seed-data/` contains anonymized analytics (not in migrations)
 - **All files must be committed** to Git
 
 #### Useful Commands
@@ -470,7 +500,28 @@ Migrations run automatically on Vercel:
 yarn db:studio              # Visual database browser (Drizzle Studio)
 yarn db:generate            # Generate migration without applying
 yarn db:migrate             # Apply pending migrations
+yarn db:reset               # ⚠️ DESTRUCTIVE - Drop all + fresh migrations
+yarn db:add-data <key1> <key2>  # Load 288k+ anonymized events
 ```
+
+#### Database Reset Workflow
+
+For a complete fresh start (useful for development):
+
+```bash
+# 1. Reset database (drops ALL data)
+yarn db:reset
+
+# 2. Start app and create account
+yarn dev
+
+# 3. Create app in UI and copy API keys
+
+# 4. Load seed data (optional - 288k+ anonymized events)
+yarn db:add-data <prod-api-key> <test-api-key>
+```
+
+See `DATABASE_SETUP.md` for full documentation on seed data and reset workflow.
 
 ### Environment Variables
 

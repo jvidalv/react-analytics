@@ -144,6 +144,12 @@ lsof -i :5434
 
 # 4. Test connection
 psql -h localhost -p 5434 -U postgres -d postgres
+
+# 5. Apply migrations if needed
+yarn db:migrate
+
+# 6. Reset database completely (⚠️ DESTRUCTIVE)
+yarn db:reset
 ```
 
 **Production (Neon)**
@@ -163,6 +169,15 @@ psql "$DATABASE_URL" -c "SELECT version();"
 - Docker not running: `docker-compose up -d`
 - Wrong DATABASE_URL in .env.local
 - Neon connection limit reached (max 100 connections)
+- Migrations not applied: Run `yarn db:migrate`
+- Schema out of sync: Run `yarn db:reset` for fresh start (⚠️ DESTRUCTIVE)
+
+**Materialized Views:**
+The project uses materialized views for identified users analytics. These are created via migrations:
+- `analytics_identified_users_mv` - Production identified users
+- `analytics_test_identified_users_mv` - Test identified users
+- Refreshed every minute by cron job (`yarn cron:watch`)
+- Manual refresh: `yarn cron:refresh-views`
 
 ---
 
