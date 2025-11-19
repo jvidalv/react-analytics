@@ -379,7 +379,10 @@ yarn start                  # Start production server
 
 # Database
 yarn db                     # Start Docker Postgres
-yarn db:push                # Push schema to database
+yarn db:generate            # Generate migration from schema changes
+yarn db:migrate             # Run pending migrations
+yarn db:studio              # Visual database browser
+yarn db:push                # ⚠️ DEPRECATED - Use db:generate + db:migrate
 
 # Analytics Package
 cd packages/analytics
@@ -398,6 +401,75 @@ yarn emails:dev             # Preview emails on :3001
 
 # Tunneling (for webhook testing)
 yarn ngrok                  # Expose localhost via ngrok
+```
+
+### Database Schema Changes & Migrations
+
+**CRITICAL: Always use the migration workflow when modifying the database schema.**
+
+#### Workflow Overview
+
+This project uses **Drizzle ORM migrations** for all schema changes. The `db:push` command is deprecated and should not be used.
+
+#### Required Workflow
+
+When making any changes to `src/db/schema.ts`:
+
+1. **Modify the schema** in `src/db/schema.ts`
+2. **Generate migration**: `yarn db:generate`
+3. **Review the SQL** in `drizzle/XXXX_*.sql`
+4. **Apply locally**: `yarn db:migrate`
+5. **Commit both files**: schema.ts + migration files
+
+```bash
+# Example: Adding a new column
+# 1. Edit src/db/schema.ts
+export const users = pgTable("user", {
+  // ... existing columns
+  newColumn: text("new_column"),
+});
+
+# 2. Generate migration
+yarn db:generate
+
+# 3. Review drizzle/0001_*.sql
+cat drizzle/0001_*.sql
+
+# 4. Apply migration locally
+yarn db:migrate
+
+# 5. Commit both files
+git add src/db/schema.ts drizzle/
+git commit -m "feat: add new column to users table"
+```
+
+#### Important Rules
+
+- **NEVER use `yarn db:push`** - It's deprecated and bypasses migration tracking
+- **ALWAYS generate migrations** for schema changes
+- **ALWAYS review generated SQL** before applying
+- **ALWAYS commit schema + migration files together**
+- **NEVER modify applied migrations** - Create new ones instead
+
+#### Deployment
+
+Migrations run automatically on Vercel:
+- **Production**: Runs `yarn db:migrate` before build
+- **Preview**: Skips migrations (faster builds, configured in `src/db/migrate.ts`)
+
+#### Migration Files
+
+- **Location**: `drizzle/` folder at project root
+- **Format**: `drizzle/XXXX_name.sql` (auto-generated names)
+- **Meta**: `drizzle/meta/` contains snapshots and journal
+- **All files must be committed** to Git
+
+#### Useful Commands
+
+```bash
+yarn db:studio              # Visual database browser (Drizzle Studio)
+yarn db:generate            # Generate migration without applying
+yarn db:migrate             # Apply pending migrations
 ```
 
 ### Environment Variables

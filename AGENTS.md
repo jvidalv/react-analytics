@@ -208,7 +208,50 @@ yarn test         # Run tests (in analytics package)
 
    **Why:** JavaScript Date calculations are type-safe, database-agnostic, more testable, and consistent with codebase patterns.
 
-3. **NEVER manually cast API responses when using Eden Treaty**
+3. **ALWAYS use db:generate + db:migrate for database schema changes**
+   - **NEVER use `yarn db:push`** - It's deprecated and bypasses migration tracking
+   - ALWAYS generate migrations for schema changes
+   - ALWAYS review generated SQL before applying
+   - ALWAYS commit schema.ts and migration files together
+
+   **DO ✅:**
+   ```bash
+   # 1. Modify schema in src/db/schema.ts
+   export const users = pgTable("user", {
+     // ... existing columns
+     newColumn: text("new_column"),
+   });
+
+   # 2. Generate migration
+   yarn db:generate
+
+   # 3. Review the SQL
+   cat drizzle/0001_*.sql
+
+   # 4. Apply migration locally
+   yarn db:migrate
+
+   # 5. Commit both files
+   git add src/db/schema.ts drizzle/
+   git commit -m "feat: add new column to users"
+   ```
+
+   **DON'T ❌:**
+   ```bash
+   # Never use db:push (deprecated)
+   yarn db:push  # ❌
+
+   # Never commit schema without migration files
+   git add src/db/schema.ts  # ❌ Missing drizzle/ folder
+   git commit -m "update schema"
+
+   # Never modify applied migrations
+   vim drizzle/0000_*.sql  # ❌ Create new migration instead
+   ```
+
+   **Why:** Migrations provide version control for database schema, enable safe deployments, allow rollback capabilities, and maintain schema history. See CLAUDE.md → Database Schema Changes & Migrations for full details.
+
+4. **NEVER manually cast API responses when using Eden Treaty**
    - Eden Treaty provides automatic end-to-end type safety
    - Backend schemas in `@/api/schemas/*.schema.ts` are the source of truth
    - Use `Static<typeof Schema>` to derive TypeScript types from Elysia schemas
@@ -236,15 +279,15 @@ yarn test         # Run tests (in analytics package)
 
    **See CLAUDE.md → Eden Treaty Type Inference for full details**
 
-4. **ALWAYS run `npx tsc --noEmit` before marking tasks complete**
+5. **ALWAYS run `npx tsc --noEmit` before marking tasks complete**
    - Validates TypeScript type safety
    - Catches errors early before build/deploy
    - Ensures code quality and prevents runtime errors
    - **This is critical** - TypeScript errors must be fixed before completion
 
-5. Validate inputs (see BUGBOT.md security section)
-6. Add proper error handling
-7. Include relevant tests
+6. Validate inputs (see BUGBOT.md security section)
+7. Add proper error handling
+8. Include relevant tests
 
 ### When Debugging
 1. Check BUGBOT.md common issues first
