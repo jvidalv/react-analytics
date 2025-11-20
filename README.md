@@ -65,6 +65,46 @@ yarn db:add-data <prod-api-key> <test-api-key>
 
 **Important:** Never bypass the migration system. Always use `yarn db:generate` → `yarn db:migrate` for schema changes. See `DATABASE_SETUP.md` for complete database documentation.
 
+## Privacy & Compliance
+
+### Privacy-First Design
+
+React Analytics is built with privacy at its core:
+
+- **Self-Hosted** - Your data stays on your infrastructure, never shared with third parties
+- **Open Source** - Fully auditable code, no hidden tracking
+- **Data Ownership** - Complete control over your analytics data
+- **GDPR-Friendly** - Designed to support compliance when properly configured
+- **No External Dependencies** - All data processing happens on your servers
+
+### GDPR Considerations
+
+⚠️ **Important**: This library is designed to be GDPR-friendly when self-hosted, but **you are responsible for ensuring compliance** with applicable data protection laws.
+
+**If you collect user identities** (name, email) using the `identify()` method, you **MUST**:
+
+- ✅ Obtain explicit user consent before tracking
+- ✅ Implement data access and deletion mechanisms
+- ✅ Maintain a data retention policy
+- ✅ Provide clear privacy notices to users
+- ✅ Honor user rights (access, deletion, portability)
+
+**Documentation:**
+- [PRIVACY.md](./PRIVACY.md) - Technical privacy features and data collection details
+- [GDPR.md](./GDPR.md) - GDPR compliance implementation guide with code examples
+- [DISCLAIMER.md](./DISCLAIMER.md) - Legal disclaimer and responsibilities
+- [LICENSE](./LICENSE) - MIT License with data protection notice
+
+### Privacy vs SaaS Analytics
+
+| Feature | React Analytics | Google Analytics | Mixpanel |
+|---------|----------------|------------------|----------|
+| Self-Hosted | ✅ Yes | ❌ No | ❌ No |
+| Open Source | ✅ Yes | ❌ No | ❌ No |
+| Full Data Ownership | ✅ Yes | ❌ No | ❌ No |
+| No Third-Party Sharing | ✅ Yes | ❌ No | ❌ No |
+| Your Infrastructure | ✅ Yes | ❌ No | ❌ No |
+
 ## Tech Stack
 
 - **Next.js 16** - React framework with App Router

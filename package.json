@@ -13,6 +13,7 @@
   "bugs": {
     "url": "https://github.com/jvidalv/react-analytics/issues"
   },
+  "license": "MIT",
   "workspaces": [
     "packages/*"
   ],

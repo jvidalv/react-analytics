@@ -1,0 +1,48 @@
+MIT License
+
+Copyright (c) 2025 Josep Vidal
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+DATA PROTECTION NOTICE
+
+This software processes personal data. You are solely responsible for:
+
+- Ensuring compliance with applicable data protection laws (including but not
+  limited to GDPR, CCPA, PIPEDA, and other privacy regulations)
+- Obtaining necessary consents from users before collecting their data
+- Implementing data subject rights (access, deletion, rectification, portability)
+- Maintaining appropriate technical and organizational security measures
+- Creating and enforcing data retention and deletion policies
+- Providing clear privacy notices to users
+- Conducting Data Protection Impact Assessments where required
+- Maintaining records of processing activities
+- Reporting data breaches to authorities and affected individuals as required
+
+The authors and copyright holders provide NO warranty regarding compliance
+with data protection regulations and accept NO liability for your use of
+this software or any resulting data protection violations, fines, penalties,
+or damages.
+
+YOU ARE THE DATA CONTROLLER. This software is a tool. Compliance with data
+protection laws is YOUR responsibility as the implementer and operator.
+
+For guidance on implementing GDPR compliance, see GDPR.md in this repository.
