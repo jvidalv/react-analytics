@@ -179,7 +179,6 @@ cp .env.example .env.local
 ```env
 # Database (local development)
 DATABASE_URL=postgresql://postgres:postgres@localhost:5434/postgres
-AUTH_DRIZZLE_URL=postgresql://postgres:postgres@localhost:5434/postgres
 
 # Authentication
 AUTH_SECRET=your-secret-key-here  # Generate: openssl rand -base64 32
