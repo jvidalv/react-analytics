@@ -81,17 +81,6 @@ export const apps = pgTable("apps", {
   updatedAt: timestamp().notNull().defaultNow(),
 });
 
-export const aiRequests = pgTable("ai_requests", {
-  id: uuid().primaryKey().defaultRandom(),
-  userId: uuid()
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  prompt: jsonb("prompt"),
-  response: jsonb("response"),
-  status: text().default("pending").notNull(), // Can be "pending", "success", "failed", or "rejected"
-  createdAt: timestamp().notNull().defaultNow(),
-});
-
 export const analyticsApiKeys = pgTable("analytics_api_keys", {
   id: uuid().primaryKey().defaultRandom(),
   userId: uuid()

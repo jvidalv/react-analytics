@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export const JoinSection = () => {
   return (
-    <section id="join" className="px-6 py-32 sm:border-t-2 sm:px-0 sm:py-36">
+    <section id="join" className="px-6 py-32 sm:px-0 sm:py-36">
       <div className="relative mx-auto max-w-6xl">
         <div className="absolute top-[132px] opacity-50 sm:top-0 sm:opacity-100">
           <div className="size-32 bg-gray-900" />
