@@ -183,48 +183,45 @@ AUTH_DRIZZLE_URL=postgresql://postgres:postgres@localhost:5434/postgres
 
 # Authentication
 AUTH_SECRET=your-secret-key-here  # Generate: openssl rand -base64 32
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 
-# Cron (for materialized view refresh)
-CRON_SECRET=your-cron-secret  # Only needed in production
-```
-
-### OAuth Providers
-
-Configure at least one OAuth provider for authentication:
-
-```env
-# Google OAuth (https://console.cloud.google.com)
-AUTH_GOOGLE_ID=your-google-client-id
-AUTH_GOOGLE_SECRET=your-google-client-secret
-
-# GitHub OAuth (https://github.com/settings/developers)
+# OAuth (configure at least one provider)
+# GitHub: https://github.com/settings/developers
 AUTH_GITHUB_ID=your-github-client-id
 AUTH_GITHUB_SECRET=your-github-client-secret
 
-# Apple OAuth (optional)
-AUTH_APPLE_ID=your-apple-id
-AUTH_APPLE_SECRET=your-apple-secret
+# Google: https://console.cloud.google.com
+AUTH_GOOGLE_ID=your-google-client-id
+AUTH_GOOGLE_SECRET=your-google-client-secret
+```
+
+### Production Variables
+
+```env
+# Cron secret for materialized view refresh
+CRON_SECRET=your-cron-secret  # Generate: openssl rand -base64 32
+
+# Base URL (defaults to http://localhost:3000)
+BASE_URL=https://your-production-domain.com
 ```
 
 ### Optional Variables
 
 ```env
-# Stripe (only if using payment features)
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET_KEY=whsec_...
+# Email service (Resend)
+RESEND_API_KEY=re_...
 
-# AWS S3 (only if using file uploads)
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-AWS_REGION=us-east-1
-S3_BUCKET_NAME=...
-S3_BUCKET_URL=...
-
-# OpenAI (only if using AI features)
+# AI features (OpenAI)
 OPENAI_API_KEY=sk-...
 
-# Resend (only if using transactional emails)
-RESEND_API_KEY=re_...
+# Payment processing (Stripe)
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET_KEY=whsec_...
+PRODUCT_PRO_PLAN_ID=prod_...
+PRODUCT_STARTER_PLAN_ID=prod_...
+NEXT_PUBLIC_FREE_PLAN=https://...
+NEXT_PUBLIC_STARTER_PLAN=https://...
+NEXT_PUBLIC_PRO_PLAN=https://...
 ```
 
 ## Project Structure
