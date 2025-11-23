@@ -1,6 +1,11 @@
-# React Analytics
+<div align="center">
+  <img src="https://github.com/jvidalv/react-analytics/blob/main/public/assets/images/logo.png" alt="React Analytics Logo" width="200" />
+  <h1>React Analytics</h1>
+  <p>Privacy-first analytics platform for React applications. Track user behavior, monitor errors, and gain insights without compromising privacy.</p>
 
-Privacy-first analytics platform for React applications. Track user behavior, monitor errors, and gain insights without compromising privacy.
+  [![npm version](https://badge.fury.io/js/@jvidalv%2Freact-analytics.svg)](https://www.npmjs.com/package/@jvidalv/react-analytics)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+</div>
 
 ## Open Source
 
@@ -59,9 +64,6 @@ yarn db:studio
 
 # Reset database (⚠️ DESTRUCTIVE - drops all tables)
 yarn db:reset
-
-# Load 288k+ anonymized analytics events (after creating an app)
-yarn db:add-data <prod-api-key> <test-api-key>
 ```
 
 **Important:** Never bypass the migration system. Always use `yarn db:generate` → `yarn db:migrate` for schema changes. See `DATABASE_SETUP.md` for complete database documentation.
@@ -122,7 +124,16 @@ React Analytics is built with privacy at its core:
 
 ## Analytics Package
 
+📦 **NPM Package:** [`@jvidalv/react-analytics`](https://www.npmjs.com/package/@jvidalv/react-analytics)
+
 This monorepo includes the `@jvidalv/react-analytics` package in `packages/analytics`. This is the open source npm package that enables analytics tracking in React applications.
+
+```bash
+# Install the package
+npm install @jvidalv/react-analytics
+# or
+yarn add @jvidalv/react-analytics
+```
 
 ### Features
 
@@ -228,11 +239,10 @@ react-analytics/
 │   └── components/              # UI components
 ├── drizzle/                     # Database migrations
 │   ├── 0000_*.sql               # Migration files
-│   ├── meta/                    # Migration metadata
-│   └── seed-data/               # Anonymized analytics (288k+ events)
+│   └── meta/                    # Migration metadata
 ├── scripts/                     # Utility scripts
-│   ├── seed-analytics.ts        # Load seed data
 │   ├── reset-database.ts        # Reset database
+│   ├── run-cron.ts              # Run cron tasks manually
 │   └── watch-crons.ts           # Cron watcher for dev
 └── CLAUDE.md                    # AI reference guide
 ```
@@ -298,17 +308,6 @@ cd packages/analytics
 yarn test              # Run tests
 yarn test:watch        # Watch mode
 yarn test:coverage     # Coverage report
-```
-
-### Integration Testing
-
-The project includes 288k+ anonymized analytics events for testing:
-
-```bash
-# 1. Create an app in the dashboard
-# 2. Copy the API keys
-# 3. Load seed data
-yarn db:add-data <prod-api-key> <test-api-key>
 ```
 
 ## Deployment
