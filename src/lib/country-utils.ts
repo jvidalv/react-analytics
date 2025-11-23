@@ -24,7 +24,7 @@ export function countryCodeToFlag(countryCode: string | null): string {
  */
 export function getCountryName(
   countryCode: string | null,
-  locale: string = "en"
+  locale: string = "en",
 ): string {
   if (!countryCode) {
     return "Unknown";

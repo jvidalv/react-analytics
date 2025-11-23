@@ -18,11 +18,13 @@ This guide helps you implement GDPR compliance when using React Analytics. **Thi
 ### What is GDPR?
 
 The General Data Protection Regulation (GDPR) is EU law that protects personal data of EU residents. It applies if you:
+
 - Have users in the EU
 - Process data of EU residents
 - Monitor behavior of individuals in the EU
 
 **Key Principles:**
+
 - **Lawfulness**: Have legal basis for processing
 - **Transparency**: Be clear about data collection
 - **Purpose Limitation**: Only collect for specified purposes
@@ -35,6 +37,7 @@ The General Data Protection Regulation (GDPR) is EU law that protects personal d
 ### When Does GDPR Apply to Analytics?
 
 ✅ **GDPR Applies** if you collect:
+
 - Email addresses
 - Names
 - User IDs linked to individuals
@@ -42,6 +45,7 @@ The General Data Protection Regulation (GDPR) is EU law that protects personal d
 - Device identifiers linked to individuals
 
 ❌ **GDPR May Not Apply** for:
+
 - Truly anonymous data
 - Aggregated statistics
 - Non-identifiable device UUIDs (if not linked to users)
@@ -55,6 +59,7 @@ The General Data Protection Regulation (GDPR) is EU law that protects personal d
 ### You Are the Data Controller
 
 When you use React Analytics, **YOU** are the:
+
 - **Data Controller**: You determine purposes and means of processing
 - **Responsible Party**: You ensure GDPR compliance
 - **Decision Maker**: You decide what data to collect and how
@@ -84,12 +89,12 @@ As data controller, you must:
 
 Determine your legal basis for processing:
 
-| Basis | When Applicable | Example |
-|-------|----------------|---------|
-| **Consent** | User explicitly agrees | "I agree to analytics tracking" |
-| **Contract** | Necessary for service | Analytics for app functionality |
-| **Legitimate Interest** | Balancing test passes | Security monitoring, fraud prevention |
-| **Legal Obligation** | Required by law | Tax records, legal compliance |
+| Basis                   | When Applicable        | Example                               |
+| ----------------------- | ---------------------- | ------------------------------------- |
+| **Consent**             | User explicitly agrees | "I agree to analytics tracking"       |
+| **Contract**            | Necessary for service  | Analytics for app functionality       |
+| **Legitimate Interest** | Balancing test passes  | Security monitoring, fraud prevention |
+| **Legal Obligation**    | Required by law        | Tax records, legal compliance         |
 
 **For most analytics with PII**: You need **consent** or **legitimate interest** (with balancing test).
 
@@ -159,6 +164,7 @@ Implement mechanisms for users to:
 ### Step 8: Data Protection Impact Assessment (DPIA)
 
 Required if processing is "likely to result in high risk". Conduct DPIA if:
+
 - Large-scale processing of sensitive data
 - Systematic monitoring
 - Automated decision-making
@@ -369,20 +375,17 @@ export function ConsentModal() {
 
 ```typescript
 // app/api/analytics/user-data/route.ts
-import { db } from '@/db';
-import { analytics, analyticsTest } from '@/db/schema';
-import { eq, or, sql } from 'drizzle-orm';
-import { NextRequest, NextResponse } from 'next/server';
+import { db } from "@/db";
+import { analytics, analyticsTest } from "@/db/schema";
+import { eq, or, sql } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
 
     if (!email) {
-      return NextResponse.json(
-        { error: 'Email required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
 
     // Search in production table
@@ -404,33 +407,33 @@ export async function POST(request: NextRequest) {
       requestDate: new Date().toISOString(),
       email,
       events: {
-        production: productionData.map(event => ({
+        production: productionData.map((event) => ({
           id: event.id,
           type: event.type,
           timestamp: event.date,
           properties: event.properties,
-          deviceInfo: event.info
+          deviceInfo: event.info,
         })),
-        test: testData.map(event => ({
+        test: testData.map((event) => ({
           id: event.id,
           type: event.type,
           timestamp: event.date,
           properties: event.properties,
-          deviceInfo: event.info
-        }))
+          deviceInfo: event.info,
+        })),
       },
-      totalEvents: productionData.length + testData.length
+      totalEvents: productionData.length + testData.length,
     };
 
     return NextResponse.json({
       success: true,
-      data: userData
+      data: userData,
     });
   } catch (error) {
-    console.error('Data access error:', error);
+    console.error("Data access error:", error);
     return NextResponse.json(
-      { error: 'Failed to retrieve data' },
-      { status: 500 }
+      { error: "Failed to retrieve data" },
+      { status: 500 },
     );
   }
 }
@@ -440,10 +443,10 @@ export async function POST(request: NextRequest) {
 
 ```typescript
 // app/api/analytics/delete-user-data/route.ts
-import { db } from '@/db';
-import { analytics, analyticsTest } from '@/db/schema';
-import { sql } from 'drizzle-orm';
-import { NextRequest, NextResponse } from 'next/server';
+import { db } from "@/db";
+import { analytics, analyticsTest } from "@/db/schema";
+import { sql } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -451,8 +454,8 @@ export async function POST(request: NextRequest) {
 
     if (!email && !userId) {
       return NextResponse.json(
-        { error: 'Email or userId required' },
-        { status: 400 }
+        { error: "Email or userId required" },
+        { status: 400 },
       );
     }
 
@@ -462,44 +465,40 @@ export async function POST(request: NextRequest) {
       : sql`${analytics.userId} = ${userId}`;
 
     // Delete from production
-    const deletedProduction = await db
-      .delete(analytics)
-      .where(condition);
+    const deletedProduction = await db.delete(analytics).where(condition);
 
     // Delete from test
-    const deletedTest = await db
-      .delete(analyticsTest)
-      .where(condition);
+    const deletedTest = await db.delete(analyticsTest).where(condition);
 
     // Refresh materialized views
     await db.execute(
-      sql`REFRESH MATERIALIZED VIEW analytics_identified_users_mv`
+      sql`REFRESH MATERIALIZED VIEW analytics_identified_users_mv`,
     );
     await db.execute(
-      sql`REFRESH MATERIALIZED VIEW analytics_test_identified_users_mv`
+      sql`REFRESH MATERIALIZED VIEW analytics_test_identified_users_mv`,
     );
 
     // Log deletion for audit
-    await fetch('/api/audit/log', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("/api/audit/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        action: 'data_deletion',
+        action: "data_deletion",
         email,
         userId,
-        timestamp: new Date().toISOString()
-      })
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     return NextResponse.json({
       success: true,
-      message: 'User data deleted successfully'
+      message: "User data deleted successfully",
     });
   } catch (error) {
-    console.error('Data deletion error:', error);
+    console.error("Data deletion error:", error);
     return NextResponse.json(
-      { error: 'Failed to delete data' },
-      { status: 500 }
+      { error: "Failed to delete data" },
+      { status: 500 },
     );
   }
 }
@@ -509,20 +508,17 @@ export async function POST(request: NextRequest) {
 
 ```typescript
 // app/api/analytics/export-user-data/route.ts
-import { db } from '@/db';
-import { analytics, analyticsTest } from '@/db/schema';
-import { sql } from 'drizzle-orm';
-import { NextRequest, NextResponse } from 'next/server';
+import { db } from "@/db";
+import { analytics, analyticsTest } from "@/db/schema";
+import { sql } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, format = 'json' } = await request.json();
+    const { email, format = "json" } = await request.json();
 
     if (!email) {
-      return NextResponse.json(
-        { error: 'Email required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
 
     // Fetch all user data
@@ -539,62 +535,62 @@ export async function POST(request: NextRequest) {
     const exportData = {
       exportDate: new Date().toISOString(),
       email,
-      dataController: 'Your Company Name',
+      dataController: "Your Company Name",
       format,
       events: {
         production: productionData,
-        test: testData
+        test: testData,
       },
       summary: {
         totalEvents: productionData.length + testData.length,
         firstEvent: productionData[0]?.date,
-        lastEvent: productionData[productionData.length - 1]?.date
-      }
+        lastEvent: productionData[productionData.length - 1]?.date,
+      },
     };
 
-    if (format === 'csv') {
+    if (format === "csv") {
       // Convert to CSV
       const csv = convertToCSV(exportData.events.production);
       return new NextResponse(csv, {
         headers: {
-          'Content-Type': 'text/csv',
-          'Content-Disposition': `attachment; filename="analytics-data-${email}-${Date.now()}.csv"`
-        }
+          "Content-Type": "text/csv",
+          "Content-Disposition": `attachment; filename="analytics-data-${email}-${Date.now()}.csv"`,
+        },
       });
     }
 
     // Return JSON
     return new NextResponse(JSON.stringify(exportData, null, 2), {
       headers: {
-        'Content-Type': 'application/json',
-        'Content-Disposition': `attachment; filename="analytics-data-${email}-${Date.now()}.json"`
-      }
+        "Content-Type": "application/json",
+        "Content-Disposition": `attachment; filename="analytics-data-${email}-${Date.now()}.json"`,
+      },
     });
   } catch (error) {
-    console.error('Data export error:', error);
+    console.error("Data export error:", error);
     return NextResponse.json(
-      { error: 'Failed to export data' },
-      { status: 500 }
+      { error: "Failed to export data" },
+      { status: 500 },
     );
   }
 }
 
 function convertToCSV(data: any[]): string {
-  if (data.length === 0) return '';
+  if (data.length === 0) return "";
 
-  const headers = ['id', 'type', 'date', 'properties', 'info'];
-  const rows = data.map(row => [
+  const headers = ["id", "type", "date", "properties", "info"];
+  const rows = data.map((row) => [
     row.id,
     row.type,
     row.date,
     JSON.stringify(row.properties),
-    JSON.stringify(row.info)
+    JSON.stringify(row.info),
   ]);
 
   return [
-    headers.join(','),
-    ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
-  ].join('\n');
+    headers.join(","),
+    ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+  ].join("\n");
 }
 ```
 
@@ -604,12 +600,12 @@ function convertToCSV(data: any[]): string {
 
 ```typescript
 // scripts/cleanup-old-analytics.ts
-import { db } from './src/db';
-import { analytics, analyticsTest } from './src/db/schema';
-import { lt } from 'drizzle-orm';
+import { db } from "./src/db";
+import { analytics, analyticsTest } from "./src/db/schema";
+import { lt } from "drizzle-orm";
 
 async function cleanupOldAnalytics() {
-  console.log('🗑️  Starting analytics data cleanup...');
+  console.log("🗑️  Starting analytics data cleanup...");
 
   // Delete data older than 13 months (recommended retention)
   const thirteenMonthsAgo = new Date();
@@ -632,7 +628,7 @@ async function cleanupOldAnalytics() {
 
   console.log(`✅ Deleted ${deletedTest.rowCount} old test events`);
 
-  console.log('✨ Cleanup completed');
+  console.log("✨ Cleanup completed");
   process.exit(0);
 }
 
@@ -650,16 +646,16 @@ Or use Vercel Cron:
 
 ```typescript
 // app/api/cron/cleanup/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { analytics, analyticsTest } from '@/db/schema';
-import { lt } from 'drizzle-orm';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/db";
+import { analytics, analyticsTest } from "@/db/schema";
+import { lt } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   // Verify cron secret
-  const authHeader = request.headers.get('authorization');
+  const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
@@ -670,13 +666,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Cleanup completed'
+      message: "Cleanup completed",
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Cleanup failed' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Cleanup failed" }, { status: 500 });
   }
 }
 ```

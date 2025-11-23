@@ -10,7 +10,7 @@ export type User = {
   isIdentified: boolean;
   lastSeen: string;
   country: string | null;
-  platform: 'iOS' | 'Android' | 'Web';
+  platform: "iOS" | "Android" | "Web";
   appVersion: string;
 };
 
@@ -32,7 +32,7 @@ export const getUsersListQueryKey = (
   platform?: string,
   country?: string,
   version?: string,
-  identified?: boolean
+  identified?: boolean,
 ) =>
   [
     "analytics",
@@ -56,7 +56,7 @@ export const useUsersList = (
   platform: string = "",
   country: string = "",
   version: string = "",
-  identified?: boolean
+  identified?: boolean,
 ) => {
   const enabled = !!appSlug && devModeEnabled !== undefined;
 
@@ -65,7 +65,16 @@ export const useUsersList = (
     isPending: isLoading,
     refetch,
   } = useQuery({
-    queryKey: getUsersListQueryKey(appSlug, devModeEnabled, page, search, platform, country, version, identified),
+    queryKey: getUsersListQueryKey(
+      appSlug,
+      devModeEnabled,
+      page,
+      search,
+      platform,
+      country,
+      version,
+      identified,
+    ),
     queryFn: async () => {
       if (!appSlug) return undefined;
 

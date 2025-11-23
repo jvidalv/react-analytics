@@ -15,17 +15,20 @@ This open-source analytics library and platform is provided "AS IS" without any 
 **By using this software, you acknowledge that YOU are the data controller** and are solely responsible for:
 
 ### 1. Legal Compliance
+
 - Ensuring your use of this software complies with all applicable data protection laws in your jurisdiction
 - Understanding your legal obligations under GDPR, CCPA, and other relevant regulations
 - Seeking qualified legal counsel regarding your specific compliance requirements
 
 ### 2. User Consent
+
 - Implementing appropriate consent mechanisms before collecting personal data
 - Obtaining explicit consent for identified user tracking (name, email, etc.)
 - Providing clear, understandable information about data collection practices
 - Enabling users to easily withdraw consent
 
 ### 3. Data Subject Rights
+
 - Building and maintaining systems to honor user rights including:
   - Right to access their data
   - Right to deletion (right to be forgotten)
@@ -36,6 +39,7 @@ This open-source analytics library and platform is provided "AS IS" without any 
 - Responding to data subject requests within legally required timeframes
 
 ### 4. Security Measures
+
 - Implementing appropriate technical measures:
   - Encryption in transit (HTTPS)
   - Encryption at rest (database encryption)
@@ -48,29 +52,34 @@ This open-source analytics library and platform is provided "AS IS" without any 
   - Incident response procedures
 
 ### 5. Privacy Notices
+
 - Providing clear, accessible privacy notices to users
 - Explaining what data is collected, why, and how long it's retained
 - Informing users of their rights
 - Updating privacy notices when practices change
 
 ### 6. Data Retention and Deletion
+
 - Implementing and enforcing data retention policies
 - Automatically deleting data after retention periods expire
 - Securely and permanently deleting data upon user request
 - Documenting your retention policies
 
 ### 7. Data Breach Response
+
 - Having procedures to detect and respond to data breaches
 - Notifying supervisory authorities within 72 hours of breach discovery (GDPR requirement)
 - Notifying affected individuals when required
 - Maintaining breach documentation
 
 ### 8. Data Protection Impact Assessments (DPIAs)
+
 - Conducting DPIAs when processing is likely to result in high risk to individuals
 - Documenting and addressing identified risks
 - Consulting with supervisory authorities when required
 
 ### 9. Records of Processing Activities
+
 - Maintaining documentation of:
   - What data is collected
   - Why it's collected (legal basis)
@@ -79,6 +88,7 @@ This open-source analytics library and platform is provided "AS IS" without any 
   - Security measures in place
 
 ### 10. International Data Transfers
+
 - Ensuring appropriate safeguards for data transfers outside the EU/EEA
 - Implementing Standard Contractual Clauses or other approved mechanisms
 - Verifying recipient countries provide adequate protection
@@ -97,6 +107,7 @@ This open-source analytics library and platform is provided "AS IS" without any 
 - Any consequential, incidental, special, or punitive damages
 
 **This limitation applies regardless of:**
+
 - Whether such claims arise in contract, tort, negligence, or other legal theory
 - Whether the authors were advised of the possibility of such damages
 - Any failure of essential purpose of remedies
@@ -106,6 +117,7 @@ This open-source analytics library and platform is provided "AS IS" without any 
 This software, including all documentation, does **NOT** constitute legal advice. The information provided is for educational and informational purposes only.
 
 **You MUST:**
+
 - Consult with qualified legal professionals
 - Seek advice specific to your jurisdiction and use case
 - Not rely solely on this software or documentation for compliance
@@ -137,6 +149,7 @@ If you do not accept these terms, you must not use this software.
 ---
 
 For implementation guidance, see:
+
 - [GDPR.md](./GDPR.md) - GDPR compliance implementation guide
 - [PRIVACY.md](./PRIVACY.md) - Privacy features and technical documentation
 

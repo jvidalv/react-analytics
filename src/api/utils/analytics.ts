@@ -4,7 +4,7 @@ import {
   analyticsTest,
   analyticsApiKeys,
   analyticsIdentifiedUsersMv,
-  analyticsTestIdentifiedUsersMv
+  analyticsTestIdentifiedUsersMv,
 } from "@/db/schema";
 import { eq, and, gte, sql, count } from "drizzle-orm";
 import type { AnalyticsEvent, EventType } from "@/api/schemas/analytics.schema";
@@ -15,7 +15,9 @@ import { uuidv7 } from "uuidv7";
 export type AnalyticsTable = typeof analytics | typeof analyticsTest;
 
 // Type for identified users materialized view
-export type IdentifiedUsersMvTable = typeof analyticsIdentifiedUsersMv | typeof analyticsTestIdentifiedUsersMv;
+export type IdentifiedUsersMvTable =
+  | typeof analyticsIdentifiedUsersMv
+  | typeof analyticsTestIdentifiedUsersMv;
 
 /**
  * Get the appropriate analytics table based on API key
@@ -27,8 +29,12 @@ export const getAnalyticsTable = (isTestKey: boolean): AnalyticsTable => {
 /**
  * Get the appropriate identified users materialized view based on API key
  */
-export const getIdentifiedUsersMv = (isTestKey: boolean): IdentifiedUsersMvTable => {
-  return isTestKey ? analyticsTestIdentifiedUsersMv : analyticsIdentifiedUsersMv;
+export const getIdentifiedUsersMv = (
+  isTestKey: boolean,
+): IdentifiedUsersMvTable => {
+  return isTestKey
+    ? analyticsTestIdentifiedUsersMv
+    : analyticsIdentifiedUsersMv;
 };
 
 /**
@@ -37,17 +43,25 @@ export const getIdentifiedUsersMv = (isTestKey: boolean): IdentifiedUsersMvTable
  */
 export const refreshIdentifiedUsersMaterializedViews = async () => {
   try {
-    console.log("[Analytics] Refreshing identified users materialized views...");
+    console.log(
+      "[Analytics] Refreshing identified users materialized views...",
+    );
     const startTime = Date.now();
 
     // Refresh both production and test views concurrently
     await Promise.all([
-      db.execute(sql`REFRESH MATERIALIZED VIEW CONCURRENTLY analytics_identified_users_mv`),
-      db.execute(sql`REFRESH MATERIALIZED VIEW CONCURRENTLY analytics_test_identified_users_mv`),
+      db.execute(
+        sql`REFRESH MATERIALIZED VIEW CONCURRENTLY analytics_identified_users_mv`,
+      ),
+      db.execute(
+        sql`REFRESH MATERIALIZED VIEW CONCURRENTLY analytics_test_identified_users_mv`,
+      ),
     ]);
 
     const duration = Date.now() - startTime;
-    console.log(`[Analytics] Materialized views refreshed successfully in ${duration}ms`);
+    console.log(
+      `[Analytics] Materialized views refreshed successfully in ${duration}ms`,
+    );
   } catch (error) {
     console.error("[Analytics] Failed to refresh materialized views:", error);
     throw error;

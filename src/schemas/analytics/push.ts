@@ -8,18 +8,16 @@ import { PushEventSchema } from "./events";
 
 // POST /api/analytics/push - Push analytics events
 export const PushEventsBodySchema = z.object({
-  apiKey: z
-    .string()
-    .refine(
-      (key) =>
-        // Accept old UUID format: "550e8400-e29b-41d4-a716-446655440000"
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-          key,
-        ) ||
-        // Accept new custom format: "prod-myapp-7c9e66797425440de944be07fc1f90ae7"
-        /^(prod|dev)-[a-z0-9-]+-[0-9a-f]{32}$/.test(key),
-      { message: "Invalid API key format" },
-    ),
+  apiKey: z.string().refine(
+    (key) =>
+      // Accept old UUID format: "550e8400-e29b-41d4-a716-446655440000"
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        key,
+      ) ||
+      // Accept new custom format: "prod-myapp-7c9e66797425440de944be07fc1f90ae7"
+      /^(prod|dev)-[a-z0-9-]+-[0-9a-f]{32}$/.test(key),
+    { message: "Invalid API key format" },
+  ),
   identifyId: z.string().optional(),
   userId: z.string().optional(),
   appVersion: z.string().optional(),

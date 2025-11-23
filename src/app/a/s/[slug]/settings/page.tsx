@@ -2,7 +2,13 @@
 
 import * as React from "react";
 import { useState, FormEvent, useEffect } from "react";
-import { App, useAppBySlug, useAppSlugFromParams, useUpdateApp } from "@/domains/app/app.api";
+import {
+  App,
+  useAppBySlug,
+  useAppSlugFromParams,
+  useUpdateApp,
+  getAllAppsQueryKey,
+} from "@/domains/app/app.api";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
@@ -18,7 +24,7 @@ import { InputColor } from "@/components/custom/input-color";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Save } from "lucide-react";
-import { mutate } from "swr";
+import { useQueryClient } from "@tanstack/react-query";
 import { Switch } from "@/components/ui/switch";
 import { useSensitive } from "@/hooks/use-sensitive";
 
@@ -65,7 +71,8 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle>Sensitive Mode</CardTitle>
           <CardDescription>
-            Hide sensitive information like user emails and names in the dashboard.
+            Hide sensitive information like user emails and names in the
+            dashboard.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -78,6 +85,7 @@ export default function SettingsPage() {
 
 function BasicInfoForm({ app, appSlug }: { app: App; appSlug: string }) {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { updateApp, isUpdating } = useUpdateApp(appSlug);
 
   const [name, setName] = useState(app.name);
@@ -93,7 +101,7 @@ function BasicInfoForm({ app, appSlug }: { app: App; appSlug: string }) {
       email,
       websiteUrl,
     });
-    void mutate("/api/app/all");
+    void queryClient.invalidateQueries({ queryKey: getAllAppsQueryKey() });
     toast({ title: "App updated", description: "Basic information updated." });
   };
 
@@ -134,11 +142,7 @@ function BasicInfoForm({ app, appSlug }: { app: App; appSlug: string }) {
           placeholder="https://yourapp.com"
         />
       </div>
-      <Button
-        isLoading={isUpdating}
-        type="submit"
-        className="mt-4 w-fit"
-      >
+      <Button isLoading={isUpdating} type="submit" className="mt-4 w-fit">
         Save <Save />
       </Button>
     </form>
@@ -147,13 +151,14 @@ function BasicInfoForm({ app, appSlug }: { app: App; appSlug: string }) {
 
 function PersonalizationForm({ app, appSlug }: { app: App; appSlug: string }) {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { updateApp, isUpdating } = useUpdateApp(appSlug);
   const [color, setColor] = useState(app.primaryColor ?? undefined);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     await updateApp({ primaryColor: color });
-    void mutate("/api/app/all");
+    void queryClient.invalidateQueries({ queryKey: getAllAppsQueryKey() });
     toast({ title: "App updated", description: "Primary color updated." });
   };
 
@@ -183,11 +188,7 @@ function SensitiveModeToggle() {
           When enabled, sensitive information will be hidden in the dashboard
         </p>
       </div>
-      <Switch
-        id="sensitive-mode"
-        checked={enabled}
-        onCheckedChange={toggle}
-      />
+      <Switch id="sensitive-mode" checked={enabled} onCheckedChange={toggle} />
     </div>
   );
 }

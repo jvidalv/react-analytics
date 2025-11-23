@@ -11,48 +11,26 @@
  *   Or automatically via: npm run dev
  */
 
-const CRON_TASKS = [
-  {
-    name: "refresh-views",
-    path: "/api/cron/refresh-views",
-    intervalMinutes: 1, // Run every minute (like production)
-  },
-];
+import {
+  CRON_TASKS_CONFIG,
+  CronTaskName,
+  runCronTaskRequest,
+} from "./cron-shared";
 
 async function runCronTask(taskName: string, path: string) {
-  const baseUrl = process.env.BASE_URL || "http://localhost:3000";
-  const url = `${baseUrl}${path}`;
+  const result = await runCronTaskRequest(taskName, path);
 
-  try {
-    const startTime = Date.now();
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: process.env.CRON_SECRET
-          ? `Bearer ${process.env.CRON_SECRET}`
-          : "Bearer local-dev-token",
-        "Content-Type": "application/json",
-      },
-    });
-
-    const duration = Date.now() - startTime;
-    const data = await response.json();
-
-    if (response.ok) {
-      console.log(
-        `✅ [${new Date().toLocaleTimeString()}] ${taskName} completed in ${duration}ms`
-      );
-    } else {
-      console.error(
-        `❌ [${new Date().toLocaleTimeString()}] ${taskName} failed (${response.status}) - ${duration}ms`
-      );
-      console.error("   Error:", data.error || data.message);
-    }
-  } catch (error) {
+  if (result.success) {
+    console.log(
+      `✅ [${new Date().toLocaleTimeString()}] ${taskName} completed in ${result.duration}ms`,
+    );
+  } else {
     console.error(
-      `❌ [${new Date().toLocaleTimeString()}] ${taskName} failed:`,
-      error instanceof Error ? error.message : "Unknown error"
+      `❌ [${new Date().toLocaleTimeString()}] ${taskName} failed - ${result.duration}ms`,
+    );
+    console.error(
+      "   Error:",
+      result.error?.error || result.error?.message || result.error,
     );
   }
 }
@@ -92,20 +70,21 @@ async function main() {
   // Schedule each cron task
   const intervals: NodeJS.Timeout[] = [];
 
-  for (const task of CRON_TASKS) {
+  // Convert config object to array for iteration
+  for (const [taskName, config] of Object.entries(CRON_TASKS_CONFIG)) {
     console.log(
-      `📅 Scheduling ${task.name} to run every ${task.intervalMinutes} minute(s)`
+      `📅 Scheduling ${taskName} to run every ${config.intervalMinutes} minute(s)`,
     );
 
     // Run immediately on start
-    await runCronTask(task.name, task.path);
+    await runCronTask(taskName, config.path);
 
     // Then schedule to run at intervals
     const interval = setInterval(
       async () => {
-        await runCronTask(task.name, task.path);
+        await runCronTask(taskName, config.path);
       },
-      task.intervalMinutes * 60 * 1000
+      config.intervalMinutes * 60 * 1000,
     );
 
     intervals.push(interval);

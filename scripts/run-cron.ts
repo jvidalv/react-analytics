@@ -11,56 +11,38 @@
  *   npm run cron <task-name>
  */
 
-const CRON_TASKS = {
-  "refresh-views": "/api/cron/refresh-views",
-} as const;
-
-type CronTask = keyof typeof CRON_TASKS;
+import {
+  CRON_TASKS_CONFIG,
+  CronTaskName,
+  runCronTaskRequest,
+} from "./cron-shared";
 
 async function runCronTask(taskName: string) {
   // Validate task name
-  if (!(taskName in CRON_TASKS)) {
+  if (!(taskName in CRON_TASKS_CONFIG)) {
     console.error(`❌ Unknown cron task: ${taskName}`);
-    console.log(`Available tasks: ${Object.keys(CRON_TASKS).join(", ")}`);
+    console.log(
+      `Available tasks: ${Object.keys(CRON_TASKS_CONFIG).join(", ")}`,
+    );
     process.exit(1);
   }
 
-  const path = CRON_TASKS[taskName as CronTask];
+  const config = CRON_TASKS_CONFIG[taskName as CronTaskName];
   const baseUrl = process.env.BASE_URL || "http://localhost:3000";
-  const url = `${baseUrl}${path}`;
+  const url = `${baseUrl}${config.path}`;
 
   console.log(`\n🕐 Running cron task: ${taskName}`);
   console.log(`📍 URL: ${url}`);
   console.log(`⏰ Time: ${new Date().toISOString()}\n`);
 
-  try {
-    const startTime = Date.now();
+  const result = await runCronTaskRequest(taskName, config.path);
 
-    // Make request with authorization header (simulating Vercel)
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": process.env.CRON_SECRET
-          ? `Bearer ${process.env.CRON_SECRET}`
-          : "Bearer local-dev-token",
-        "Content-Type": "application/json",
-      },
-    });
-
-    const duration = Date.now() - startTime;
-    const data = await response.json();
-
-    if (response.ok) {
-      console.log(`✅ Success (${response.status}) - ${duration}ms\n`);
-      console.log("Response:", JSON.stringify(data, null, 2));
-    } else {
-      console.error(`❌ Error (${response.status}) - ${duration}ms\n`);
-      console.error("Response:", JSON.stringify(data, null, 2));
-      process.exit(1);
-    }
-  } catch (error) {
-    console.error(`❌ Request failed:\n`);
-    console.error(error);
+  if (result.success) {
+    console.log(`✅ Success - ${result.duration}ms\n`);
+    console.log("Response:", JSON.stringify(result.data, null, 2));
+  } else {
+    console.error(`❌ Error - ${result.duration}ms\n`);
+    console.error("Response:", JSON.stringify(result.error, null, 2));
     process.exit(1);
   }
 }
@@ -71,7 +53,7 @@ const taskName = process.argv[2];
 if (!taskName) {
   console.error("❌ Please provide a cron task name");
   console.log(`\nUsage: npm run cron <task-name>`);
-  console.log(`Available tasks: ${Object.keys(CRON_TASKS).join(", ")}`);
+  console.log(`Available tasks: ${Object.keys(CRON_TASKS_CONFIG).join(", ")}`);
   process.exit(1);
 }
 

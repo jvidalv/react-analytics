@@ -2,8 +2,7 @@ import { treaty } from "@elysiajs/eden";
 import { Api } from "@/api/routes";
 import { logout } from "@/app/actions";
 
-const APP_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export const fetcherPublic = treaty<Api>(APP_URL).api.public;
 

@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow, format } from "date-fns";
 import {
-  useAnalyticsUserStats,
   usePlatformAggregates,
   useIdentificationAggregates,
   useCountryAggregates,
@@ -172,8 +171,6 @@ export default function OverviewPage() {
   const { apiKeys, isLoading: isLoadingApiKeys } = useAnalyticsApiKeys(appSlug);
   const apiKey = me?.devModeEnabled ? apiKeys?.apiKeyTest : apiKeys?.apiKey;
 
-  useAnalyticsUserStats(apiKey);
-
   const { overview, isLoading: isLoadingOverview } = useAnalyticsOverview(
     app?.slug,
     me?.devModeEnabled,
@@ -199,7 +196,7 @@ export default function OverviewPage() {
     {
       history: "push",
       shallow: false,
-    }
+    },
   );
 
   const { newJoinersList, isLoading: isLoadingNewJoiners } = useNewJoiners(
@@ -632,15 +629,13 @@ export default function OverviewPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">
-              {isLoadingNewJoiners ? (
-                "New Joiners"
-              ) : newJoinersList?.pagination.total === 0 ? (
-                "No new joiners this week"
-              ) : newJoinersList?.pagination.total === 1 ? (
-                "1 new joiner this week"
-              ) : (
-                `${newJoinersList?.pagination.total} new joiners this week`
-              )}
+              {isLoadingNewJoiners
+                ? "New Joiners"
+                : newJoinersList?.pagination.total === 0
+                  ? "No new joiners this week"
+                  : newJoinersList?.pagination.total === 1
+                    ? "1 new joiner this week"
+                    : `${newJoinersList?.pagination.total} new joiners this week`}
             </h2>
             <Link
               href={`/a/s/${appSlug}/users`}
@@ -669,37 +664,47 @@ export default function OverviewPage() {
               </div>
 
               {/* Pagination - only show if more than 25 users */}
-              {newJoinersList?.pagination && newJoinersList.pagination.total > 25 && (
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-muted-foreground">
-                    Page {newJoinersList.pagination.page} of {newJoinersList.pagination.totalPages}
+              {newJoinersList?.pagination &&
+                newJoinersList.pagination.total > 25 && (
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-muted-foreground">
+                      Page {newJoinersList.pagination.page} of{" "}
+                      {newJoinersList.pagination.totalPages}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setNewJoinersFilters({
+                            njPage: Math.max(1, newJoinersFilters.njPage - 1),
+                          })
+                        }
+                        disabled={newJoinersFilters.njPage === 1}
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setNewJoinersFilters({
+                            njPage: Math.min(
+                              newJoinersList.pagination.totalPages,
+                              newJoinersFilters.njPage + 1,
+                            ),
+                          })
+                        }
+                        disabled={
+                          newJoinersFilters.njPage ===
+                          newJoinersList.pagination.totalPages
+                        }
+                      >
+                        Next
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        setNewJoinersFilters({ njPage: Math.max(1, newJoinersFilters.njPage - 1) })
-                      }
-                      disabled={newJoinersFilters.njPage === 1}
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        setNewJoinersFilters({
-                          njPage: Math.min(newJoinersList.pagination.totalPages, newJoinersFilters.njPage + 1),
-                        })
-                      }
-                      disabled={newJoinersFilters.njPage === newJoinersList.pagination.totalPages}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </div>
-              )}
+                )}
             </>
           )}
         </div>

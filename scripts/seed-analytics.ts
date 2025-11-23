@@ -52,18 +52,18 @@ async function seedData() {
     // Read seed data files
     const analyticsData = readFileSync(
       "drizzle/seed-data/analytics.sql",
-      "utf-8"
+      "utf-8",
     );
     const analyticsTestData = readFileSync(
       "drizzle/seed-data/analytics_test.sql",
-      "utf-8"
+      "utf-8",
     );
 
     // Replace placeholders with actual API keys
     const analyticsWithKey = analyticsData.replace(/{{API_KEY}}/g, apiKey);
     const analyticsTestWithKey = analyticsTestData.replace(
       /{{API_KEY_TEST}}/g,
-      apiKeyTest
+      apiKeyTest,
     );
 
     // Insert data into analytics table
@@ -75,7 +75,9 @@ async function seedData() {
     for (const statement of analyticsStatements) {
       await sql.unsafe(statement);
     }
-    console.log(`   ✅ Inserted ${analyticsStatements.length} analytics records`);
+    console.log(
+      `   ✅ Inserted ${analyticsStatements.length} analytics records`,
+    );
 
     // Insert data into analytics_test table
     console.log("📊 Inserting analytics_test data...");
@@ -87,7 +89,7 @@ async function seedData() {
       await sql.unsafe(statement);
     }
     console.log(
-      `   ✅ Inserted ${analyticsTestStatements.length} analytics_test records`
+      `   ✅ Inserted ${analyticsTestStatements.length} analytics_test records`,
     );
 
     // Refresh materialized views

@@ -35,5 +35,5 @@ export const postUserModeRoute = new Elysia().post(
       description: "Toggle development mode for the current user",
       tags: ["User"],
     },
-  }
+  },
 );

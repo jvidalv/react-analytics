@@ -20,19 +20,19 @@
 
 **Always visible at top of dashboard**
 
-1. **Total Users** ⭐ *requested*
+1. **Total Users** ⭐ _requested_
    - All-time unique users (by `identify_id`)
    - Query complexity: Simple ✓
    - Endpoint: Exists (`/api/analytics/users/stats`)
 
-2. **MAU - Monthly Active Users** ⭐ *requested*
+2. **MAU - Monthly Active Users** ⭐ _requested_
    - Users with events in last 30 days
    - Query: `COUNT(DISTINCT identify_id) WHERE date >= NOW() - INTERVAL '30 days'`
    - Query complexity: Simple ✓
    - Endpoint: **MISSING** - needs implementation
    - Show period-over-period change (vs previous 30 days)
 
-3. **DAU - Daily Active Users** ⭐ *requested*
+3. **DAU - Daily Active Users** ⭐ _requested_
    - Users with events in last 24 hours
    - Query: `COUNT(DISTINCT identify_id) WHERE date >= NOW() - INTERVAL '1 day'`
    - Query complexity: Simple ✓
@@ -271,7 +271,8 @@
 ## Recommended Implementation Priority
 
 ### **Phase 1: Core KPIs** (Week 1)
-*Highest value, simplest implementation*
+
+_Highest value, simplest implementation_
 
 - ✅ Total Users (exists)
 - 🔨 MAU (needs implementation)
@@ -286,7 +287,8 @@
 ---
 
 ### **Phase 2: Engagement & Content** (Week 2)
-*High value, moderate complexity*
+
+_High value, moderate complexity_
 
 - 🔨 New Users (7d/30d)
 - 🔨 Events per User
@@ -301,7 +303,8 @@
 ---
 
 ### **Phase 3: Trends & Deep Dives** (Week 3)
-*Medium value, varied complexity*
+
+_Medium value, varied complexity_
 
 - 🔨 Event Volume Trend
 - ✅ Error Trend (exists, needs display)
@@ -316,7 +319,8 @@
 ---
 
 ### **Phase 4: Advanced Analytics** (Week 4+)
-*Lower priority, higher complexity*
+
+_Lower priority, higher complexity_
 
 - 🔨 Session metrics (duration, count)
 - 🔨 Retention cohorts
@@ -348,6 +352,7 @@ If starting with limited scope, these 10 provide maximum insight:
 ## Dashboard Layout Recommendation
 
 ### **Hero Metrics Row**
+
 ```
 ┌──────────────┬──────────────┬──────────────┬──────────────┬──────────────┐
 │ Total Users  │     MAU      │     DAU      │  Stickiness  │  Error Rate  │
@@ -357,6 +362,7 @@ If starting with limited scope, these 10 provide maximum insight:
 ```
 
 ### **Main Dashboard Grid**
+
 ```
 ┌───────────────────────────────────┬───────────────────────────────────┐
 │  DAU Trend (30 days)              │  Platform Distribution            │
@@ -381,6 +387,7 @@ If starting with limited scope, these 10 provide maximum insight:
 ```
 
 ### **Sections/Tabs**
+
 - **Overview** - Hero metrics + key charts
 - **Engagement** - User behavior and retention metrics
 - **Technical** - Errors, performance, platform stats
@@ -393,24 +400,29 @@ If starting with limited scope, these 10 provide maximum insight:
 ### **Cache Strategy**
 
 **Real-time (no cache):**
+
 - None recommended - all queries benefit from brief caching
 
 **5-minute cache:**
+
 - Hero KPIs (MAU, DAU, Total Users)
 - Error Rate
 - Platform Distribution
 
 **15-minute cache:**
+
 - Top Pages/Actions/Errors
 - New Users counts
 - Events per User
 
 **1-hour cache:**
+
 - Time-series charts (30-day trends)
 - Session metrics
 - Retention calculations
 
 **Daily pre-aggregation:**
+
 - Long-term trends (90+ days)
 - Historical comparisons
 - Cohort analysis
@@ -418,15 +430,18 @@ If starting with limited scope, these 10 provide maximum insight:
 ### **Query Optimization**
 
 **Existing indexes (good for):**
+
 - `(apiKey, identifyId, date DESC)` - User-centric queries
 - `(identifyId, type, date DESC)` - Event-type filtering
 
 **Recommended additional indexes:**
+
 - `(apiKey, date DESC)` - Time-range queries without user filter
 - `(apiKey, type, date DESC)` - Event-type aggregations
 - `(apiKey, (info->>'platform'), date DESC)` - Platform filtering (JSONB index)
 
 **Query patterns:**
+
 - Always include `apiKey` in WHERE (uses index)
 - Use `date` range filters (last 7d, 30d, etc.)
 - Prefer `COUNT(DISTINCT identify_id)` for user counts
@@ -458,6 +473,7 @@ If starting with limited scope, these 10 provide maximum insight:
 ### **Frontend Chart Libraries**
 
 Recommended: **Recharts** (React-friendly, lightweight)
+
 - Line charts: DAU trend, event volume
 - Bar charts: Top pages, actions, errors
 - Pie/donut: Platform distribution
@@ -474,16 +490,19 @@ Show "Last updated: X minutes ago" on cached data
 ## Success Metrics for Dashboard
 
 **Adoption:**
+
 - Daily active dashboard users
 - Time spent on dashboard
 - Most viewed metrics
 
 **Impact:**
+
 - Decisions made based on metrics
 - Issues identified and resolved
 - Feature usage correlated with analytics
 
 **Performance:**
+
 - Dashboard load time < 2 seconds
 - Query response time < 500ms (cached)
 - No query > 3 seconds (even uncached)
@@ -512,6 +531,7 @@ Show "Last updated: X minutes ago" on cached data
 ---
 
 **Legend:**
+
 - ⭐ User requested
 - ✅ Already implemented (backend)
 - 🔨 Needs implementation

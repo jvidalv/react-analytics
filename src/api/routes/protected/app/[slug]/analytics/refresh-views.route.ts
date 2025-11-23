@@ -30,5 +30,5 @@ export const refreshViewsRoute = new Elysia().post(
         "Refreshes the materialized views for identified users. This ensures the views have the latest data from the analytics tables.",
       tags: ["Analytics"],
     },
-  }
+  },
 );

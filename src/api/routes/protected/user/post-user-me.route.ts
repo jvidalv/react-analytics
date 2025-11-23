@@ -49,5 +49,5 @@ export const postUserMeRoute = new Elysia().post(
       description: "Update the currently authenticated user's profile",
       tags: ["User"],
     },
-  }
+  },
 );

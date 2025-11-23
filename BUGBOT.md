@@ -3,6 +3,7 @@
 ## Project Context
 
 **React Analytics** is a platform for tracking, viewing, and querying analytics data from React applications. It consists of:
+
 1. **Analytics Package** (`@jvidalv/react-analytics`) - Universal React analytics library (web + native)
 2. **Analytics Dashboard** - Next.js application for visualizing and querying analytics data
 
@@ -15,9 +16,11 @@ This guide helps debug common issues, understand system architecture, and resolv
 ### 1. Analytics Events Not Showing in Dashboard
 
 #### Symptom
+
 Events sent from client app don't appear in the dashboard.
 
 #### Diagnostic Steps
+
 ```bash
 # 1. Check if events are reaching the API
 # Look in browser DevTools → Network tab for POST /api/analytics/push
@@ -35,15 +38,17 @@ SELECT COUNT(*) FROM analytics_test;   # Test
 #### Common Causes & Fixes
 
 **Wrong API Key**
+
 ```typescript
 // ❌ Wrong: Using test key in production
-createAnalyticsClient({ apiKey: 'test-key-xxx' })
+createAnalyticsClient({ apiKey: "test-key-xxx" });
 
 // ✅ Correct: Use production key
-createAnalyticsClient({ apiKey: 'prod-key-xxx' })
+createAnalyticsClient({ apiKey: "prod-key-xxx" });
 ```
 
 **CORS Blocked**
+
 - **Issue**: Browser blocks cross-origin request
 - **Fix**: CORS is enabled on `/api/analytics/push`, but check:
   - Are you using the correct endpoint URL?
@@ -51,33 +56,36 @@ createAnalyticsClient({ apiKey: 'prod-key-xxx' })
   - Check browser console for CORS errors
 
 **Event Properties Too Large**
+
 - **Limit**: 600 characters per event properties JSON
 - **Fix**: Reduce property payload size
+
 ```typescript
 // ❌ Too large
-analytics.track('action', {
-  name: 'click',
-  properties: { veryLongString: '...(700 chars)...' }
-})
+analytics.track("action", {
+  name: "click",
+  properties: { veryLongString: "...(700 chars)..." },
+});
 
 // ✅ Reduced
-analytics.track('action', {
-  name: 'click',
-  properties: { summary: 'shortened data' }
-})
+analytics.track("action", {
+  name: "click",
+  properties: { summary: "shortened data" },
+});
 ```
 
 **Missing identifyId**
+
 ```typescript
 // ❌ No identifyId - events won't be stored
-createAnalyticsClient({ apiKey: 'xxx' })
+createAnalyticsClient({ apiKey: "xxx" });
 
 // ✅ identifyId auto-generated and persisted
 // Happens automatically with storage adapter
 createAnalyticsClient({
-  apiKey: 'xxx',
-  asyncStorageInstance: AsyncStorage // or localStorage
-})
+  apiKey: "xxx",
+  asyncStorageInstance: AsyncStorage, // or localStorage
+});
 ```
 
 ---
@@ -85,9 +93,11 @@ createAnalyticsClient({
 ### 2. API Key Authentication Failures
 
 #### Symptom
+
 API returns 403 Forbidden when sending events.
 
 #### Diagnostic Query
+
 ```sql
 -- Check if API key exists
 SELECT * FROM analytics_api_keys
@@ -104,19 +114,22 @@ WHERE ak.api_key = 'your-key-here';
 #### Common Causes
 
 **1. API Key Doesn't Exist**
+
 - Create new app in dashboard
 - Copy keys from settings dropdown
 
 **2. Using Wrong Key Type**
+
 ```typescript
 // Test key format: shorter, different prefix
-const testKey = 'test_abc123'
+const testKey = "test_abc123";
 
 // Production key format: longer, different prefix
-const prodKey = 'prod_xyz789'
+const prodKey = "prod_xyz789";
 ```
 
 **3. App Deleted**
+
 - Cascade delete removes API keys
 - Create new app and update client
 
@@ -125,6 +138,7 @@ const prodKey = 'prod_xyz789'
 ### 3. Database Connection Problems
 
 #### Symptom
+
 ```
 Error: connect ECONNREFUSED 127.0.0.1:5434
 ```
@@ -132,6 +146,7 @@ Error: connect ECONNREFUSED 127.0.0.1:5434
 #### Solutions
 
 **Local Development**
+
 ```bash
 # 1. Start Docker Postgres
 yarn db
@@ -153,6 +168,7 @@ yarn db:reset
 ```
 
 **Production (Neon)**
+
 ```bash
 # Check DATABASE_URL format:
 # postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require
@@ -165,6 +181,7 @@ psql "$DATABASE_URL" -c "SELECT version();"
 ```
 
 **Common Issues**
+
 - Port 5434 (not default 5432) for local dev
 - Docker not running: `docker-compose up -d`
 - Wrong DATABASE_URL in .env.local
@@ -174,6 +191,7 @@ psql "$DATABASE_URL" -c "SELECT version();"
 
 **Materialized Views:**
 The project uses materialized views for identified users analytics. These are created via migrations:
+
 - `analytics_identified_users_mv` - Production identified users
 - `analytics_test_identified_users_mv` - Test identified users
 - Refreshed every minute by cron job (`yarn cron:watch`)
@@ -184,6 +202,7 @@ The project uses materialized views for identified users analytics. These are cr
 ### 4. Monorepo Workspace Issues
 
 #### Symptom
+
 ```
 Module not found: Can't resolve '@jvidalv/react-analytics'
 ```
@@ -212,6 +231,7 @@ yarn build
 ```
 
 **Common Causes**
+
 - Analytics package not built (`dist/` folder missing)
 - Node modules out of sync
 - Wrong package name in web app's package.json
@@ -222,6 +242,7 @@ yarn build
 ### 5. Analytics Package Build Failures
 
 #### Symptom
+
 ```
 Error: Cannot find package '@babel/preset-typescript'
 ```
@@ -246,6 +267,7 @@ yarn tsc --noEmit
 ```
 
 **Required Build Dependencies**
+
 - `@babel/core`
 - `@babel/preset-react`
 - `@babel/preset-typescript`
@@ -260,6 +282,7 @@ yarn tsc --noEmit
 ### 6. NextAuth / Authentication Issues
 
 #### Symptom
+
 - Infinite redirect loops
 - Session not persisting
 - "Not authenticated" on protected routes
@@ -267,6 +290,7 @@ yarn tsc --noEmit
 #### Solutions
 
 **Check AUTH_SECRET**
+
 ```bash
 # Generate new secret
 openssl rand -base64 32
@@ -276,6 +300,7 @@ echo "AUTH_SECRET=$(openssl rand -base64 32)" >> .env.local
 ```
 
 **Verify OAuth Credentials**
+
 ```bash
 # Check all auth variables are set
 grep -E "^AUTH_" .env.local
@@ -289,12 +314,14 @@ grep -E "^AUTH_" .env.local
 ```
 
 **Check Callback URLs**
+
 - GitHub: Settings → Developer settings → OAuth Apps
   - Callback: `http://localhost:3000/api/auth/callback/github`
 - Google: Cloud Console → APIs & Services → Credentials
   - Authorized redirect URI: `http://localhost:3000/api/auth/callback/google`
 
 **Session Not Persisting**
+
 ```sql
 -- Check if session exists
 SELECT * FROM sessions
@@ -306,13 +333,14 @@ SELECT * FROM users WHERE email = 'your@email.com';
 ```
 
 **Middleware Edge Runtime Limitation**
+
 ```typescript
 // ❌ Don't import full auth in middleware
-import { auth } from '@/auth'
+import { auth } from "@/auth";
 
 // ✅ Use cookie-based check
-import { cookies } from 'next/headers'
-const sessionCookie = cookies().get('authjs.session-token')
+import { cookies } from "next/headers";
+const sessionCookie = cookies().get("authjs.session-token");
 ```
 
 ---
@@ -320,36 +348,40 @@ const sessionCookie = cookies().get('authjs.session-token')
 ### 7. Event Batching Not Working
 
 #### Symptom
+
 Events sent individually instead of batched.
 
 #### Debug
+
 ```typescript
 // Add logging to analytics client
 const client = createAnalyticsClient({
-  apiKey: 'xxx',
+  apiKey: "xxx",
   batchInterval: 5000, // 5 seconds
   maxBatchSize: 100,
-  debug: true // If supported
-})
+  debug: true, // If supported
+});
 
 // Check network tab
 // Should see batched POST every 5 seconds
 ```
 
 **Common Causes**
+
 - `batchInterval` set to 0 (sends immediately)
 - Storage adapter not configured (can't queue events)
 - Page navigates before batch sends (events lost)
 
 **Solution**: Implement flush on page unload
+
 ```typescript
 useEffect(() => {
   const handleUnload = () => {
-    analytics.flush() // Send queued events
-  }
-  window.addEventListener('beforeunload', handleUnload)
-  return () => window.removeEventListener('beforeunload', handleUnload)
-}, [])
+    analytics.flush(); // Send queued events
+  };
+  window.addEventListener("beforeunload", handleUnload);
+  return () => window.removeEventListener("beforeunload", handleUnload);
+}, []);
 ```
 
 ---
@@ -357,9 +389,11 @@ useEffect(() => {
 ### 8. Analytics Query Performance Issues
 
 #### Symptom
+
 Dashboard queries are slow (> 2 seconds).
 
 #### Diagnostic
+
 ```sql
 -- Check table size
 SELECT
@@ -382,6 +416,7 @@ LIMIT 100;
 #### Optimizations
 
 **Add Indexes** (already in schema, but verify)
+
 ```sql
 -- Verify indexes exist
 SELECT indexname, indexdef
@@ -396,6 +431,7 @@ WHERE tablename = 'analytics';
 ```
 
 **Partition Table by Date** (for large datasets)
+
 ```sql
 -- Create partitioned table (example)
 CREATE TABLE analytics_partitioned (
@@ -408,6 +444,7 @@ CREATE TABLE analytics_2025_11 PARTITION OF analytics_partitioned
 ```
 
 **Use Materialized Views** for aggregations
+
 ```sql
 CREATE MATERIALIZED VIEW analytics_daily_stats AS
 SELECT
@@ -427,28 +464,31 @@ REFRESH MATERIALIZED VIEW analytics_daily_stats;
 ### 9. CORS Configuration Issues
 
 #### Symptom
+
 ```
 Access to fetch at '...' has been blocked by CORS policy
 ```
 
 #### Current CORS Setup
+
 ```typescript
 // In /api/analytics/push/route.ts
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
-}
+};
 
 export const OPTIONS = () => {
   return new NextResponse(null, {
     status: 204,
     headers: corsHeaders,
-  })
-}
+  });
+};
 ```
 
 #### Troubleshooting
+
 ```bash
 # Test OPTIONS preflight
 curl -X OPTIONS \
@@ -460,19 +500,17 @@ curl -X OPTIONS \
 ```
 
 **If Specific Origin Needed**
-```typescript
-const allowedOrigins = [
-  'https://your-app.com',
-  'http://localhost:3000'
-]
 
-const origin = req.headers.get('origin')
+```typescript
+const allowedOrigins = ["https://your-app.com", "http://localhost:3000"];
+
+const origin = req.headers.get("origin");
 const corsHeaders = {
   "Access-Control-Allow-Origin": allowedOrigins.includes(origin)
     ? origin
     : allowedOrigins[0],
   // ... rest
-}
+};
 ```
 
 ---
@@ -482,14 +520,18 @@ const corsHeaders = {
 #### Common Errors
 
 **Missing Event Type**
+
 ```typescript
 // ❌ Error: Type 'string' is not assignable to type 'AnalyticsEvent'
-import type { AnalyticsEvent } from '@jvidalv/react-analytics'
+import type { AnalyticsEvent } from "@jvidalv/react-analytics";
 
-const events: AnalyticsEvent[] = [/* ... */]
+const events: AnalyticsEvent[] = [
+  /* ... */
+];
 ```
 
 **Wrong Import Path**
+
 ```typescript
 // ❌ Wrong
 import { track } from '@jvidalv/react-analytics/dist/core'
@@ -501,16 +543,17 @@ analytics.track(...)
 ```
 
 **Drizzle Schema Type Mismatch**
+
 ```typescript
 // ❌ Passing Date object
 await db.insert(analytics).values({
-  date: new Date()
-})
+  date: new Date(),
+});
 
 // ✅ Drizzle expects timestamp
 await db.insert(analytics).values({
-  date: new Date() // Drizzle auto-converts
-})
+  date: new Date(), // Drizzle auto-converts
+});
 ```
 
 ---
@@ -570,30 +613,34 @@ await db.insert(analytics).values({
 ### Request/Response Lifecycle
 
 #### 1. Client Request
+
 ```typescript
 // Client-side
-const events: AnalyticsEvent[] = [{
-  type: 'navigation',
-  path: '/home',
-  date: new Date(),
-  properties: {}
-}]
+const events: AnalyticsEvent[] = [
+  {
+    type: "navigation",
+    path: "/home",
+    date: new Date(),
+    properties: {},
+  },
+];
 
-fetch('https://api.domain.com/api/analytics/push', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+fetch("https://api.domain.com/api/analytics/push", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    apiKey: 'prod_xxx',
-    identifyId: 'device-uuid',
-    userId: 'user-123',
-    appVersion: '1.0.0',
+    apiKey: "prod_xxx",
+    identifyId: "device-uuid",
+    userId: "user-123",
+    appVersion: "1.0.0",
     events,
-    info: { platform: 'web', browser: 'Chrome' }
-  })
-})
+    info: { platform: "web", browser: "Chrome" },
+  }),
+});
 ```
 
 #### 2. Server Validation
+
 ```typescript
 // Server-side (/api/analytics/push/route.ts)
 
@@ -601,36 +648,39 @@ fetch('https://api.domain.com/api/analytics/push', {
 const apiKeyRecord = await db
   .select()
   .from(analyticsApiKeys)
-  .where(or(
-    eq(analyticsApiKeys.apiKey, apiKey),
-    eq(analyticsApiKeys.apiKeyTest, apiKey)
-  ))
+  .where(
+    or(
+      eq(analyticsApiKeys.apiKey, apiKey),
+      eq(analyticsApiKeys.apiKeyTest, apiKey),
+    ),
+  );
 
 // Determine table (production vs test)
-const isTestKey = apiKey === apiKeyData.apiKeyTest
-const targetTable = isTestKey ? analyticsTest : analytics
+const isTestKey = apiKey === apiKeyData.apiKeyTest;
+const targetTable = isTestKey ? analyticsTest : analytics;
 
 // Validate each event
-events.forEach(event => {
+events.forEach((event) => {
   if (!VALID_EVENT_TYPES.includes(event.type)) {
-    throw new Error('Invalid event type')
+    throw new Error("Invalid event type");
   }
   if (event.properties && JSON.stringify(event.properties).length > 600) {
-    throw new Error('Properties too large')
+    throw new Error("Properties too large");
   }
-})
+});
 ```
 
 #### 3. Event Enrichment
+
 ```typescript
 // Add request metadata
 const requestMetadata = {
-  country: req.headers.get('x-vercel-ip-country') || null,
-  userAgent: req.headers.get('user-agent') || null
-}
+  country: req.headers.get("x-vercel-ip-country") || null,
+  userAgent: req.headers.get("user-agent") || null,
+};
 
 // Format events for database
-const dbEvents = events.map(event => ({
+const dbEvents = events.map((event) => ({
   id: uuidv7(),
   apiKey,
   identifyId,
@@ -640,44 +690,46 @@ const dbEvents = events.map(event => ({
   type: event.type,
   properties: {
     [specialPropertyKey]: specialPropertyValue,
-    ...(event.properties ? { data: event.properties } : {})
+    ...(event.properties ? { data: event.properties } : {}),
   },
   info: { ...info, requestMetadata },
   createdAt: new Date(),
-  updatedAt: new Date()
-}))
+  updatedAt: new Date(),
+}));
 ```
 
 #### 4. User Linking
+
 ```typescript
 // If userId provided, link all previous events
 if (userId && identifyId) {
   const existingIdentify = await db
     .select({ identifyId: targetTable.identifyId })
     .from(targetTable)
-    .where(eq(targetTable.userId, userId))
+    .where(eq(targetTable.userId, userId));
 
-  const previousIdentifyId = existingIdentify[0]?.identifyId
+  const previousIdentifyId = existingIdentify[0]?.identifyId;
 
   // Update all events from old identifyId to new one
   if (previousIdentifyId && previousIdentifyId !== identifyId) {
     await db
       .update(targetTable)
       .set({ identifyId })
-      .where(eq(targetTable.identifyId, previousIdentifyId))
+      .where(eq(targetTable.identifyId, previousIdentifyId));
   }
 }
 ```
 
 #### 5. Database Insert
+
 ```typescript
 // Bulk insert events
-await db.insert(targetTable).values(dbEvents)
+await db.insert(targetTable).values(dbEvents);
 
 return NextResponse.json(
   { success: true },
-  { status: 201, headers: corsHeaders }
-)
+  { status: 201, headers: corsHeaders },
+);
 ```
 
 ---
@@ -687,6 +739,7 @@ return NextResponse.json(
 ### Development vs Production
 
 #### Local Development
+
 ```bash
 # Database
 DATABASE_URL=postgresql://postgres:postgres@localhost:5434/postgres
@@ -699,6 +752,7 @@ STRIPE_SECRET_KEY=sk_test_...
 ```
 
 #### Production
+
 ```bash
 # Database (Neon)
 DATABASE_URL=postgresql://user:pass@ep-xxx.neon.tech/dbname?sslmode=require
@@ -713,6 +767,7 @@ STRIPE_SECRET_KEY=sk_live_...
 ### Edge Cases
 
 **Development on Different Port**
+
 ```bash
 # If running on :3001
 NEXTAUTH_URL=http://localhost:3001
@@ -722,6 +777,7 @@ NEXTAUTH_URL=http://localhost:3001
 ```
 
 **Behind Reverse Proxy**
+
 ```bash
 # May need to trust proxy headers
 # In Next.js config:
@@ -756,34 +812,36 @@ yarn test:coverage
 
 ```typescript
 // Test analytics ingestion
-describe('Analytics API', () => {
-  it('should accept valid events', async () => {
-    const response = await fetch('http://localhost:3000/api/analytics/push', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+describe("Analytics API", () => {
+  it("should accept valid events", async () => {
+    const response = await fetch("http://localhost:3000/api/analytics/push", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         apiKey: testApiKey,
-        identifyId: 'test-device',
-        events: [{
-          type: 'action',
-          name: 'test-action',
-          date: new Date(),
-          properties: {}
-        }]
-      })
-    })
+        identifyId: "test-device",
+        events: [
+          {
+            type: "action",
+            name: "test-action",
+            date: new Date(),
+            properties: {},
+          },
+        ],
+      }),
+    });
 
-    expect(response.status).toBe(201)
+    expect(response.status).toBe(201);
 
     // Verify in database
     const events = await db
       .select()
       .from(analyticsTest)
-      .where(eq(analyticsTest.identifyId, 'test-device'))
+      .where(eq(analyticsTest.identifyId, "test-device"));
 
-    expect(events).toHaveLength(1)
-  })
-})
+    expect(events).toHaveLength(1);
+  });
+});
 ```
 
 ### Manual Testing Checklist
@@ -827,16 +885,16 @@ LIMIT 10;
 ```typescript
 // Add timing middleware
 export async function middleware(request: NextRequest) {
-  const start = Date.now()
+  const start = Date.now();
 
-  const response = NextResponse.next()
+  const response = NextResponse.next();
 
-  const duration = Date.now() - start
-  response.headers.set('X-Response-Time', `${duration}ms`)
+  const duration = Date.now() - start;
+  response.headers.set("X-Response-Time", `${duration}ms`);
 
-  console.log(`${request.method} ${request.url} - ${duration}ms`)
+  console.log(`${request.method} ${request.url} - ${duration}ms`);
 
-  return response
+  return response;
 }
 ```
 
@@ -845,11 +903,11 @@ export async function middleware(request: NextRequest) {
 ```typescript
 // Monitor batch send performance
 const client = createAnalyticsClient({
-  apiKey: 'xxx',
+  apiKey: "xxx",
   onBatchSend: (events, duration) => {
-    console.log(`Sent ${events.length} events in ${duration}ms`)
-  }
-})
+    console.log(`Sent ${events.length} events in ${duration}ms`);
+  },
+});
 ```
 
 ---
@@ -857,45 +915,43 @@ const client = createAnalyticsClient({
 ## Security Considerations
 
 ### API Key Security
+
 - ✅ **DO**: Store in environment variables
 - ✅ **DO**: Use separate test/production keys
 - ❌ **DON'T**: Commit keys to git
 - ❌ **DON'T**: Expose production keys client-side
 
 ### Input Validation
+
 ```typescript
 // Always validate event types
 const VALID_EVENT_TYPES = [
-  'navigation',
-  'action',
-  'identify',
-  'state',
-  'error'
-] as const
+  "navigation",
+  "action",
+  "identify",
+  "state",
+  "error",
+] as const;
 
 if (!VALID_EVENT_TYPES.includes(event.type)) {
-  throw new Error('Invalid event type')
+  throw new Error("Invalid event type");
 }
 
 // Limit property size
-const MAX_PROPERTIES_LENGTH = 600
+const MAX_PROPERTIES_LENGTH = 600;
 if (JSON.stringify(properties).length > MAX_PROPERTIES_LENGTH) {
-  throw new Error('Properties too large')
+  throw new Error("Properties too large");
 }
 ```
 
 ### SQL Injection Prevention
+
 ```typescript
 // ✅ Good: Drizzle ORM
-await db
-  .select()
-  .from(analytics)
-  .where(eq(analytics.apiKey, apiKey))
+await db.select().from(analytics).where(eq(analytics.apiKey, apiKey));
 
 // ❌ Bad: Raw SQL
-await db.execute(
-  `SELECT * FROM analytics WHERE api_key = '${apiKey}'`
-)
+await db.execute(`SELECT * FROM analytics WHERE api_key = '${apiKey}'`);
 ```
 
 ---
@@ -920,6 +976,7 @@ await db.execute(
 ## Useful Debugging Queries
 
 ### Check Recent Events
+
 ```sql
 SELECT
   id,
@@ -934,6 +991,7 @@ LIMIT 10;
 ```
 
 ### Find Events by User
+
 ```sql
 SELECT
   type,
@@ -945,6 +1003,7 @@ ORDER BY date DESC;
 ```
 
 ### Count Events by Type
+
 ```sql
 SELECT
   type,
@@ -957,6 +1016,7 @@ ORDER BY count DESC;
 ```
 
 ### Find Large Events
+
 ```sql
 SELECT
   id,
@@ -969,6 +1029,7 @@ ORDER BY property_size DESC;
 ```
 
 ### Check API Key Usage
+
 ```sql
 SELECT
   ak.api_key,

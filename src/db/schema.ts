@@ -183,9 +183,18 @@ export const analyticsIdentifiedUsersMv = pgTable(
     platform: text("platform"),
     country: text("country"),
     appVersion: text("app_version"),
-    firstSeen: timestamp("first_seen", { mode: "date", withTimezone: true }).notNull(),
-    lastSeen: timestamp("last_seen", { mode: "date", withTimezone: true }).notNull(),
-    updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).notNull(),
+    firstSeen: timestamp("first_seen", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    lastSeen: timestamp("last_seen", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
   },
 );
 
@@ -202,8 +211,17 @@ export const analyticsTestIdentifiedUsersMv = pgTable(
     platform: text("platform"),
     country: text("country"),
     appVersion: text("app_version"),
-    firstSeen: timestamp("first_seen", { mode: "date", withTimezone: true }).notNull(),
-    lastSeen: timestamp("last_seen", { mode: "date", withTimezone: true }).notNull(),
-    updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).notNull(),
+    firstSeen: timestamp("first_seen", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    lastSeen: timestamp("last_seen", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
   },
 );

@@ -39,22 +39,23 @@ async function dumpTable(tableName: string, outputFile: string) {
     const inserts: string[] = [];
 
     for (const row of rows) {
-      const values = columns.map(col => {
+      const values = columns.map((col) => {
         const val = row[col];
-        if (val === null) return 'NULL';
-        if (typeof val === 'string') return `'${val.replace(/'/g, "''")}'`;
-        if (typeof val === 'boolean') return val ? 'true' : 'false';
+        if (val === null) return "NULL";
+        if (typeof val === "string") return `'${val.replace(/'/g, "''")}'`;
+        if (typeof val === "boolean") return val ? "true" : "false";
         if (val instanceof Date) return `'${val.toISOString()}'`;
-        if (typeof val === 'object') return `'${JSON.stringify(val).replace(/'/g, "''")}'::jsonb`;
+        if (typeof val === "object")
+          return `'${JSON.stringify(val).replace(/'/g, "''")}'::jsonb`;
         return val;
       });
 
       inserts.push(
-        `INSERT INTO ${tableName} (${columns.map(c => `"${c}"`).join(', ')}) VALUES (${values.join(', ')});`
+        `INSERT INTO ${tableName} (${columns.map((c) => `"${c}"`).join(", ")}) VALUES (${values.join(", ")});`,
       );
     }
 
-    writeFileSync(outputFile, inserts.join('\n') + '\n');
+    writeFileSync(outputFile, inserts.join("\n") + "\n");
     console.log(`   ✅ Saved to ${outputFile}`);
   } catch (error) {
     console.error(`   ❌ Error dumping ${tableName}:`, error);
@@ -66,10 +67,10 @@ async function main() {
   console.log("🚀 Starting analytics data dump...\n");
 
   // Create output directory
-  mkdirSync('/tmp/analytics-dump', { recursive: true });
+  mkdirSync("/tmp/analytics-dump", { recursive: true });
 
-  await dumpTable('analytics', '/tmp/analytics-dump/analytics.sql');
-  await dumpTable('analytics_test', '/tmp/analytics-dump/analytics_test.sql');
+  await dumpTable("analytics", "/tmp/analytics-dump/analytics.sql");
+  await dumpTable("analytics_test", "/tmp/analytics-dump/analytics_test.sql");
 
   console.log("\n✅ Dump complete!");
   console.log("   Files saved to /tmp/analytics-dump/");

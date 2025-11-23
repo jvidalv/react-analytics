@@ -378,12 +378,14 @@ function App() {
 ```
 
 **When to use manual init:**
+
 - You need to initialize analytics conditionally (e.g., based on user consent)
 - You're using a custom router not supported by auto-detection
 - You want to control exactly when tracking starts
 - Your app architecture doesn't support provider patterns
 
 **When to use AnalyticsProvider instead:**
+
 - Most standard React apps (Next.js, Expo, React Router, etc.)
 - You want automatic router tracking
 - You prefer declarative React patterns
@@ -445,7 +447,6 @@ import {
 ## How It Works
 
 1. **Initialization**: When you call `analytics.init()` or use `<AnalyticsProvider>`, the library:
-
    - Detects the platform (web or React Native)
    - Sets up appropriate storage (localStorage or AsyncStorage)
    - Generates or retrieves a persistent anonymous user ID
@@ -455,7 +456,6 @@ import {
 2. **Event Queue**: Events are stored in memory and automatically pushed to the API every 5 seconds. If the push fails, the library retries with exponential backoff.
 
 3. **Router Detection**: The library automatically detects which router you're using and tracks navigation changes. Supported routers:
-
    - expo-router (Expo apps)
    - react-router-dom v6+ (React SPAs)
    - next/router (Next.js Pages Router)

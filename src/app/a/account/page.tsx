@@ -19,7 +19,11 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { PRICE_PLANS } from "@/domains/plan/api.plan";
-import { getPlanDisplayName, getPlanEmoji, PlanType } from "@/domains/plan/plan.utils";
+import {
+  getPlanDisplayName,
+  getPlanEmoji,
+  PlanType,
+} from "@/domains/plan/plan.utils";
 
 export default function AccountPage() {
   const { me } = useMe();
@@ -129,7 +133,9 @@ function PlanSection({ user }: { user: User }) {
                   "bg-indigo-900/50 border-indigo-400/30  text-indigo-400 ",
               )}
             >
-              <span className="mr-2 font-medium">{getPlanDisplayName(user.plan as PlanType)}</span>
+              <span className="mr-2 font-medium">
+                {getPlanDisplayName(user.plan as PlanType)}
+              </span>
               {getPlanEmoji(user.plan as PlanType)}
             </div>
           </div>

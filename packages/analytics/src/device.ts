@@ -113,8 +113,7 @@ function getReactNativeDeviceInfo(): DeviceInfo {
           brand: Device.brand,
           modelName: Device.modelName,
           isSimulator: !Device.isDevice,
-          androidPlatformApiLevel:
-            Device.platformApiLevel ?? undefined,
+          androidPlatformApiLevel: Device.platformApiLevel ?? undefined,
         };
       }
     } catch {

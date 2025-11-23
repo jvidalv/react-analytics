@@ -19,9 +19,6 @@ export * from "./common";
 // Re-export event schemas and types
 export * from "./events";
 
-// Re-export user analytics schemas and types
-export * from "./users";
-
 // Re-export API keys schemas and types
 export * from "./api-keys";
 

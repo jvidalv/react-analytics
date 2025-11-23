@@ -18,13 +18,7 @@ import { Copy, Check } from "lucide-react";
 import { useMe } from "@/domains/user/me.api";
 import { useToggleDevMode } from "@/domains/user/me.api";
 
-function ApiKeyDisplay({
-  apiKey,
-  label,
-}: {
-  apiKey?: string;
-  label: string;
-}) {
+function ApiKeyDisplay({ apiKey, label }: { apiKey?: string; label: string }) {
   const [copied, copy] = useClipboard();
 
   return (
@@ -83,10 +77,7 @@ export default function ApiKeysPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <ApiKeyDisplay
-            apiKey={apiKeys?.apiKey}
-            label="Production API Key"
-          />
+          <ApiKeyDisplay apiKey={apiKeys?.apiKey} label="Production API Key" />
           <ApiKeyDisplay
             apiKey={apiKeys?.apiKeyTest}
             label="Development API Key"

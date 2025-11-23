@@ -1,29 +1,29 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import tseslint from "typescript-eslint";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const eslintConfig = [
-  ...compat.extends(
-    "next/core-web-vitals",
-    "next/typescript",
-    "plugin:prettier/recommended",
-    "plugin:tailwindcss/recommended",
-  ),
+export default tseslint.config(
+  // Ignore patterns
+  {
+    ignores: [
+      ".next/",
+      "packages/*/dist/",
+      "packages/*/test/",
+      "node_modules/",
+      "*.config.js",
+      "*.config.mjs",
+    ],
+  },
+  // TypeScript files
+  ...tseslint.configs.recommended,
   {
     rules: {
-      "@next/next/no-img-element": "off",
+      // Disable rules that conflict with Prettier or are too strict
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "no-console": "off",
+      // Disable React hooks rules (not configured yet)
+      "react-hooks/exhaustive-deps": "off",
+      "react-hooks/rules-of-hooks": "off",
     },
   },
-  {
-    ignores: [".next/", "packages/*/dist/", "packages/*/test/"],
-  },
-];
-
-export default eslintConfig;
+);

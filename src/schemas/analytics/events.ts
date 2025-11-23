@@ -17,17 +17,16 @@ export const AnalyticsEventTypeSchema = z.enum([
 export type AnalyticsEventType = z.infer<typeof AnalyticsEventTypeSchema>;
 
 // Event properties with 600 character limit
-export const EventPropertiesSchema = z
-  .record(z.string(), z.unknown())
-  .refine(
-    (props) => {
-      const jsonString = JSON.stringify(props);
-      return jsonString.length <= 600;
-    },
-    {
-      message: "Event properties must be less than 600 characters when stringified",
-    }
-  );
+export const EventPropertiesSchema = z.record(z.string(), z.unknown()).refine(
+  (props) => {
+    const jsonString = JSON.stringify(props);
+    return jsonString.length <= 600;
+  },
+  {
+    message:
+      "Event properties must be less than 600 characters when stringified",
+  },
+);
 
 // Base analytics event schema
 export const AnalyticsEventSchema = z.object({

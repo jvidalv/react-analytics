@@ -8,13 +8,10 @@ export type UsersFilters = {
 
 export const getUsersFiltersQueryKey = (
   appSlug?: string,
-  devModeEnabled?: boolean
+  devModeEnabled?: boolean,
 ) => ["analytics", appSlug, "users", "filters", devModeEnabled] as const;
 
-export const useUsersFilters = (
-  appSlug?: string,
-  devModeEnabled?: boolean
-) => {
+export const useUsersFilters = (appSlug?: string, devModeEnabled?: boolean) => {
   const enabled = !!appSlug && devModeEnabled !== undefined;
 
   const {

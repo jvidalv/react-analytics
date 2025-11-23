@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+build/
+
+# Generated files
+packages/*/dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# Database
+drizzle/meta/
+
+# IDE
+.idea/
+.vscode/
+
+# Other
+coverage/
+.vercel/

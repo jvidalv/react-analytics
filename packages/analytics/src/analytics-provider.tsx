@@ -57,7 +57,6 @@ const AnalyticsProvider: FC<AnalyticsProviderProps> = ({
     return () => {
       analytics.cleanup();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config.apiKey]); // Re-initialize only if API key changes
 
   // Don't render router tracker until analytics is initialized

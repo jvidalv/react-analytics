@@ -26,7 +26,8 @@ async function resetDatabase() {
   console.log("   Database:", databaseUrl?.split("@")[1] || "unknown");
   console.log("\n🗑️  Dropping all tables and views...\n");
 
-  const sql = postgres(databaseUrl, { max: 1 });
+  // TypeScript: databaseUrl is guaranteed to be defined due to exit above
+  const sql = postgres(databaseUrl!, { max: 1 });
 
   try {
     // Drop materialized views first (they depend on tables) - ignore errors if they're tables

@@ -43,7 +43,9 @@ export const errorRateAggregatesRoute = new Elysia().get(
     const totalErrors = Number(overallRow?.total_errors || 0);
     const totalEvents = Number(overallRow?.total_events || 0);
     const errorRate =
-      totalEvents > 0 ? Math.round((totalErrors / totalEvents) * 10000) / 100 : 0;
+      totalEvents > 0
+        ? Math.round((totalErrors / totalEvents) * 10000) / 100
+        : 0;
 
     // Query current period (last 30 days)
     const currentResult = await db.execute(sql`
@@ -84,7 +86,9 @@ export const errorRateAggregatesRoute = new Elysia().get(
 
     // Calculate absolute change in error rate (not percentage of percentage)
     const rateChange =
-      previousRate > 0 ? Math.round((currentRate - previousRate) * 100) / 100 : 0;
+      previousRate > 0
+        ? Math.round((currentRate - previousRate) * 100) / 100
+        : 0;
 
     return {
       totalErrors,
@@ -105,5 +109,5 @@ export const errorRateAggregatesRoute = new Elysia().get(
         "Returns overall and growth metrics for error rate (errors/total events)",
       tags: ["Analytics"],
     },
-  }
+  },
 );

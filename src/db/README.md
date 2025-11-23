@@ -24,6 +24,7 @@ drizzle/
 ## Available Commands
 
 ### `yarn db:reset`
+
 Drops all tables and views, then runs migrations from scratch.
 **WARNING**: Deletes ALL data!
 
@@ -32,6 +33,7 @@ yarn db:reset
 ```
 
 ### `yarn db:add-data <api-key> <api-key-test>`
+
 Injects anonymized analytics data associated with your API keys.
 
 ```bash
@@ -40,10 +42,12 @@ yarn db:add-data prod-abc123 test-abc123
 ```
 
 **Requirements**:
+
 - API keys must exist in `analytics_api_keys` table
 - Creates an app first through the UI, then use those API keys
 
 ### `yarn db:generate`
+
 Generates a new migration from schema changes.
 
 ```bash
@@ -51,6 +55,7 @@ yarn db:generate
 ```
 
 ### `yarn db:migrate`
+
 Runs pending migrations.
 
 ```bash
@@ -60,11 +65,13 @@ yarn db:migrate
 ## Workflow for Fresh Start
 
 1. **Reset database** (drops everything):
+
    ```bash
    yarn db:reset
    ```
 
 2. **Start the app**:
+
    ```bash
    yarn dev
    ```
@@ -75,6 +82,7 @@ yarn db:migrate
    - Copy the API keys from the dashboard
 
 4. **Add seed data** (optional):
+
    ```bash
    yarn db:add-data <your-prod-api-key> <your-test-api-key>
    ```
@@ -91,6 +99,7 @@ The migration creates two materialized views:
 These views are automatically refreshed every minute by the cron job (`yarn cron:watch`).
 
 Manual refresh:
+
 ```bash
 yarn cron:refresh-views
 ```
@@ -107,6 +116,7 @@ All schema is defined in `src/db/schema.ts`. When you make changes:
 ## Seed Data
 
 Seed data was created from actual production data with:
+
 - **1,123 unique emails** anonymized to `user1@example.com` format
 - **288,762 analytics events** from production
 - **6 analytics_test events** for testing

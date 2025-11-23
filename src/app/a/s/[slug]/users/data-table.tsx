@@ -26,14 +26,16 @@ interface DataTableProps<TData, TValue> {
     version: string;
     identified: boolean;
   };
-  setFilters?: (filters: Partial<{
-    page: number;
-    search: string;
-    platform: string;
-    country: string;
-    version: string;
-    identified: boolean;
-  }>) => void;
+  setFilters?: (
+    filters: Partial<{
+      page: number;
+      search: string;
+      platform: string;
+      country: string;
+      version: string;
+      identified: boolean;
+    }>,
+  ) => void;
   filterOptions?: {
     countries: string[];
     versions: string[];
@@ -76,7 +78,7 @@ export function DataTable<TData, TValue>({
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 );
@@ -96,9 +98,14 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableCell
                       key={cell.id}
-                      style={width !== 150 ? { width: `${width}px` } : undefined}
+                      style={
+                        width !== 150 ? { width: `${width}px` } : undefined
+                      }
                     >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </TableCell>
                   );
                 })}
@@ -106,10 +113,7 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-24 text-center"
-              >
+              <TableCell colSpan={columns.length} className="h-24 text-center">
                 No results.
               </TableCell>
             </TableRow>

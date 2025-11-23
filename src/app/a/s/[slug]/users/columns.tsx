@@ -16,7 +16,13 @@ import { useClipboard } from "@/hooks/use-clipboard";
 import { toast } from "sonner";
 
 // Copyable text component with hover button
-function CopyableText({ text, className }: { text: string; className?: string }) {
+function CopyableText({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
   const [copied, copyToClipboard] = useClipboard();
 
   const handleCopy = () => {
@@ -26,10 +32,7 @@ function CopyableText({ text, className }: { text: string; className?: string })
 
   return (
     <div className="group relative inline-flex items-center gap-1.5">
-      <span
-        className={cn("cursor-pointer", className)}
-        onClick={handleCopy}
-      >
+      <span className={cn("cursor-pointer", className)} onClick={handleCopy}>
         {text}
       </span>
       <button
@@ -52,7 +55,8 @@ function NameCell({ user }: { user: User }) {
   const isAnonymous = !user.name && !user.email;
 
   // For anonymous users: use last 8 digits of UUID as name
-  const displayName = user.name || user.email || getUuidLastDigits(user.identifyId);
+  const displayName =
+    user.name || user.email || getUuidLastDigits(user.identifyId);
 
   const initials = isAnonymous
     ? getUuidLastDigits(user.identifyId, 2).toUpperCase()

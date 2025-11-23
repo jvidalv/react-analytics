@@ -40,9 +40,7 @@ export function validateApiKeyFormat(apiKey: string): boolean {
  * Extracts the mode from a custom-format API key
  * Returns null for old UUID-format keys
  */
-export function getApiKeyMode(
-  apiKey: string,
-): "prod" | "dev" | null {
+export function getApiKeyMode(apiKey: string): "prod" | "dev" | null {
   if (apiKey.startsWith("prod-")) return "prod";
   if (apiKey.startsWith("dev-")) return "dev";
   return null; // Old UUID format

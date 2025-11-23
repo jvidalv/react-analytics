@@ -129,9 +129,7 @@ export const useUpdateApp = (slug?: string) => {
     }) => {
       if (!slug) throw new Error("No app slug provided");
 
-      const { data, error } = await fetcherProtected
-        .app({ slug })
-        .put(payload);
+      const { data, error } = await fetcherProtected.app({ slug }).put(payload);
 
       if (error) {
         throw error;

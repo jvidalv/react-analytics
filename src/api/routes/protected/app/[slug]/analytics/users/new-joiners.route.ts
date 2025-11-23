@@ -58,7 +58,7 @@ export const newJoinersRoute = new Elysia().get(
       .select({ count: count() })
       .from(identifiedUsersMv)
       .where(
-        sql`${identifiedUsersMv.apiKey} = ${apiKey} AND ${identifiedUsersMv.firstSeen} >= ${startDate.toISOString()}`
+        sql`${identifiedUsersMv.apiKey} = ${apiKey} AND ${identifiedUsersMv.firstSeen} >= ${startDate.toISOString()}`,
       );
 
     const total = Number(countResult[0]?.count || 0);
@@ -80,7 +80,7 @@ export const newJoinersRoute = new Elysia().get(
       })
       .from(identifiedUsersMv)
       .where(
-        sql`${identifiedUsersMv.apiKey} = ${apiKey} AND ${identifiedUsersMv.firstSeen} >= ${startDate.toISOString()}`
+        sql`${identifiedUsersMv.apiKey} = ${apiKey} AND ${identifiedUsersMv.firstSeen} >= ${startDate.toISOString()}`,
       )
       .orderBy(desc(identifiedUsersMv.firstSeen))
       .limit(limit)
@@ -97,8 +97,12 @@ export const newJoinersRoute = new Elysia().get(
       country: row.country || null,
       appVersion: row.appVersion || null,
       isIdentified: true, // All users from this view are identified
-      firstSeen: row.firstSeen ? new Date(row.firstSeen).toISOString() : new Date().toISOString(),
-      lastSeen: row.lastSeen ? new Date(row.lastSeen).toISOString() : new Date().toISOString(),
+      firstSeen: row.firstSeen
+        ? new Date(row.firstSeen).toISOString()
+        : new Date().toISOString(),
+      lastSeen: row.lastSeen
+        ? new Date(row.lastSeen).toISOString()
+        : new Date().toISOString(),
     }));
 
     return {
@@ -123,5 +127,5 @@ export const newJoinersRoute = new Elysia().get(
         "Returns a paginated list of new users (those whose first event was in the last week)",
       tags: ["Analytics"],
     },
-  }
+  },
 );

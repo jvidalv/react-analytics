@@ -18,20 +18,14 @@ export async function GET(request: NextRequest) {
     if (process.env.CRON_SECRET) {
       if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
         console.error("[Cron] Unauthorized request to refresh-views");
-        return NextResponse.json(
-          { error: "Unauthorized" },
-          { status: 401 }
-        );
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
     } else {
       // If no CRON_SECRET is set, check if it's from Vercel
       const isFromVercel = authHeader?.startsWith("Bearer ");
       if (!isFromVercel) {
         console.error("[Cron] Missing authorization header");
-        return NextResponse.json(
-          { error: "Unauthorized" },
-          { status: 401 }
-        );
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
     }
 
@@ -54,7 +48,7 @@ export async function GET(request: NextRequest) {
         error: error instanceof Error ? error.message : "Unknown error",
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

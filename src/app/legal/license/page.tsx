@@ -11,23 +11,23 @@ export default function PrivacyPolicy() {
           <h2>TL;DR;</h2>
           <ul>
             <li>
-              <strong>Free Tier:</strong> Track analytics on 1 project with 30 days
-              data retention as an individual.
+              <strong>Free Tier:</strong> Track analytics on 1 project with 30
+              days data retention as an individual.
             </li>
             <li>
-              <strong>Paid Subscriptions (Starter/Pro):</strong> Track analytics on
-              multiple projects with unlimited data retention.
+              <strong>Paid Subscriptions (Starter/Pro):</strong> Track analytics
+              on multiple projects with unlimited data retention.
             </li>
             <li>
-              <strong>Open Source:</strong> Self-host the MIT-licensed open source
-              version on your own infrastructure.
+              <strong>Open Source:</strong> Self-host the MIT-licensed open
+              source version on your own infrastructure.
             </li>
           </ul>
 
           <p>
             This License Agreement (&apos;Agreement&apos;) is entered into
-            between <strong>React Analytics</strong>, represented by Josep Vidal, whose
-            contact information is{" "}
+            between <strong>React Analytics</strong>, represented by Josep
+            Vidal, whose contact information is{" "}
             <a
               href="mailto:josepvidalvidal@gmail.com"
               className="text-blue-600 underline"
@@ -35,14 +35,17 @@ export default function PrivacyPolicy() {
               josepvidalvidal@gmail.com
             </a>
             , and you, the user (&apos;Licensee&apos;), regarding the use of the{" "}
-            <strong>React Analytics</strong> service (the
-            &apos;Service&apos;) available at{" "}
-            <a href="https://react-analytics.app" className="text-blue-600 underline">
+            <strong>React Analytics</strong> service (the &apos;Service&apos;)
+            available at{" "}
+            <a
+              href="https://react-analytics.app"
+              className="text-blue-600 underline"
+            >
               https://react-analytics.app
             </a>{" "}
-            (the &apos;Website&apos;). By accessing or using the
-            Service, Licensee agrees to be bound by the terms and conditions of
-            this Agreement.
+            (the &apos;Website&apos;). By accessing or using the Service,
+            Licensee agrees to be bound by the terms and conditions of this
+            Agreement.
           </p>
 
           <h2>1. Grant of Service License</h2>
@@ -58,43 +61,42 @@ export default function PrivacyPolicy() {
           </p>
           <ul>
             <li>Track analytics on up to 1 project/application.</li>
-            <li>
-              Collect up to 10,000 analytics events per month.
-            </li>
-            <li>
-              Access analytics data with 30 days data retention.
-            </li>
-            <li>
-              Use the service for personal or commercial projects.
-            </li>
+            <li>Collect up to 10,000 analytics events per month.</li>
+            <li>Access analytics data with 30 days data retention.</li>
+            <li>Use the service for personal or commercial projects.</li>
           </ul>
 
           <h3>1.2 Paid Subscriptions (Starter/Pro)</h3>
           <p>
             Subject to the terms and conditions of this Agreement and payment of
-            applicable subscription fees,{" "}
-            <strong>React Analytics</strong> grants Licensee a non-exclusive,
-            non-transferable, and non-sublicensable subscription license to use
-            the <strong>React Analytics</strong> hosted service with enhanced
+            applicable subscription fees, <strong>React Analytics</strong>{" "}
+            grants Licensee a non-exclusive, non-transferable, and
+            non-sublicensable subscription license to use the{" "}
+            <strong>React Analytics</strong> hosted service with enhanced
             features:
           </p>
           <ul>
-            <li>Track analytics on multiple projects (3 for Starter, unlimited for Pro).</li>
+            <li>
+              Track analytics on multiple projects (3 for Starter, unlimited for
+              Pro).
+            </li>
             <li>
               Collect increased analytics events per month (100,000 for Starter,
               unlimited for Pro).
             </li>
             <li>Unlimited data retention.</li>
             <li>Advanced filtering, exports, and analytics features.</li>
-            <li>Share analytics dashboard access with team members (Pro tier).</li>
+            <li>
+              Share analytics dashboard access with team members (Pro tier).
+            </li>
           </ul>
 
           <h3>1.3 Open Source License</h3>
           <p>
-            The <strong>React Analytics</strong> open source software is available
-            under the MIT License. Licensee may download, modify, and self-host
-            the software on their own infrastructure subject to the terms of the
-            MIT License available in the GitHub repository.
+            The <strong>React Analytics</strong> open source software is
+            available under the MIT License. Licensee may download, modify, and
+            self-host the software on their own infrastructure subject to the
+            terms of the MIT License available in the GitHub repository.
           </p>
 
           <h2>2. Restrictions</h2>
@@ -111,8 +113,8 @@ export default function PrivacyPolicy() {
             </li>
             <li>
               Use the <strong>React Analytics</strong> service in any way that
-              violates applicable laws, regulations, privacy laws, or third-party
-              rights.
+              violates applicable laws, regulations, privacy laws, or
+              third-party rights.
             </li>
             <li>
               Exceed usage limits (events, projects, data retention) applicable
@@ -130,15 +132,16 @@ export default function PrivacyPolicy() {
 
           <h2>3. Ownership and Intellectual Property</h2>
           <p>
-            <strong>React Analytics</strong> retains all ownership and intellectual
-            property rights in and to the <strong>React Analytics</strong> hosted
-            service and its proprietary components. This Agreement does not grant
-            Licensee any ownership rights in the hosted service infrastructure.
+            <strong>React Analytics</strong> retains all ownership and
+            intellectual property rights in and to the{" "}
+            <strong>React Analytics</strong> hosted service and its proprietary
+            components. This Agreement does not grant Licensee any ownership
+            rights in the hosted service infrastructure.
           </p>
           <p>
-            The open source software components are licensed under the MIT License,
-            granting Licensee the rights specified in that license for self-hosted
-            deployments.
+            The open source software components are licensed under the MIT
+            License, granting Licensee the rights specified in that license for
+            self-hosted deployments.
           </p>
 
           <h2>4. Warranty and Disclaimer</h2>
@@ -147,8 +150,8 @@ export default function PrivacyPolicy() {
             IS&apos; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
             INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
             MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR
-            NONINFRINGEMENT. NO WARRANTY IS PROVIDED REGARDING UPTIME,
-            DATA ACCURACY, OR AVAILABILITY OF THE SERVICE.
+            NONINFRINGEMENT. NO WARRANTY IS PROVIDED REGARDING UPTIME, DATA
+            ACCURACY, OR AVAILABILITY OF THE SERVICE.
           </p>
 
           <h2>5. Limitation of Liability</h2>
@@ -175,9 +178,9 @@ export default function PrivacyPolicy() {
           <h2>7. Entire Agreement</h2>
           <p>
             This Agreement constitutes the entire agreement between Licensee and{" "}
-            <strong>React Analytics</strong> concerning the subject matter herein and
-            supersedes all prior or contemporaneous agreements, representations,
-            warranties, and understandings.
+            <strong>React Analytics</strong> concerning the subject matter
+            herein and supersedes all prior or contemporaneous agreements,
+            representations, warranties, and understandings.
           </p>
 
           <p>

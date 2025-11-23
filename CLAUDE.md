@@ -3,6 +3,7 @@
 ## Project Vision
 
 **React Analytics** is a comprehensive analytics platform for React applications. It provides:
+
 - Universal analytics tracking library (`@jvidalv/react-analytics`) for React, React Native, Expo, and Next.js
 - Web dashboard for viewing, querying, and analyzing user behavior data
 - Multi-app support allowing users to track analytics across multiple React applications
@@ -28,32 +29,38 @@ react-analytics/
 ## Technology Stack
 
 ### Core Framework
+
 - **Next.js 15.1.6** - App Router, Server Components
 - **React 19.0.0** - Latest React with concurrent features
 - **TypeScript 5** - Full type safety
 
 ### Database & ORM
+
 - **PostgreSQL** - Primary database (Neon serverless in production)
 - **Drizzle ORM 0.39.1** - Type-safe SQL queries
 - **Local Dev**: Docker Compose (PostgreSQL on port 5434)
 
 ### Authentication
+
 - **NextAuth v5** - OAuth authentication
 - **Providers**: Google, Apple, GitHub
 - **Sessions**: Database-backed, 10-year duration
 - **Protection**: Server-side auth checks on `/a/*` routes
 
 ### UI & Styling
+
 - **Tailwind CSS 3.4.1** - Utility-first styling
 - **Shadcn/ui** - Accessible component primitives (38 components)
 - **Radix UI** - Headless UI components
 - **Lucide React** - Icon library
 
 ### State & Data Fetching
+
 - **Zustand v5** - Lightweight state management
 - **SWR 2.3.2** - Data fetching and caching
 
 ### External Services
+
 - **Stripe** - Payment processing (3 tiers: Straw/Wood/Metal)
 - **AWS S3** - File storage
 - **OpenAI** - AI-powered features
@@ -62,6 +69,7 @@ react-analytics/
 ## Core Product Features
 
 ### 1. Analytics Ingestion
+
 - **Endpoint**: `POST /api/analytics/push`
 - **Authentication**: API key-based (production + test keys)
 - **Event Types**: Navigation, Actions, Errors, State, Identify
@@ -70,6 +78,7 @@ react-analytics/
 - **Storage**: Separate tables for production vs test data
 
 ### 2. Analytics Dashboard
+
 - **User Analytics**: `/app/s/[slug]/users`
   - Real-time user sessions
   - Event timeline
@@ -80,12 +89,14 @@ react-analytics/
 - **Privacy**: Sensitive mode to hide user data (configured in Settings)
 
 ### 3. Multi-App Management
+
 - **App Creation**: Users can create multiple apps
 - **Slug-based**: Each app has unique slug for routing
 - **API Keys**: Separate production/test keys per app
 - **Settings**: `/app/s/[slug]/settings`
 
 ### 4. Analytics Package (`@jvidalv/react-analytics`)
+
 - **Auto-detection**: Automatically detects Next.js, Expo Router, React Router
 - **Event Types**:
   - **Navigation**: Automatic page/screen tracking
@@ -100,6 +111,7 @@ react-analytics/
 ## Directory Structure Reference
 
 ### `/packages/analytics` - Analytics Library
+
 ```
 packages/analytics/
 ├── src/
@@ -118,6 +130,7 @@ packages/analytics/
 ```
 
 ### `/src/app` - Next.js Application
+
 ```
 src/app/
 ├── api/
@@ -146,6 +159,7 @@ src/app/
 ```
 
 ### `/src/domains` - Business Logic
+
 ```
 src/domains/
 ├── app/
@@ -165,21 +179,23 @@ src/domains/
 ### Core Tables
 
 #### `users` - Platform users
+
 ```typescript
 {
-  id: string (uuid)
-  name: string | null
-  email: string (unique)
-  emailVerified: timestamp | null
-  image: string | null
-  plan: 'free' | 'straw' | 'wood' | 'metal'
-  aiModel: 'gpt-3.5-turbo' | 'gpt-4' | 'gpt-4-turbo'
-  createdAt: timestamp
-  updatedAt: timestamp
+  id: string(uuid);
+  name: string | null;
+  email: string(unique);
+  emailVerified: timestamp | null;
+  image: string | null;
+  plan: "free" | "straw" | "wood" | "metal";
+  aiModel: "gpt-3.5-turbo" | "gpt-4" | "gpt-4-turbo";
+  createdAt: timestamp;
+  updatedAt: timestamp;
 }
 ```
 
 #### `apps` - User applications
+
 ```typescript
 {
   id: string (uuid)
@@ -191,6 +207,7 @@ src/domains/
 ```
 
 #### `analytics_api_keys` - API keys per app
+
 ```typescript
 {
   id: string (uuid)
@@ -203,27 +220,30 @@ src/domains/
 ```
 
 #### `analytics` - Production analytics events
+
 ```typescript
 {
-  id: string (uuid)
-  apiKey: string (indexed)
-  identifyId: string (indexed) // Device/session identifier
-  userId: string | null (indexed) // Identified user
-  appVersion: string | null
-  date: timestamp (indexed)
-  type: 'navigation' | 'action' | 'identify' | 'state' | 'error'
-  properties: jsonb // Event-specific data
-  info: jsonb | null // Device/platform info
-  createdAt: timestamp
-  updatedAt: timestamp
+  id: string(uuid);
+  apiKey: string(indexed);
+  identifyId: string(indexed); // Device/session identifier
+  userId: string | null(indexed); // Identified user
+  appVersion: string | null;
+  date: timestamp(indexed);
+  type: "navigation" | "action" | "identify" | "state" | "error";
+  properties: jsonb; // Event-specific data
+  info: jsonb | null; // Device/platform info
+  createdAt: timestamp;
+  updatedAt: timestamp;
 }
 ```
 
 #### `analytics_test` - Test environment events
+
 - Same schema as `analytics` table
 - Separate for development testing
 
 ### Supporting Tables
+
 - `accounts` - OAuth provider accounts (NextAuth)
 - `sessions` - User sessions (NextAuth)
 - `transactions` - Stripe payment transactions
@@ -233,9 +253,11 @@ src/domains/
 ### Analytics APIs
 
 #### `POST /api/analytics/push`
+
 Analytics event ingestion endpoint.
 
 **Request Body:**
+
 ```typescript
 {
   apiKey: string
@@ -248,6 +270,7 @@ Analytics event ingestion endpoint.
 ```
 
 **Features:**
+
 - CORS enabled for cross-origin requests
 - Validates event types and required fields
 - Routes to production or test table based on API key
@@ -256,11 +279,13 @@ Analytics event ingestion endpoint.
 - Returns 201 on success
 
 #### `GET /api/analytics/users/all`
+
 List all unique users for an app.
 
 **Query Params:** `appId`, `page`, `limit`, `search`, `startDate`, `endDate`
 
 #### `GET /api/analytics/users/one`
+
 Get detailed user analytics.
 
 **Query Params:** `appId`, `identifyId`
@@ -268,6 +293,7 @@ Get detailed user analytics.
 **Returns:** User info, events timeline, session count
 
 #### `GET /api/analytics/users/stats`
+
 Get user statistics.
 
 **Returns:** Total users, active users, retention metrics
@@ -275,9 +301,11 @@ Get user statistics.
 ### App Management APIs
 
 #### `GET /api/app/all`
+
 List user's apps.
 
 #### `GET /api/app/one`
+
 Get single app details.
 
 **Query Params:** `slug`
@@ -292,6 +320,7 @@ Get single app details.
 6. **Protected Routes**: All `/app/*` routes require authentication
 
 **Edge Cases:**
+
 - Middleware uses edge runtime (limited Drizzle imports)
 - Session validated via cookie presence only in middleware
 - Full session data loaded in page components
@@ -299,6 +328,7 @@ Get single app details.
 ## Analytics Package Architecture
 
 ### Event Flow
+
 ```
 User Action
     ↓
@@ -320,6 +350,7 @@ Database (analytics/analytics_test)
 ### Key Components
 
 #### `AnalyticsProvider`
+
 ```typescript
 <AnalyticsProvider client={analyticsClient}>
   {children}
@@ -327,18 +358,20 @@ Database (analytics/analytics_test)
 ```
 
 #### `createAnalyticsClient`
+
 ```typescript
 const client = createAnalyticsClient({
-  apiKey: 'your-api-key',
-  endpoint: 'https://your-domain.com/api/analytics/push',
+  apiKey: "your-api-key",
+  endpoint: "https://your-domain.com/api/analytics/push",
   asyncStorageInstance: AsyncStorage, // For React Native
-  appVersion: '1.0.0',
+  appVersion: "1.0.0",
   batchInterval: 5000,
-  maxBatchSize: 100
-})
+  maxBatchSize: 100,
+});
 ```
 
 #### Router Detection
+
 - **Next.js**: Uses `usePathname()` and `useSearchParams()`
 - **Expo Router**: Uses `useSegments()` and `useGlobalSearchParams()`
 - **React Router**: Uses `useLocation()`
@@ -346,6 +379,7 @@ const client = createAnalyticsClient({
 ## Development Workflow
 
 ### Initial Setup
+
 ```bash
 # 1. Clone repository
 git clone git@github.com:jvidalv/react-analytics.git
@@ -483,6 +517,7 @@ yarn db:migrate
 #### Deployment
 
 Migrations run automatically on Vercel:
+
 - **Production**: Runs `yarn db:migrate` before build
 - **Preview**: Skips migrations (faster builds, configured in `src/db/migrate.ts`)
 
@@ -614,6 +649,7 @@ This project follows semantic commit conventions to maintain a clear and meaning
 ### Examples
 
 **Good commits:**
+
 ```
 feat: restructure pricing plans from one-time to subscription model
 
@@ -636,6 +672,7 @@ migration to Turbopack and Tailwind CSS v4 configuration.
 ```
 
 **Avoid:**
+
 ```
 update stuff          # Too vague
 Fixed bug             # Not descriptive enough
@@ -678,19 +715,22 @@ This maintains transparency about AI-assisted development and acknowledges the c
 ## Code Patterns & Conventions
 
 ### File Naming
+
 - **Components**: PascalCase - `UserDashboard.tsx`
 - **Utilities**: camelCase - `formatDate.ts`
 - **API Routes**: kebab-case folders, `route.ts` file
 - **Domains**: kebab-case - `users.api.ts`
 
 ### Database Queries
+
 - Use Drizzle ORM, not raw SQL
 - Import `db` from `@/db`
 - Use `eq()`, `and()`, `or()` from `drizzle-orm`
 - Always use prepared statements
-- **Note**: Drizzle has a native `count()` function. Use it instead of `.select({ count: sql<number>`count(*)` })`
+- **Note**: Drizzle has a native `count()` function. Use it instead of `.select({ count: sql<number>`count(\*)` })`
 
 ### API Routes (Next.js - Legacy)
+
 - Return `NextResponse.json()`
 - Include proper HTTP status codes
 - Add CORS headers for analytics endpoints
@@ -698,6 +738,7 @@ This maintains transparency about AI-assisted development and acknowledges the c
 - Handle errors gracefully
 
 ### Elysia API Routes (Current Standard)
+
 - **One endpoint per file** - Each HTTP method (GET, POST, PUT, DELETE) should be in its own separate route file
   - Example: `get-user-me.route.ts`, `post-user-me.route.ts`
 - Use TypeBox schemas for request/response validation
@@ -707,15 +748,18 @@ This maintains transparency about AI-assisted development and acknowledges the c
 - Export route instances that can be composed with `.use()`
 
 ### Eden Treaty Type Inference
+
 Eden Treaty provides automatic end-to-end type safety from backend to frontend without manual type casting.
 
 **Core Principles:**
+
 - **Never cast API responses** - Eden Treaty infers types automatically from backend schemas
 - **Backend schemas are source of truth** - All types derive from `@/api/schemas/*.schema.ts`
 - **Use `Static<typeof Schema>`** - Generate TypeScript types from Elysia TypeBox schemas
 - **No manual type definitions** - Don't create duplicate frontend types
 
 **DO ✅:**
+
 ```typescript
 // Backend schema (source of truth)
 import { t, Static } from "elysia";
@@ -746,6 +790,7 @@ import type { App } from "@/api/schemas/app.schema";
 ```
 
 **DON'T ❌:**
+
 ```typescript
 // ❌ Never manually cast responses
 return data.message as App;
@@ -761,6 +806,7 @@ export type App = {
 ```
 
 **Pattern for Re-exporting Types:**
+
 ```typescript
 // In @/domains/app/app.api.ts
 import type { App as AppType } from "@/api/schemas/app.schema";
@@ -772,6 +818,7 @@ export type App = AppType;
 ```
 
 **Handling Null vs Undefined:**
+
 ```typescript
 // Backend returns null for nullable fields
 description: t.Union([t.String(), t.Null()])
@@ -782,18 +829,21 @@ const [description, setDescription] = useState(app.description ?? undefined);
 ```
 
 ### Component Structure
+
 - Server Components by default
 - Use `"use client"` only when needed
 - Prefer Server Actions over API routes
 - Keep client components small and focused
 
 ### Path Aliases
+
 - `@/*` → `./src/*`
 - Configured in `tsconfig.json`
 
 ## Debugging Tips
 
 ### Analytics Events Not Appearing
+
 1. Check API key is correct (production vs test)
 2. Verify CORS is enabled on endpoint
 3. Check browser network tab for 403/400 errors
@@ -802,18 +852,21 @@ const [description, setDescription] = useState(app.description ?? undefined);
 6. Verify database table (analytics vs analytics_test)
 
 ### Database Connection Issues
+
 1. Ensure Docker Postgres is running (`yarn db`)
 2. Check `DATABASE_URL` in `.env.local`
 3. Verify port 5434 is not in use
 4. Run `yarn db:push` to sync schema
 
 ### Monorepo Build Issues
+
 1. Clean node_modules: `rm -rf node_modules && yarn install`
 2. Rebuild analytics: `cd packages/analytics && yarn build`
 3. Check for ESLint errors in dist folders (should be ignored)
 4. Ensure Node 24+ is active
 
 ### Authentication Issues
+
 1. Check `AUTH_SECRET` is set
 2. Verify OAuth credentials are correct
 3. Check callback URLs in provider settings
@@ -840,6 +893,7 @@ const [description, setDescription] = useState(app.description ?? undefined);
 ## Next Steps & Roadmap
 
 ### Planned Features
+
 - Advanced analytics querying (filters, aggregations)
 - Custom dashboard creation
 - Real-time analytics updates
@@ -850,6 +904,7 @@ const [description, setDescription] = useState(app.description ?? undefined);
 - A/B testing integration
 
 ### Legacy Code to Remove
+
 - Store management features (`/stores`)
 - Translation features (`/translations`)
 - Related API routes and database tables

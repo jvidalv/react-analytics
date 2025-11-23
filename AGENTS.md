@@ -7,7 +7,9 @@ Welcome to the React Analytics platform AI agent documentation. This hub provide
 This repository contains two comprehensive documentation files for AI agents:
 
 ### 📘 [CLAUDE.md](./CLAUDE.md) - Comprehensive Reference Guide
+
 **Use this when you need to:**
+
 - Understand the overall project architecture
 - Learn about the technology stack
 - Find directory structure and code organization
@@ -17,6 +19,7 @@ This repository contains two comprehensive documentation files for AI agents:
 - Get started with development setup
 
 **Best for:**
+
 - ✅ Understanding "how things work"
 - ✅ Learning the codebase structure
 - ✅ Finding where code lives
@@ -26,7 +29,9 @@ This repository contains two comprehensive documentation files for AI agents:
 ---
 
 ### 🐛 [BUGBOT.md](./BUGBOT.md) - Debugging & Troubleshooting Guide
+
 **Use this when you need to:**
+
 - Debug issues with analytics events
 - Troubleshoot database connection problems
 - Fix authentication issues
@@ -36,6 +41,7 @@ This repository contains two comprehensive documentation files for AI agents:
 - Test and verify functionality
 
 **Best for:**
+
 - ✅ Fixing bugs and errors
 - ✅ Troubleshooting deployment issues
 - ✅ Performance optimization
@@ -98,18 +104,21 @@ This repository contains two comprehensive documentation files for AI agents:
 ### Common Workflows
 
 #### Contributing New Features
+
 1. Read relevant sections in CLAUDE.md
 2. Understand directory structure
 3. Follow code patterns
 4. Test using BUGBOT.md testing strategies
 
 #### Fixing Bugs
+
 1. Identify issue type
 2. Check BUGBOT.md for common issues
 3. Use debugging queries
 4. Verify fix with testing checklist
 
 #### Optimizing Performance
+
 1. Check BUGBOT.md performance section
 2. Use database query tools
 3. Monitor API response times
@@ -118,6 +127,7 @@ This repository contains two comprehensive documentation files for AI agents:
 ## Frequently Needed Information
 
 ### Environment Setup
+
 ```bash
 # See CLAUDE.md → Development Workflow
 cp .env.example .env.local
@@ -128,6 +138,7 @@ yarn dev
 ```
 
 ### Common Commands
+
 ```bash
 yarn dev          # Start development server
 yarn build        # Production build
@@ -139,6 +150,7 @@ yarn test         # Run tests (in analytics package)
 ```
 
 ### Important Paths
+
 ```
 /packages/analytics      # Analytics library
 /src/app/api/analytics   # Analytics API routes
@@ -148,6 +160,7 @@ yarn test         # Run tests (in analytics package)
 ```
 
 ### Debug Quick Links
+
 - Analytics not showing: BUGBOT.md → Section 1
 - Database errors: BUGBOT.md → Section 3
 - Auth issues: BUGBOT.md → Section 6
@@ -156,12 +169,14 @@ yarn test         # Run tests (in analytics package)
 ## Best Practices for AI Agents
 
 ### When Reading Code
+
 1. Understand the context (analytics platform)
 2. Check CLAUDE.md for architecture patterns
 3. Look for existing similar code
 4. Follow established conventions
 
 ### When Writing Code
+
 1. Follow TypeScript patterns from CLAUDE.md
 2. **ALWAYS use Drizzle ORM query builder syntax** - Never use raw SQL
    - Use `.select()`, `.from()`, `.where()`, etc. instead of `db.execute(sql`...`)`
@@ -169,6 +184,7 @@ yarn test         # Run tests (in analytics package)
    - **Exception**: Only use raw SQL for complex queries Drizzle cannot express (document why)
 
    **DO ✅:**
+
    ```typescript
    // Use Drizzle query builder with countDistinct
    const [row] = await db
@@ -178,6 +194,7 @@ yarn test         # Run tests (in analytics package)
    ```
 
    **DON'T ❌:**
+
    ```typescript
    // Never use raw SQL with table interpolation
    const table = getAnalyticsTable(isTest);
@@ -194,18 +211,20 @@ yarn test         # Run tests (in analytics package)
    - **ALWAYS use JavaScript Date calculations** for date arithmetic
 
    **DO ✅:**
+
    ```typescript
    // Calculate dates in JavaScript
    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
    // Use with standard Drizzle operators
-   gte(table.date, thirtyDaysAgo)
+   gte(table.date, thirtyDaysAgo);
    ```
 
    **DON'T ❌:**
+
    ```typescript
    // Never use sql template for date intervals
-   gte(table.date, sql`NOW() - INTERVAL '30 days'`) // ❌ Not type-safe!
+   gte(table.date, sql`NOW() - INTERVAL '30 days'`); // ❌ Not type-safe!
    ```
 
    **Why:** JavaScript Date calculations are type-safe, database-agnostic, more testable, and consistent with codebase patterns.
@@ -218,6 +237,7 @@ yarn test         # Run tests (in analytics package)
    - ALWAYS commit schema.ts and migration files together
 
    **DO ✅:**
+
    ```bash
    # 1. Modify schema in src/db/schema.ts
    export const users = pgTable("user", {
@@ -241,6 +261,7 @@ yarn test         # Run tests (in analytics package)
    ```
 
    **DON'T ❌:**
+
    ```bash
    # Never bypass migrations with push/raw SQL
    yarn db:push  # ❌ Command removed
@@ -254,6 +275,7 @@ yarn test         # Run tests (in analytics package)
    ```
 
    **Special Case - Materialized Views:**
+
    ```bash
    # Drizzle generates CREATE TABLE - you must manually edit
    yarn db:generate
@@ -265,7 +287,7 @@ yarn test         # Run tests (in analytics package)
 
    **Why:** Migrations provide version control for database schema, enable safe deployments, allow rollback capabilities, and maintain schema history. See CLAUDE.md → Database Schema Changes & Migrations for full details.
 
-   **Seed Data:**  The project includes 288k+ anonymized analytics events in `drizzle/seed-data/`. Use `yarn db:add-data <api-key> <api-key-test>` to inject after creating an app. See `DATABASE_SETUP.md` for details.
+   **Seed Data:** The project includes 288k+ anonymized analytics events in `drizzle/seed-data/`. Use `yarn db:add-data <api-key> <api-key-test>` to inject after creating an app. See `DATABASE_SETUP.md` for details.
 
 4. **NEVER manually cast API responses when using Eden Treaty**
    - Eden Treaty provides automatic end-to-end type safety
@@ -273,9 +295,12 @@ yarn test         # Run tests (in analytics package)
    - Use `Static<typeof Schema>` to derive TypeScript types from Elysia schemas
 
    **DO ✅:**
+
    ```typescript
    // Backend schema exports type
-   export const AppSchema = t.Object({ /* ... */ });
+   export const AppSchema = t.Object({
+     /* ... */
+   });
    export type App = Static<typeof AppSchema>;
 
    // Frontend API - NO casting needed
@@ -284,6 +309,7 @@ yarn test         # Run tests (in analytics package)
    ```
 
    **DON'T ❌:**
+
    ```typescript
    // Never manually cast responses
    return data.message as App; // ❌
@@ -306,6 +332,7 @@ yarn test         # Run tests (in analytics package)
 8. Include relevant tests
 
 ### When Debugging
+
 1. Check BUGBOT.md common issues first
 2. Use provided SQL queries for diagnostics
 3. Follow debugging workflows
@@ -314,6 +341,7 @@ yarn test         # Run tests (in analytics package)
 ## Getting Help
 
 ### Documentation Hierarchy
+
 ```
 General Question
     └─► AGENTS.md (this file)
@@ -326,6 +354,7 @@ General Question
 ```
 
 ### When Documentation Doesn't Help
+
 1. Search codebase for similar patterns
 2. Check git history for context
 3. Review test files for usage examples
@@ -334,6 +363,7 @@ General Question
 ## Document Maintenance
 
 These documents should be updated when:
+
 - ✅ Major architecture changes occur
 - ✅ New features are added
 - ✅ Common issues are discovered
@@ -345,6 +375,7 @@ Last updated: November 2025
 ---
 
 **Quick Links:**
+
 - 📘 [CLAUDE.md - Comprehensive Reference](./CLAUDE.md)
 - 🐛 [BUGBOT.md - Debugging Guide](./BUGBOT.md)
 - 📦 [Analytics Package README](./packages/analytics/README.md)

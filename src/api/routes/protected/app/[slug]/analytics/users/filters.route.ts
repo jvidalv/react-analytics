@@ -53,9 +53,8 @@ export const usersFiltersRoute = new Elysia().get(
     }),
     detail: {
       summary: "Get available filter options",
-      description:
-        "Returns unique countries and versions for filtering users",
+      description: "Returns unique countries and versions for filtering users",
       tags: ["Analytics"],
     },
-  }
+  },
 );

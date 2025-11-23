@@ -27,5 +27,5 @@ export const getOneAppRoute = new Elysia().get(
       description: "Fetch a single app by its slug",
       tags: ["App"],
     },
-  }
+  },
 );

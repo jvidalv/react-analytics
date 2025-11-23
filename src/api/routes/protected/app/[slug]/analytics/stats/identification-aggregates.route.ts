@@ -140,9 +140,7 @@ export const identificationAggregatesRoute = new Elysia().get(
 
     // Calculate absolute change in identification rate (not percentage of percentage)
     const rateChange =
-      previousRate > 0
-        ? Math.round((currentRate - previousRate) * 10) / 10
-        : 0;
+      previousRate > 0 ? Math.round((currentRate - previousRate) * 10) / 10 : 0;
 
     return {
       identified,
@@ -181,5 +179,5 @@ export const identificationAggregatesRoute = new Elysia().get(
         "Returns overall and growth metrics for identified vs anonymous users",
       tags: ["Analytics"],
     },
-  }
+  },
 );

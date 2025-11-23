@@ -16,7 +16,7 @@ const validateFeatures = (features?: string[]) => {
   if (!features) return true;
   if (!Array.isArray(features)) return false;
   return features.every((feature) =>
-    VALID_FEATURE_KEYS.has(feature as FeatureKey)
+    VALID_FEATURE_KEYS.has(feature as FeatureKey),
   );
 };
 
@@ -107,5 +107,5 @@ export const postCreateAppRoute = new Elysia().post(
       description: "Create a new app for the authenticated user",
       tags: ["App"],
     },
-  }
+  },
 );

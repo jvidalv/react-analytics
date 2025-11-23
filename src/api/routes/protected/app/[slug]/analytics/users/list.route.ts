@@ -58,9 +58,9 @@ export const usersListRoute = new Elysia().get(
       if (search) {
         conditions.push(
           sql`(
-            ${identifiedUsersMv.name} ILIKE ${'%' + search + '%'} OR
-            ${identifiedUsersMv.email} ILIKE ${'%' + search + '%'}
-          )`
+            ${identifiedUsersMv.name} ILIKE ${"%" + search + "%"} OR
+            ${identifiedUsersMv.email} ILIKE ${"%" + search + "%"}
+          )`,
         );
       }
 
@@ -73,16 +73,19 @@ export const usersListRoute = new Elysia().get(
       }
 
       if (versionFilter) {
-        conditions.push(sql`${identifiedUsersMv.appVersion} = ${versionFilter}`);
+        conditions.push(
+          sql`${identifiedUsersMv.appVersion} = ${versionFilter}`,
+        );
       }
 
-      const whereClause = conditions.length > 0
-        ? sql`WHERE ${sql.join(conditions, sql` AND `)}`
-        : sql``;
+      const whereClause =
+        conditions.length > 0
+          ? sql`WHERE ${sql.join(conditions, sql` AND `)}`
+          : sql``;
 
       // Get total count
       const countResult = await db.execute(
-        sql`SELECT COUNT(*) as total FROM ${identifiedUsersMv} ${whereClause}`
+        sql`SELECT COUNT(*) as total FROM ${identifiedUsersMv} ${whereClause}`,
       );
 
       const total = Number((countResult[0] as any)?.total || 0);
@@ -106,7 +109,7 @@ export const usersListRoute = new Elysia().get(
           ORDER BY last_seen DESC
           LIMIT ${limit}
           OFFSET ${offset}
-        `
+        `,
       );
 
       // Map results
@@ -117,10 +120,12 @@ export const usersListRoute = new Elysia().get(
         email: row.email || null,
         avatar: row.avatar || null,
         isIdentified: true,
-        lastSeen: row.last_seen ? new Date(row.last_seen).toISOString() : new Date().toISOString(),
+        lastSeen: row.last_seen
+          ? new Date(row.last_seen).toISOString()
+          : new Date().toISOString(),
         country: row.country || null,
-        platform: row.platform || 'Web',
-        appVersion: row.app_version || '0.0.0',
+        platform: row.platform || "Web",
+        appVersion: row.app_version || "0.0.0",
       }));
 
       return {
@@ -138,10 +143,10 @@ export const usersListRoute = new Elysia().get(
     const searchCondition =
       search.length > 0
         ? sql`AND (
-          properties->'data'->>'name' ILIKE ${'%' + search + '%'} OR
-          properties->'data'->>'email' ILIKE ${'%' + search + '%'} OR
-          properties->'data'->>'firstName' ILIKE ${'%' + search + '%'} OR
-          properties->'data'->>'lastName' ILIKE ${'%' + search + '%'}
+          properties->'data'->>'name' ILIKE ${"%" + search + "%"} OR
+          properties->'data'->>'email' ILIKE ${"%" + search + "%"} OR
+          properties->'data'->>'firstName' ILIKE ${"%" + search + "%"} OR
+          properties->'data'->>'lastName' ILIKE ${"%" + search + "%"}
         )`
         : sql``;
 
@@ -180,14 +185,14 @@ export const usersListRoute = new Elysia().get(
             AND user_id IS NOT NULL
         )`
         : identifiedFilter === "false"
-        ? sql`AND identify_id NOT IN (
+          ? sql`AND identify_id NOT IN (
           SELECT DISTINCT identify_id
           FROM ${targetTable}
           WHERE api_key = ${apiKey}
             AND type = 'identify'
             AND user_id IS NOT NULL
         )`
-        : sql``;
+          : sql``;
 
     // Get total count
     const countResult = await db.execute(
@@ -212,7 +217,7 @@ export const usersListRoute = new Elysia().get(
           ${countryCondition}
           ${versionCondition}
           ${identifiedCondition}
-        `
+        `,
     );
 
     const total = Number((countResult[0] as any)?.total || 0);
@@ -317,7 +322,7 @@ export const usersListRoute = new Elysia().get(
           ORDER BY last_seen DESC
           LIMIT ${limit}
           OFFSET ${offset}
-        `
+        `,
     );
 
     // Map results to user objects
@@ -328,10 +333,12 @@ export const usersListRoute = new Elysia().get(
       email: row.email || null,
       avatar: row.avatar || null,
       isIdentified: row.user_id !== null,
-      lastSeen: row.last_seen ? new Date(row.last_seen).toISOString() : new Date().toISOString(),
+      lastSeen: row.last_seen
+        ? new Date(row.last_seen).toISOString()
+        : new Date().toISOString(),
       country: row.country || null,
-      platform: row.platform || 'Web',
-      appVersion: row.app_version || '0.0.0',
+      platform: row.platform || "Web",
+      appVersion: row.app_version || "0.0.0",
     }));
 
     return {
@@ -361,5 +368,5 @@ export const usersListRoute = new Elysia().get(
         "Returns a paginated list of both identified and anonymous users with search capability",
       tags: ["Analytics"],
     },
-  }
+  },
 );

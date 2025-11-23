@@ -47,5 +47,5 @@ export const apiKeysRoute = new Elysia().get(
         "Fetch analytics API keys for the app (production and development)",
       tags: ["Analytics"],
     },
-  }
+  },
 );

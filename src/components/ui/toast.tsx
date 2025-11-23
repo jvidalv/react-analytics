@@ -1,9 +1,9 @@
-import * as React from "react"
+import * as React from "react";
 
 export type ToastProps = {
-  variant?: "default" | "destructive" | "success"
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
-}
+  variant?: "default" | "destructive" | "success";
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
 
-export type ToastActionElement = React.ReactElement
+export type ToastActionElement = React.ReactElement;

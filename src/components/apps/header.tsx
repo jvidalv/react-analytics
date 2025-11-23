@@ -75,7 +75,9 @@ const Plan = () => {
           "bg-indigo-900/50 border-indigo-400/30  text-indigo-400 ",
       )}
     >
-      <span className="mr-2 font-medium">{getPlanDisplayName(me.plan as PlanType)}</span>
+      <span className="mr-2 font-medium">
+        {getPlanDisplayName(me.plan as PlanType)}
+      </span>
       {getPlanEmoji(me.plan as PlanType)}
     </div>
   );
@@ -288,9 +290,10 @@ function AppHeader() {
   ];
 
   // Only show Overview when there are no users (onboarding state)
-  const visibleLinks = overview?.totalUsers === 0
-    ? links.filter(link => link.name === "Overview")
-    : links;
+  const visibleLinks =
+    overview?.totalUsers === 0
+      ? links.filter((link) => link.name === "Overview")
+      : links;
 
   return (
     <nav className="pb-4">

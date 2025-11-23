@@ -16,5 +16,5 @@ export const healthRoute = new Elysia().get(
       description: "Check if the API is running",
       tags: ["Health"],
     },
-  }
+  },
 );

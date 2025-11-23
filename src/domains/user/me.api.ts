@@ -48,10 +48,7 @@ export const useUpdateUser = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync: updateUser, isPending: isUpdating } = useMutation({
-    mutationFn: async (updatedFields: {
-      name?: string;
-      image?: string;
-    }) => {
+    mutationFn: async (updatedFields: { name?: string; image?: string }) => {
       const { data, error } =
         await fetcherProtected.user.me.post(updatedFields);
 

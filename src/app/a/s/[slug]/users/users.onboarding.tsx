@@ -23,7 +23,9 @@ export function UsersOnboarding({
   apiKeyTest,
   devModeEnabled,
 }: OnboardingProps) {
-  const [selectedFramework, setSelectedFramework] = useState<Framework | null>(null);
+  const [selectedFramework, setSelectedFramework] = useState<Framework | null>(
+    null,
+  );
   const [selectedPM, setSelectedPM] = useState<PackageManager>("npm");
 
   const [copiedProdKey, copyProdKey] = useClipboard();
@@ -44,24 +46,31 @@ export function UsersOnboarding({
     { id: "react" as Framework, name: "React (Other)", icon: "⚛" },
   ];
 
-  const packageManagers = selectedFramework === "expo"
-    ? [{ id: "expo" as PackageManager, name: "Expo CLI" }]
-    : [
-        { id: "npm" as PackageManager, name: "npm" },
-        { id: "yarn" as PackageManager, name: "yarn" },
-        { id: "pnpm" as PackageManager, name: "pnpm" },
-        { id: "bun" as PackageManager, name: "bun" },
-      ];
+  const packageManagers =
+    selectedFramework === "expo"
+      ? [{ id: "expo" as PackageManager, name: "Expo CLI" }]
+      : [
+          { id: "npm" as PackageManager, name: "npm" },
+          { id: "yarn" as PackageManager, name: "yarn" },
+          { id: "pnpm" as PackageManager, name: "pnpm" },
+          { id: "bun" as PackageManager, name: "bun" },
+        ];
 
   const getInstallCommand = () => {
     const pkg = "@jvidalv/react-analytics";
     switch (selectedPM) {
-      case "npm": return `npm install ${pkg}`;
-      case "yarn": return `yarn add ${pkg}`;
-      case "pnpm": return `pnpm add ${pkg}`;
-      case "bun": return `bun add ${pkg}`;
-      case "expo": return `npx expo install ${pkg} @react-native-async-storage/async-storage`;
-      default: return `npm install ${pkg}`;
+      case "npm":
+        return `npm install ${pkg}`;
+      case "yarn":
+        return `yarn add ${pkg}`;
+      case "pnpm":
+        return `pnpm add ${pkg}`;
+      case "bun":
+        return `bun add ${pkg}`;
+      case "expo":
+        return `npx expo install ${pkg} @react-native-async-storage/async-storage`;
+      default:
+        return `npm install ${pkg}`;
     }
   };
 
@@ -154,7 +163,9 @@ function App() {
     <div className="mx-auto w-full max-w-4xl space-y-8">
       {/* Header */}
       <div className="text-left">
-        <h1 className="mb-3 text-4xl font-bold">Welcome to React Analytics! 👋</h1>
+        <h1 className="mb-3 text-4xl font-bold">
+          Welcome to React Analytics! 👋
+        </h1>
         <p className="text-lg text-muted-foreground">
           Get started in minutes with our universal analytics library
         </p>
@@ -173,7 +184,8 @@ function App() {
                 : "You're viewing production data. Use the production API key below for your live app."}
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
-              💡 Tip: Toggle between modes anytime to separate development and production analytics.
+              💡 Tip: Toggle between modes anytime to separate development and
+              production analytics.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -184,7 +196,9 @@ function App() {
               id="dev-mode-toggle"
               checked={devModeEnabled}
               onCheckedChange={handleToggleDevMode}
-              className={cn(devModeEnabled && "data-[state=checked]:bg-orange-500")}
+              className={cn(
+                devModeEnabled && "data-[state=checked]:bg-orange-500",
+              )}
             />
           </div>
         </div>
@@ -193,8 +207,12 @@ function App() {
       {/* Step 1: Choose Framework */}
       <div className="space-y-4">
         <div>
-          <h2 className="mb-1 text-xl font-semibold">Step 1: Choose Your Framework</h2>
-          <p className="text-sm text-muted-foreground">Select your router to see tailored setup instructions</p>
+          <h2 className="mb-1 text-xl font-semibold">
+            Step 1: Choose Your Framework
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Select your router to see tailored setup instructions
+          </p>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {frameworks.map((framework) => (
@@ -206,7 +224,8 @@ function App() {
               }}
               className={cn(
                 "flex flex-col items-center gap-3 border-2 p-6 transition-all hover:border-primary",
-                selectedFramework === framework.id && "border-primary bg-primary/5"
+                selectedFramework === framework.id &&
+                  "border-primary bg-primary/5",
               )}
             >
               <span className="text-4xl">{framework.icon}</span>
@@ -221,8 +240,12 @@ function App() {
           {/* Step 2: Install Package */}
           <div className="space-y-4">
             <div>
-              <h2 className="mb-1 text-xl font-semibold">Step 2: Install Package</h2>
-              <p className="text-sm text-muted-foreground">Add the analytics library to your project</p>
+              <h2 className="mb-1 text-xl font-semibold">
+                Step 2: Install Package
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Add the analytics library to your project
+              </p>
             </div>
 
             {/* Package Manager Tabs */}
@@ -235,7 +258,7 @@ function App() {
                     "px-4 py-2 text-sm font-medium transition-colors",
                     selectedPM === pm.id
                       ? "border-b-2 border-primary text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   {pm.name}
@@ -254,7 +277,11 @@ function App() {
                 className="absolute right-2 top-2 border"
                 onClick={() => copyInstall(getInstallCommand())}
               >
-                {copiedInstall ? <Check className="size-4 text-green-500" /> : <Copy className="size-4" />}
+                {copiedInstall ? (
+                  <Check className="size-4 text-green-500" />
+                ) : (
+                  <Copy className="size-4" />
+                )}
               </Button>
             </div>
           </div>
@@ -262,7 +289,9 @@ function App() {
           {/* Step 3: API Keys */}
           <div className="space-y-4">
             <div>
-              <h2 className="mb-1 text-xl font-semibold">Step 3: Get Your API Keys</h2>
+              <h2 className="mb-1 text-xl font-semibold">
+                Step 3: Get Your API Keys
+              </h2>
               <p className="text-sm text-muted-foreground">
                 Use test key for development, production key for live apps
               </p>
@@ -273,7 +302,9 @@ function App() {
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">Test Key</span>
-                  <span className="bg-orange-500/20 px-2 py-0.5 text-xs text-orange-600">DEV</span>
+                  <span className="bg-orange-500/20 px-2 py-0.5 text-xs text-orange-600">
+                    DEV
+                  </span>
                 </div>
                 <div className="relative">
                   <pre className="overflow-x-auto border bg-muted/30 p-3 pr-12 font-mono text-xs">
@@ -286,7 +317,11 @@ function App() {
                       className="absolute right-1 top-1 h-7 border"
                       onClick={() => copyTestKey(apiKeyTest)}
                     >
-                      {copiedTestKey ? <Check className="size-3 text-green-500" /> : <Copy className="size-3" />}
+                      {copiedTestKey ? (
+                        <Check className="size-3 text-green-500" />
+                      ) : (
+                        <Copy className="size-3" />
+                      )}
                     </Button>
                   )}
                 </div>
@@ -296,7 +331,9 @@ function App() {
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">Production Key</span>
-                  <span className="bg-green-500/20 px-2 py-0.5 text-xs text-green-600">PROD</span>
+                  <span className="bg-green-500/20 px-2 py-0.5 text-xs text-green-600">
+                    PROD
+                  </span>
                 </div>
                 <div className="relative">
                   <pre className="overflow-x-auto border bg-muted/30 p-3 pr-12 font-mono text-xs">
@@ -309,7 +346,11 @@ function App() {
                       className="absolute right-1 top-1 h-7 border"
                       onClick={() => copyProdKey(apiKey)}
                     >
-                      {copiedProdKey ? <Check className="size-3 text-green-500" /> : <Copy className="size-3" />}
+                      {copiedProdKey ? (
+                        <Check className="size-3 text-green-500" />
+                      ) : (
+                        <Copy className="size-3" />
+                      )}
                     </Button>
                   )}
                 </div>
@@ -320,7 +361,9 @@ function App() {
           {/* Step 4: Add to App */}
           <div className="space-y-4">
             <div>
-              <h2 className="mb-1 text-xl font-semibold">Step 4: Add to Your App</h2>
+              <h2 className="mb-1 text-xl font-semibold">
+                Step 4: Add to Your App
+              </h2>
               <p className="text-sm text-muted-foreground">
                 Wrap your app with the AnalyticsProvider
               </p>
@@ -336,7 +379,11 @@ function App() {
                 className="absolute right-2 top-2 border"
                 onClick={() => copyCode(getCodeSnippet())}
               >
-                {copiedCode ? <Check className="size-4 text-green-500" /> : <Copy className="size-4" />}
+                {copiedCode ? (
+                  <Check className="size-4 text-green-500" />
+                ) : (
+                  <Copy className="size-4" />
+                )}
               </Button>
             </div>
           </div>
@@ -344,14 +391,19 @@ function App() {
           {/* Step 5: Verify */}
           <div className="space-y-4">
             <div>
-              <h2 className="mb-1 text-xl font-semibold">Step 5: Start Your App</h2>
+              <h2 className="mb-1 text-xl font-semibold">
+                Step 5: Start Your App
+              </h2>
               <p className="text-sm text-muted-foreground">
-                Launch your app and navigate around - analytics will start flowing automatically!
+                Launch your app and navigate around - analytics will start
+                flowing automatically!
               </p>
             </div>
 
             <div className="border p-6 text-left">
-              <p className="mb-2 text-sm font-medium">⏳ Waiting for first event...</p>
+              <p className="mb-2 text-sm font-medium">
+                ⏳ Waiting for first event...
+              </p>
               <p className="text-xs text-muted-foreground">
                 Refresh this page once you've started your app
               </p>

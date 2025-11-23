@@ -1,6 +1,10 @@
 "use client";
 
-import { useCreateApp, useUserApps } from "@/domains/app/app.api";
+import {
+  useCreateApp,
+  useUserApps,
+  getAllAppsQueryKey,
+} from "@/domains/app/app.api";
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -15,7 +19,7 @@ import { uuidv7 } from "uuidv7";
 import { Textarea } from "@/components/ui/textarea";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { mutate } from "swr";
+import { useQueryClient } from "@tanstack/react-query";
 import { wait } from "@/lib/wait";
 import { useTitle } from "@/hooks/use-title";
 
@@ -27,6 +31,7 @@ const CreateAppForm = ({
   cancelCreate: () => void;
 }) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const idRef = useRef(uuidv7());
   const { createApp, isCreating } = useCreateApp();
   const [name, setName] = useState("");
@@ -47,7 +52,7 @@ const CreateAppForm = ({
     router.push(`/a/s/${app.slug}`);
 
     await wait(200);
-    void mutate("/api/app/all");
+    void queryClient.invalidateQueries({ queryKey: getAllAppsQueryKey() });
   };
 
   return (

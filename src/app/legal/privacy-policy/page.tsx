@@ -9,9 +9,9 @@ export default function PrivacyPolicy() {
         <h1 className="mb-4 text-5xl font-black">Privacy policy</h1>
         <article className="prose prose-invert">
           <p>
-            At <strong>React Analytics</strong>, we are committed to respecting your
-            privacy regarding any information we collect from you across our
-            website and other platforms we own and operate.
+            At <strong>React Analytics</strong>, we are committed to respecting
+            your privacy regarding any information we collect from you across
+            our website and other platforms we own and operate.
           </p>
           <h2>Data Collection</h2>
           <p>
@@ -23,8 +23,8 @@ export default function PrivacyPolicy() {
           <h2>Google Account Sign-Up</h2>
           <p>
             You can sign up using your Google account, allowing your{" "}
-            <strong>React Analytics</strong> account username to be prefilled with your
-            name and public profile picture.
+            <strong>React Analytics</strong> account username to be prefilled
+            with your name and public profile picture.
           </p>
           <h2>Data Retention & Security</h2>
           <p>

@@ -9,6 +9,7 @@ This project is open source and self-hostable. Built with modern web technologie
 ## Quick Start
 
 ### Prerequisites
+
 - **Node.js 22+** (uses NVM: `nvm use 24`)
 - Docker & Docker Compose
 - Yarn package manager
@@ -90,6 +91,7 @@ React Analytics is built with privacy at its core:
 - ✅ Honor user rights (access, deletion, portability)
 
 **Documentation:**
+
 - [PRIVACY.md](./PRIVACY.md) - Technical privacy features and data collection details
 - [GDPR.md](./GDPR.md) - GDPR compliance implementation guide with code examples
 - [DISCLAIMER.md](./DISCLAIMER.md) - Legal disclaimer and responsibilities
@@ -97,13 +99,13 @@ React Analytics is built with privacy at its core:
 
 ### Privacy vs SaaS Analytics
 
-| Feature | React Analytics | Google Analytics | Mixpanel |
-|---------|----------------|------------------|----------|
-| Self-Hosted | ✅ Yes | ❌ No | ❌ No |
-| Open Source | ✅ Yes | ❌ No | ❌ No |
-| Full Data Ownership | ✅ Yes | ❌ No | ❌ No |
-| No Third-Party Sharing | ✅ Yes | ❌ No | ❌ No |
-| Your Infrastructure | ✅ Yes | ❌ No | ❌ No |
+| Feature                | React Analytics | Google Analytics | Mixpanel |
+| ---------------------- | --------------- | ---------------- | -------- |
+| Self-Hosted            | ✅ Yes          | ❌ No            | ❌ No    |
+| Open Source            | ✅ Yes          | ❌ No            | ❌ No    |
+| Full Data Ownership    | ✅ Yes          | ❌ No            | ❌ No    |
+| No Third-Party Sharing | ✅ Yes          | ❌ No            | ❌ No    |
+| Your Infrastructure    | ✅ Yes          | ❌ No            | ❌ No    |
 
 ## Tech Stack
 
@@ -123,6 +125,7 @@ React Analytics is built with privacy at its core:
 This monorepo includes the `@jvidalv/react-analytics` package in `packages/analytics`. This is the open source npm package that enables analytics tracking in React applications.
 
 ### Features
+
 - **Universal** - Works with React, React Native, Expo, and Next.js
 - **Auto-detection** - Automatically detects routing framework
 - **Event Batching** - Efficient 5-second batching with configurable intervals

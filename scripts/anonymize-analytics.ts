@@ -55,7 +55,7 @@ function main() {
 
   processFile(
     "/tmp/analytics-dump/analytics.sql",
-    "/tmp/analytics-dump/analytics_anonymized.sql"
+    "/tmp/analytics-dump/analytics_anonymized.sql",
   );
 
   console.log(`\n📊 Summary:`);
@@ -63,7 +63,7 @@ function main() {
 
   processFile(
     "/tmp/analytics-dump/analytics_test.sql",
-    "/tmp/analytics-dump/analytics_test_anonymized.sql"
+    "/tmp/analytics-dump/analytics_test_anonymized.sql",
   );
 
   console.log("\n✅ Anonymization complete!");

@@ -9,6 +9,7 @@
 The analytics system is a full-stack mobile analytics platform tracking user behavior across iOS/Android applications. While well-architected for MVP, several critical performance and scalability issues need addressing before scaling beyond 10k daily active users.
 
 **Key Findings**:
+
 - ✅ Strong foundation: Dual environments, TypeScript coverage, identity reconciliation
 - 🔴 Critical: Missing MAU endpoint (404 errors in production)
 - 🔴 Critical: Session calculation fetches 6000 events to Node.js (performance bottleneck)
@@ -115,6 +116,7 @@ FROM current_month c, previous_month p;
 **Location**: `/api/analytics/users/one/sessions/route.ts`
 **Problem**: Fetches up to 6000 events and processes in Node.js memory
 **Impact**:
+
 - Can't scale beyond 6000 events per user
 - Slow for active users (~500ms+)
 - High memory usage
@@ -165,6 +167,7 @@ ORDER BY MIN(date) DESC;
 
 **Problem**: No indexes on `userId`, `type`, `appVersion`, or JSONB properties
 **Impact**:
+
 - User search queries perform full table scans
 - Identity reconciliation is slow
 - Aggregate queries inefficient at scale
@@ -228,6 +231,7 @@ CREATE TABLE analytics_2025_01 PARTITION OF analytics_partitioned
 ### Phase 1: Critical Fixes (~2 days)
 
 **Deliverables**:
+
 1. ✅ Implement MAU endpoint
 2. ✅ Add database indexes
 3. ✅ Move session calculation to SQL
@@ -240,6 +244,7 @@ CREATE TABLE analytics_2025_01 PARTITION OF analytics_partitioned
 ### Phase 2: Performance Optimization (~1 week)
 
 **Deliverables**:
+
 1. Implement response caching (5-minute TTL on aggregates)
 2. Migrate to cursor-based pagination
 3. Add rate limiting to push endpoint
@@ -252,6 +257,7 @@ CREATE TABLE analytics_2025_01 PARTITION OF analytics_partitioned
 ### Phase 3: Scalability (~2 weeks)
 
 **Deliverables**:
+
 1. Implement data retention policy (90-day partitions)
 2. Add event deduplication (idempotency keys)
 3. Async identity reconciliation
@@ -264,6 +270,7 @@ CREATE TABLE analytics_2025_01 PARTITION OF analytics_partitioned
 ### Phase 4: New Features (Future)
 
 **Potential Features**:
+
 - Real-time updates via WebSocket
 - Funnel analysis
 - Cohort analysis
@@ -277,21 +284,27 @@ CREATE TABLE analytics_2025_01 PARTITION OF analytics_partitioned
 ## What Works Well (Preserve These)
 
 ### ✅ Dual Environment Separation
+
 Production vs test API keys - excellent for development workflow
 
 ### ✅ Identity Reconciliation
+
 Automatic merging of anonymous → identified users preserves historical data
 
 ### ✅ JSONB Flexibility
+
 Properties and info fields allow schema evolution without migrations
 
 ### ✅ TypeScript Coverage
+
 Full type safety across frontend/backend with shared types
 
 ### ✅ Comprehensive Validation
+
 Zod/TypeBox schemas ensure data quality
 
 ### ✅ Good UX Features
+
 - Real-time "Online" badge (2-minute threshold)
 - Cross-field search
 - Session timeline visualization
@@ -303,6 +316,7 @@ Zod/TypeBox schemas ensure data quality
 ## Migration to Elysia
 
 ### Benefits
+
 - Consistent with new architecture (berrus pattern)
 - Better performance (Elysia is faster than Next.js API routes)
 - Type-safe end-to-end with Eden Treaty
@@ -310,6 +324,7 @@ Zod/TypeBox schemas ensure data quality
 - Better middleware composition
 
 ### Strategy
+
 - Incremental migration, no breaking changes
 - Create new routes under `/api/public/analytics/` and `/api/protected/app/[slug]/analytics/`
 - Migrate frontend hooks from old routes to new Elysia routes
@@ -317,6 +332,7 @@ Zod/TypeBox schemas ensure data quality
 - Use feature flags if needed
 
 ### Priority Order
+
 1. **Public push endpoint** (high traffic, benefits from performance)
 2. **Protected query endpoints** (MAU, sessions, aggregates)
 3. **User list/details endpoints** (lower priority)
@@ -326,16 +342,19 @@ Zod/TypeBox schemas ensure data quality
 ## Success Metrics
 
 ### Performance
+
 - Average query time < 100ms (currently ~300ms for complex queries)
 - Push endpoint latency < 50ms (currently ~150ms)
 - Session endpoint handles unlimited events (currently capped at 6000)
 
 ### Scalability
+
 - Support 100k events/day without degradation (currently ~10k/day)
 - Database size growth < 10GB/month with retention policy
 - Query performance stable with 1M+ events in database
 
 ### Reliability
+
 - 99.9% uptime for push endpoint
 - Zero data loss
 - Proper error handling and logging

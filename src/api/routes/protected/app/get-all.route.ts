@@ -35,5 +35,5 @@ export const getAllAppsRoute = new Elysia().get(
       description: "Fetch all apps belonging to the authenticated user",
       tags: ["App"],
     },
-  }
+  },
 );

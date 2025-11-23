@@ -25,21 +25,14 @@ export type NewJoinersList = {
 export const getNewJoinersQueryKey = (
   appSlug?: string,
   devModeEnabled?: boolean,
-  page?: number
+  page?: number,
 ) =>
-  [
-    "analytics",
-    appSlug,
-    "users",
-    "new-joiners",
-    devModeEnabled,
-    page,
-  ] as const;
+  ["analytics", appSlug, "users", "new-joiners", devModeEnabled, page] as const;
 
 export const useNewJoiners = (
   appSlug?: string,
   devModeEnabled?: boolean,
-  page: number = 1
+  page: number = 1,
 ) => {
   const enabled = !!appSlug && devModeEnabled !== undefined;
 
