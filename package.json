@@ -115,11 +115,11 @@
     "uuidv7": "^1.0.2",
     "vaul": "^1.1.2",
     "zod": "^4.1.12",
-    "zustand": "^5.0.8"
+    "zustand": "^5.0.8",
+    "@jvidalv/react-analytics": "1.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@jvidalv/react-analytics": "1.0.2",
     "@shikijs/compat": "^2.5.0",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^24.10.1",

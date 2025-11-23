@@ -1,8 +1,8 @@
 import { Elysia } from "elysia";
-import { cors } from "@elysiajs/cors";
 import { swagger } from "@elysiajs/swagger";
 import { publicRoutes } from "./public";
 import { protectedRoutes } from "./protected";
+import { analyticsRoutes } from "@/api/routes/analytics";
 
 export const app = new Elysia({ prefix: "/api" })
   // CORS removed from global level - managed per-route for flexibility
@@ -53,6 +53,7 @@ export const app = new Elysia({ prefix: "/api" })
       error: "Internal server error",
     };
   })
+  .use(analyticsRoutes)
   .use(publicRoutes)
   .use(protectedRoutes);
 
