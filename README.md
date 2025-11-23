@@ -5,11 +5,15 @@
 
   [![npm version](https://badge.fury.io/js/@jvidalv%2Freact-analytics.svg)](https://www.npmjs.com/package/@jvidalv/react-analytics)
   [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+  **[🌐 Official Platform: reactanalytics.app](https://reactanalytics.app)**
 </div>
 
-## Open Source
+## Open Source & Hosted Options
 
-This project is open source and self-hostable. Built with modern web technologies and designed for developers who want full control over their analytics data.
+**🚀 Get Started Instantly:** Visit [reactanalytics.app](https://reactanalytics.app) for a fully managed, hosted solution.
+
+**⚙️ Self-Host:** This project is open source and self-hostable. Built with modern web technologies and designed for developers who want full control over their analytics data.
 
 ## Quick Start
 
