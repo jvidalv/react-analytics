@@ -28,7 +28,6 @@
     "db:generate": "npx drizzle-kit generate",
     "db:migrate": "tsx src/db/migrate.ts",
     "db:studio": "npx drizzle-kit studio",
-    "db:add-data": "tsx scripts/seed-analytics.ts",
     "db:reset": "tsx scripts/reset-database.ts",
     "vercel-build": "npm run db:migrate && npm run build",
     "format": "eslint --fix . && prettier --write .",
