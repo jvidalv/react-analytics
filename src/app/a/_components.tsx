@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { logout } from "@/app/actions";
 import { queryClient } from "@/lib/query-client";
-import { useIsDocs } from "@/hooks/use-is-docs";
 import { useUserApps } from "@/domains/app/app.api";
 
 export function AppLayoutClient({
@@ -32,8 +31,6 @@ function AppsLayoutContent({ children }: { children: ReactNode }) {
 
   useUserApps();
 
-  const isDocs = useIsDocs();
-
   return (
     <>
       <AppsHeader onLogout={logout} />
@@ -41,7 +38,6 @@ function AppsLayoutContent({ children }: { children: ReactNode }) {
         className={cn(
           "min-h-screen pt-24 pb-24 px-8",
           hasSelectedApp && "pt-36",
-          isDocs && "px-0 pb-0 pt-[var(--app-header-default-height)]",
         )}
       >
         {children}

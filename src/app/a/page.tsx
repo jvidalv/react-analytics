@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { getColor, getContrastTextColor } from "@/lib/colors";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { BookText, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -120,13 +120,6 @@ export default function DashboardPage() {
 
   const { apps, isLoading } = useUserApps();
   const [openCreate, setOpenCreate] = useState(false);
-  const resources = [
-    {
-      href: "/docs",
-      name: "Documentation",
-      Icon: BookText,
-    },
-  ];
 
   const handleOpenCreate = () => {
     setOpenCreate(true);
@@ -205,24 +198,6 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
-      {!isLoading && (
-        <>
-          <h2 className="mb-4 text-xl font-semibold">Resources</h2>
-          <ul>
-            {resources.map(({ Icon, name, href }) => (
-              <li key={name}>
-                <Link
-                  href={href}
-                  className="flex items-center gap-2 hover:underline"
-                >
-                  <Icon className="size-4 text-muted-foreground" />
-                  <span>{name}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
     </div>
   );
 }
