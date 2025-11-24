@@ -80,7 +80,10 @@ export type AnalyticsEvent = Static<typeof AnalyticsEventSchema>;
 
 // Push request body schema
 export const PushRequestBodySchema = t.Object({
-  apiKey: t.String({ format: "uuid" }),
+  // Accept both UUID format (case-insensitive) and new custom format (prod|dev)-{name}-{hash}
+  apiKey: t.String({
+    pattern: "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|(prod|dev)-[a-z0-9-]+-[0-9a-f]{32})$",
+  }),
   identifyId: t.String({ minLength: 1 }),
   userId: t.Optional(t.Union([t.String(), t.Null()])),
   appVersion: t.Optional(t.Union([t.String(), t.Null()])),
