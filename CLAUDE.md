@@ -144,16 +144,16 @@ src/app/
 │   │       └── sessions/route.ts  # User sessions
 │   ├── auth/[...nextauth]/route.ts # NextAuth handlers
 │   ├── user/me/route.ts           # Current user
-│   └── stripe/route.ts            # Stripe webhooks
-├── app/
-│   ├── dashboard/page.tsx         # Main dashboard
-│   ├── account/page.tsx           # User account settings
-│   ├── docs/                      # Documentation pages
-│   └── s/[slug]/                  # App-specific routes
-│       ├── users/                 # Analytics dashboard
-│       ├── settings/              # App settings
-│       ├── stores/                # (Legacy: to be removed)
-│       └── translations/          # (Legacy: to be removed)
+│   ├── stripe/route.ts            # Stripe webhooks
+│   └── cron/
+│       └── refresh-views/route.ts # Materialized view refresh (cron)
+├── a/s/[slug]/                    # App-specific routes
+│   ├── page.tsx                   # Overview with new joiners
+│   ├── users/                     # Analytics dashboard
+│   └── settings/                  # App settings
+├── dashboard/page.tsx             # Main dashboard
+├── account/page.tsx               # User account settings
+├── docs/                          # Documentation pages
 ├── join/                          # Authentication pages
 └── legal/                         # Legal pages
 ```
@@ -241,6 +241,36 @@ src/domains/
 
 - Same schema as `analytics` table
 - Separate for development testing
+
+#### `analytics_identified_users_mv` - Materialized view (production)
+
+Optimized view for querying identified users:
+
+```typescript
+{
+  identifyId: string (uuid)
+  userId: string | null
+  name: string | null
+  email: string | null
+  avatar: string | null
+  platform: string | null  // ios, android, web
+  country: string | null   // ISO country code
+  appVersion: string | null
+  firstSeen: timestamp
+  lastSeen: timestamp
+}
+```
+
+- **Refreshed**: Every minute by cron job (`/api/cron/refresh-views`)
+- **Built from**: `identify` event types only
+- **Unique by**: `identifyId` (one row per device/user)
+- **Purpose**: Fast lookups for user lists and "new joiners"
+
+#### `analytics_test_identified_users_mv` - Materialized view (test)
+
+- Same structure as production view
+- Refreshed on same schedule
+- Queries test data only
 
 ### Supporting Tables
 
@@ -496,23 +526,63 @@ Drizzle generates `CREATE TABLE` for materialized views. You must manually edit:
 # 1. Define view as table in schema.ts (for types)
 export const myView = pgTable("my_view", { /* columns */ });
 
-# 2. Generate migration
-yarn db:generate
+# 2. Generate custom migration (use --custom flag)
+yarn db:generate --custom
 
-# 3. Edit generated SQL - replace CREATE TABLE with CREATE MATERIALIZED VIEW
-# Replace:
-CREATE TABLE "my_view" (...)
-# With:
+# 3. Write the migration SQL manually
+# File: drizzle/0001_custom_view.sql
 CREATE MATERIALIZED VIEW my_view AS
-SELECT ...
-FROM ...
+WITH first_last_seen AS (
+  SELECT DISTINCT ON (identify_id)
+    identify_id,
+    date AS first_seen,
+    LAST_VALUE(date) OVER (
+      PARTITION BY identify_id
+      ORDER BY date
+      ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS last_seen
+  FROM analytics
+  WHERE type = 'identify'
+  ORDER BY identify_id, date
+),
+latest_event_data AS (
+  SELECT DISTINCT ON (a.identify_id)
+    a.identify_id,
+    a.properties,
+    a.info
+  FROM analytics a
+  WHERE a.type = 'identify'
+  ORDER BY a.identify_id, a.date DESC
+)
+SELECT
+  fls.identify_id,
+  led.properties->>'userId' AS user_id,
+  led.properties->>'name' AS name,
+  led.properties->>'email' AS email,
+  led.properties->>'avatar' AS avatar,
+  led.info->>'platform' AS platform,
+  led.info->>'country' AS country,
+  led.info->>'appVersion' AS app_version,
+  fls.first_seen,
+  fls.last_seen
+FROM first_last_seen fls
+JOIN latest_event_data led ON fls.identify_id = led.identify_id;
 
 # 4. Add indexes
-CREATE UNIQUE INDEX idx_my_view_id ON my_view(id);
+CREATE UNIQUE INDEX idx_my_view_identify_id ON my_view(identify_id);
+CREATE INDEX idx_my_view_user_id ON my_view(user_id);
+CREATE INDEX idx_my_view_first_seen ON my_view(first_seen);
 
 # 5. Apply migration
 yarn db:migrate
 ```
+
+**Important Notes:**
+- Use `DISTINCT ON` instead of `GROUP BY` for first/last seen to avoid "must appear in GROUP BY" errors
+- Filter to `type = 'identify'` only to get user data (name, email, avatar)
+- Use `LAST_VALUE()` window function with proper frame for last_seen
+- Always create indexes on materialized views for performance
+- Views are refreshed by cron job every minute
 
 #### Deployment
 
@@ -565,24 +635,35 @@ Required in `.env.local`:
 ```bash
 # Database
 DATABASE_URL=postgresql://...
+AUTH_DRIZZLE_URL=postgresql://...  # For NextAuth adapter
 
 # Auth
-AUTH_SECRET=...
+AUTH_SECRET=...  # Generate: openssl rand -base64 32
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 AUTH_GITHUB_ID=...
 AUTH_GITHUB_SECRET=...
 AUTH_GOOGLE_ID=...
 AUTH_GOOGLE_SECRET=...
 
-# APIs
+# Cron (for materialized view refresh)
+CRON_SECRET=...  # Only needed in production
+
+# APIs (optional)
 OPENAI_API_KEY=...
 RESEND_API_KEY=...
 
-# Stripe
+# Stripe (optional)
 STRIPE_SECRET_KEY=...
 STRIPE_WEBHOOK_SECRET_KEY=...
 
-# Product Plan IDs
+# AWS S3 (optional)
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+AWS_REGION=us-east-1
+S3_BUCKET_NAME=...
+S3_BUCKET_URL=...
+
+# Product Plan IDs (optional)
 PRODUCT_METAL_PLAN_ID=...
 PRODUCT_WOOD_PLAN_ID=...
 NEXT_PUBLIC_METAL_PLAN=...
@@ -882,6 +963,132 @@ const [description, setDescription] = useState(app.description ?? undefined);
 - **Input Validation**: Validate all user input
 - **SQL Injection**: Use Drizzle ORM, never raw SQL
 - **XSS**: React escapes by default, be careful with `dangerouslySetInnerHTML`
+
+## Privacy & GDPR Compliance
+
+### Overview
+
+React Analytics is designed as a **privacy-first, self-hosted** analytics platform. The project includes comprehensive documentation for legal compliance.
+
+### Documentation Files
+
+- **[LICENSE](./LICENSE)** - MIT License with DATA PROTECTION NOTICE
+- **[DISCLAIMER.md](./DISCLAIMER.md)** - Legal disclaimer stating user responsibilities (143 lines)
+- **[PRIVACY.md](./PRIVACY.md)** - Technical privacy features and data collection details (332 lines)
+- **[GDPR.md](./GDPR.md)** - GDPR compliance implementation guide with code examples
+
+### Key Privacy Features
+
+**Self-Hosted Architecture:**
+- All data stays on user's infrastructure
+- No third-party sharing by design
+- Complete data ownership
+- Host in any region (EU, US, etc.) for data sovereignty
+
+**Configurable Data Collection:**
+- **Automatic**: identifyId (UUID), timestamp, platform, appVersion, country
+- **Opt-In Only**: name, email, userId (via `identify()` method)
+- PII collection requires explicit user consent under GDPR
+
+**UUID-Based Tracking:**
+- Uses UUID v7 (not traditional cookies)
+- Stored in localStorage/AsyncStorage
+- No automatic cross-site tracking
+- Easy for users to clear
+
+**Event Batching:**
+- 5-second intervals (configurable)
+- Reduces network exposure
+- Minimizes data transmission frequency
+
+### Legal Positioning
+
+**Clear Disclaimer:** "You are the data controller"
+- Platform provides tools, not guarantees
+- Implementers are responsible for compliance
+- No built-in consent management (must be implemented)
+- No automatic data deletion (must be implemented)
+
+### GDPR Implementation Requirements
+
+If collecting PII (name, email) via `identify()`, you **MUST** implement:
+
+1. ✅ **Consent Management**: Cookie banner/modal before tracking
+2. ✅ **Data Access**: API endpoints for users to view their data
+3. ✅ **Data Deletion**: API endpoints to delete user data on request
+4. ✅ **Data Export**: API endpoints for data portability (JSON format)
+5. ✅ **Privacy Notices**: Clear explanations of data collection
+6. ✅ **Data Retention**: Policies and automatic deletion (recommended 13-26 months)
+7. ✅ **User Rights**: Access, deletion, rectification, portability
+
+**See [GDPR.md](./GDPR.md) for complete implementation examples with working code.**
+
+### Privacy vs SaaS Analytics
+
+| Feature | React Analytics | Google Analytics | Mixpanel |
+|---------|----------------|------------------|----------|
+| Self-Hosted | ✅ Yes | ❌ No | ❌ No |
+| Open Source | ✅ Yes | ❌ No | ❌ No |
+| Full Data Ownership | ✅ Yes | ❌ No | ❌ No |
+| No Third-Party Sharing | ✅ Yes | ❌ No | ❌ No |
+| Your Infrastructure | ✅ Yes | ❌ No | ❌ No |
+| PII Collection | Opt-in only | Automatic | Automatic |
+| Cookie-Free Option | ✅ Yes (UUID) | ❌ No | ❌ No |
+
+### Data Collection Details
+
+**Automatically Collected (No PII):**
+- identifyId (UUID v7) - pseudonymous device identifier
+- timestamp - when event occurred
+- platform - ios, android, web
+- appVersion - your app version
+- country - derived from IP (if enabled, not stored)
+- userAgent - browser/device info (web only)
+
+**Opt-In Only (PII - Requires Consent):**
+- userId - user identifier (only if you call `identify()`)
+- email - user email (only if you pass to `identify()`)
+- name - user name (only if you pass to `identify()`)
+- avatarUrl - profile picture (only if you pass to `identify()`)
+- custom properties - any additional data you pass
+
+### Best Practices
+
+**Minimize Data Collection:**
+```typescript
+// ✅ Good: Only collect what you need
+analytics.navigation('/dashboard');
+
+// ❌ Avoid: Collecting unnecessary PII
+analytics.action('click', {
+  socialSecurityNumber: '...' // Never do this!
+});
+```
+
+**Anonymize When Possible:**
+```typescript
+// ✅ Good: Use non-identifiable IDs
+analytics.identify('user-uuid-123');
+
+// ⚠️ Requires Consent: Identifiable information
+analytics.identify('user-uuid-123', {
+  email: 'user@example.com'  // Requires user consent!
+});
+```
+
+**Respect Do Not Track:**
+```typescript
+if (navigator.doNotTrack === '1') {
+  // Don't initialize analytics
+}
+```
+
+### Development Notes
+
+- Use **test API keys** during development (routes to `analytics_test` table)
+- Use **production API keys** in production (routes to `analytics` table)
+- Both tables have separate materialized views for identified users
+- Views are refreshed every minute by cron job
 
 ## Next Steps & Roadmap
 

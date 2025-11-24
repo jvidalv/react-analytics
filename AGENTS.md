@@ -56,7 +56,11 @@ This repository contains two comprehensive documentation files for AI agents:
 .
 ├── AGENTS.md        # This file - Documentation hub
 ├── CLAUDE.md        # Comprehensive reference guide
-└── BUGBOT.md        # Debugging & troubleshooting guide
+├── BUGBOT.md        # Debugging & troubleshooting guide
+├── PRIVACY.md       # Privacy features and data collection
+├── GDPR.md          # GDPR compliance implementation guide
+├── DISCLAIMER.md    # Legal disclaimer and responsibilities
+└── LICENSE          # MIT License with data protection notice
 ```
 
 ## Project Overview
@@ -289,7 +293,55 @@ yarn test         # Run tests (in analytics package)
 
    **Seed Data:** The project includes 288k+ anonymized analytics events in `drizzle/seed-data/`. Use `yarn db:add-data <api-key> <api-key-test>` to inject after creating an app. See `DATABASE_SETUP.md` for details.
 
-4. **NEVER manually cast API responses when using Eden Treaty**
+4. **IMPORTANT: Privacy and GDPR Compliance**
+   - **Self-hosted platform** - Users own their data
+   - **Privacy-first by design** - No third-party sharing
+   - **Clear legal positioning** - "You are the data controller"
+   - **Comprehensive documentation** - See PRIVACY.md, GDPR.md, DISCLAIMER.md
+   - **PII collection requires consent** - name/email only collected if user calls `identify()`
+   - **Implementation required** - Consent management, data deletion, user rights
+
+   **DO ✅:**
+
+   ```typescript
+   // Always disclose data collection
+   // Implement consent before tracking
+   if (userConsented) {
+     analytics.init({ apiKey: 'xxx' });
+   }
+
+   // Minimize PII collection
+   analytics.identify('user-uuid-123'); // ✅ Non-identifiable
+
+   // Only collect PII with consent
+   if (userConsentedToPII) {
+     analytics.identify('user-uuid-123', {
+       email: 'user@example.com'  // Requires explicit consent
+     });
+   }
+   ```
+
+   **DON'T ❌:**
+
+   ```typescript
+   // Never collect sensitive data
+   analytics.action('form-submit', {
+     password: '...',              // ❌ Never
+     creditCard: '...',            // ❌ Never
+     socialSecurityNumber: '...'   // ❌ Never
+   });
+
+   // Don't assume consent
+   analytics.identify(userId, { email }); // ❌ Must obtain consent first
+   ```
+
+   **See GDPR.md for:**
+   - Consent banner implementation
+   - Data deletion API endpoints
+   - Privacy settings page
+   - User rights implementation
+
+5. **NEVER manually cast API responses when using Eden Treaty**
    - Eden Treaty provides automatic end-to-end type safety
    - Backend schemas in `@/api/schemas/*.schema.ts` are the source of truth
    - Use `Static<typeof Schema>` to derive TypeScript types from Elysia schemas
@@ -321,15 +373,15 @@ yarn test         # Run tests (in analytics package)
 
    **See CLAUDE.md → Eden Treaty Type Inference for full details**
 
-5. **ALWAYS run `npx tsc --noEmit` before marking tasks complete**
+6. **ALWAYS run `npx tsc --noEmit` before marking tasks complete**
    - Validates TypeScript type safety
    - Catches errors early before build/deploy
    - Ensures code quality and prevents runtime errors
    - **This is critical** - TypeScript errors must be fixed before completion
 
-6. Validate inputs (see BUGBOT.md security section)
-7. Add proper error handling
-8. Include relevant tests
+7. Validate inputs (see BUGBOT.md security section)
+8. Add proper error handling
+9. Include relevant tests
 
 ### When Debugging
 

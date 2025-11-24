@@ -197,6 +197,36 @@ The project uses materialized views for identified users analytics. These are cr
 - Refreshed every minute by cron job (`yarn cron:watch`)
 - Manual refresh: `yarn cron:refresh-views`
 
+**Materialized View Troubleshooting:**
+
+```sql
+-- Check if views exist
+SELECT schemaname, matviewname
+FROM pg_matviews
+WHERE matviewname LIKE 'analytics%';
+
+-- Check view contents
+SELECT COUNT(*) FROM analytics_identified_users_mv;
+SELECT * FROM analytics_identified_users_mv LIMIT 5;
+
+-- Check when last refreshed
+SELECT schemaname, matviewname, last_refresh
+FROM pg_stat_user_tables
+WHERE relname LIKE 'analytics%mv';
+
+-- Manual refresh if data is stale
+REFRESH MATERIALIZED VIEW analytics_identified_users_mv;
+REFRESH MATERIALIZED VIEW analytics_test_identified_users_mv;
+```
+
+**Common Issues:**
+
+- **Data not appearing in new joiners**: Views may need refresh
+- **"Column must appear in GROUP BY" errors**: Use `DISTINCT ON` instead of `GROUP BY` in view definition
+- **Missing user data (name/email)**: View must filter to `type = 'identify'` events only
+- **Duplicate key errors**: Ensure `DISTINCT ON (identify_id)` in first_last_seen CTE
+- **Performance issues**: Check indexes on materialized views (identify_id, user_id, first_seen)
+
 ---
 
 ### 4. Monorepo Workspace Issues
@@ -970,6 +1000,77 @@ await db.execute(`SELECT * FROM analytics WHERE api_key = '${apiKey}'`);
 - [ ] Database backups configured
 - [ ] SSL certificates valid
 - [ ] CORS configured correctly
+
+---
+
+## UI Component Patterns
+
+### New Joiners Table
+
+The overview page (`/a/s/[slug]/page.tsx`) displays recent identified users from the materialized view.
+
+**Key Patterns:**
+
+```typescript
+// 1. Avatar fallback with initials
+const getInitials = (name?: string | null, email?: string | null): string => {
+  if (name) {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }
+  if (email) {
+    return email.slice(0, 2).toUpperCase();
+  }
+  return "??";
+};
+
+// 2. Platform icons
+const getPlatformIcon = (platform: string | null) => {
+  if (platform === "ios") return <Smartphone className="size-4" />;
+  if (platform === "android") return <Smartphone className="size-4" />;
+  if (platform === "web") return <Globe className="size-4" />;
+  return <HelpCircle className="size-4" />;
+};
+
+// 3. Country flag from code
+const countryCodeToFlag = (code: string): string => {
+  return code.toUpperCase().replace(/./g, (char) =>
+    String.fromCodePoint(127397 + char.charCodeAt(0))
+  );
+};
+
+// 4. Time ago display
+import { formatDistanceToNow } from "date-fns";
+formatDistanceToNow(firstSeenDate, { addSuffix: true }); // "2 hours ago"
+```
+
+**API Contract:**
+
+```typescript
+// Backend returns from materialized view
+interface NewJoiner {
+  identifyId: string;
+  userId: string | null;
+  name: string | null;
+  email: string | null;
+  avatar: string | null;
+  platform: string | null; // "ios" | "android" | "web"
+  country: string | null; // ISO country code
+  appVersion: string | null;
+  firstSeen: string; // ISO timestamp
+  lastSeen: string; // ISO timestamp
+}
+```
+
+**Common Issues:**
+
+- **Fields showing as "—"**: API route must select platform, country, appVersion from materialized view
+- **Avatar not working**: Check if `avatar` field is in API schema and select query
+- **Initials not showing**: Ensure `getInitials()` handles null/undefined properly
+- **Time ago incorrect**: Verify `firstSeen` is valid ISO timestamp
 
 ---
 
