@@ -307,16 +307,16 @@ yarn test         # Run tests (in analytics package)
    // Always disclose data collection
    // Implement consent before tracking
    if (userConsented) {
-     analytics.init({ apiKey: 'xxx' });
+     analytics.init({ apiKey: "xxx" });
    }
 
    // Minimize PII collection
-   analytics.identify('user-uuid-123'); // ✅ Non-identifiable
+   analytics.identify("user-uuid-123"); // ✅ Non-identifiable
 
    // Only collect PII with consent
    if (userConsentedToPII) {
-     analytics.identify('user-uuid-123', {
-       email: 'user@example.com'  // Requires explicit consent
+     analytics.identify("user-uuid-123", {
+       email: "user@example.com", // Requires explicit consent
      });
    }
    ```
@@ -325,10 +325,10 @@ yarn test         # Run tests (in analytics package)
 
    ```typescript
    // Never collect sensitive data
-   analytics.action('form-submit', {
-     password: '...',              // ❌ Never
-     creditCard: '...',            // ❌ Never
-     socialSecurityNumber: '...'   // ❌ Never
+   analytics.action("form-submit", {
+     password: "...", // ❌ Never
+     creditCard: "...", // ❌ Never
+     socialSecurityNumber: "...", // ❌ Never
    });
 
    // Don't assume consent

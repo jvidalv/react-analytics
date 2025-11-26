@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent } from "react";
 import {
   App,
   useAppBySlug,

@@ -11,11 +11,7 @@
  *   Or automatically via: npm run dev
  */
 
-import {
-  CRON_TASKS_CONFIG,
-  CronTaskName,
-  runCronTaskRequest,
-} from "./cron-shared";
+import { CRON_TASKS_CONFIG, runCronTaskRequest } from "./cron-shared";
 
 async function runCronTask(taskName: string, path: string) {
   const result = await runCronTaskRequest(taskName, path);
@@ -45,7 +41,7 @@ async function waitForServer(maxRetries = 30, retryDelay = 1000) {
         console.log("✅ Dev server is ready, starting cron watcher...\n");
         return true;
       }
-    } catch (error) {
+    } catch (_error) {
       // Server not ready yet
       if (i === 0) {
         console.log("⏳ Waiting for dev server to start...");

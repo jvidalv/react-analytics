@@ -1,27 +1,15 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { db } from "@/db";
 import { sql } from "drizzle-orm";
-import { getAnalyticsTable } from "@/api/utils/analytics";
-
-// Response schema
-const IdentificationAggregatesResponseSchema = t.Object({
-  identified: t.Number(),
-  anonymous: t.Number(),
-  total: t.Number(),
-  identificationRate: t.Number(),
-  growth: t.Object({
-    current: t.Number(),
-    previous: t.Number(),
-    change: t.Number(),
-  }),
-});
+import {
+  getAnalyticsTable,
+  getAnalyticsFromStore,
+} from "@/api/utils/analytics";
 
 export const identificationAggregatesRoute = new Elysia().get(
   "/identification-aggregates",
   async ({ store }) => {
-    // Access from store (set by parent route)
-    const apiKey = (store as any).apiKey as string;
-    const isTest = (store as any).isTest as boolean;
+    const { apiKey, isTest } = getAnalyticsFromStore(store);
 
     // Get correct table (production or test)
     const targetTable = getAnalyticsTable(isTest);

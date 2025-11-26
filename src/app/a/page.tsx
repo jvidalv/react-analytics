@@ -8,7 +8,7 @@ import {
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { getColor, getContrastTextColor } from "@/lib/colors";
+import { getColor } from "@/lib/colors";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";

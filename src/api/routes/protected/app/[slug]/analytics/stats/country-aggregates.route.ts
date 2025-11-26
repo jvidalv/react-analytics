@@ -1,24 +1,15 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { db } from "@/db";
 import { sql } from "drizzle-orm";
-import { getAnalyticsTable } from "@/api/utils/analytics";
-
-// Response schemas
-const CountryAggregateSchema = t.Object({
-  value: t.Union([t.String(), t.Null()]),
-  count: t.Number(),
-});
-
-const CountryAggregatesResponseSchema = t.Object({
-  data: t.Array(CountryAggregateSchema),
-});
+import {
+  getAnalyticsTable,
+  getAnalyticsFromStore,
+} from "@/api/utils/analytics";
 
 export const countryAggregatesRoute = new Elysia().get(
   "/country-aggregates",
   async ({ store }) => {
-    // Access from store (set by parent route)
-    const apiKey = (store as any).apiKey as string;
-    const isTest = (store as any).isTest as boolean;
+    const { apiKey, isTest } = getAnalyticsFromStore(store);
 
     // Get correct table (production or test)
     const targetTable = getAnalyticsTable(isTest);

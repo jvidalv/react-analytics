@@ -1,37 +1,16 @@
 import { Elysia, t } from "elysia";
 import { db } from "@/db";
-import { sql, desc, count, like, or, and, eq } from "drizzle-orm";
-import { getAnalyticsTable, getIdentifiedUsersMv } from "@/api/utils/analytics";
-
-// Response schemas
-const UserSchema = t.Object({
-  identifyId: t.String(),
-  userId: t.Union([t.String(), t.Null()]),
-  name: t.Union([t.String(), t.Null()]),
-  email: t.Union([t.String(), t.Null()]),
-  avatar: t.Union([t.String(), t.Null()]),
-  isIdentified: t.Boolean(),
-  lastSeen: t.String(), // ISO date string
-});
-
-const PaginationSchema = t.Object({
-  page: t.Number(),
-  limit: t.Number(),
-  total: t.Number(),
-  totalPages: t.Number(),
-});
-
-const UsersListResponseSchema = t.Object({
-  users: t.Array(UserSchema),
-  pagination: PaginationSchema,
-});
+import { sql } from "drizzle-orm";
+import {
+  getAnalyticsTable,
+  getIdentifiedUsersMv,
+  getAnalyticsFromStore,
+} from "@/api/utils/analytics";
 
 export const usersListRoute = new Elysia().get(
   "/list",
   async ({ store, query }) => {
-    // Access from store (set by parent route)
-    const apiKey = (store as any).apiKey as string;
-    const isTest = (store as any).isTest as boolean;
+    const { apiKey, isTest } = getAnalyticsFromStore(store);
 
     // Get query parameters
     const page = parseInt(query.page || "1", 10);

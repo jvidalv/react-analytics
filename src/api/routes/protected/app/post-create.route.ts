@@ -1,4 +1,4 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { db } from "@/db";
 import { apps, analyticsApiKeys } from "@/db/schema";
 import { eq } from "drizzle-orm";

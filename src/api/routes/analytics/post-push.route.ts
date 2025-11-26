@@ -10,6 +10,7 @@ import {
 import {
   validateApiKey,
   getAnalyticsTable,
+  getMessageStatusTable,
   extractRequestMetadata,
   isValidPropertiesSize,
   buildEventObject,
@@ -136,6 +137,19 @@ export const postPushRoute = new Elysia()
 
         // 6. Batch insert all events (single query - performance improvement!)
         await db.insert(targetTable).values(eventObjects);
+
+        // 6b. Create message_status entries for any message events
+        const messageEvents = eventObjects.filter((e) => e.type === "message");
+        if (messageEvents.length > 0) {
+          const messageStatusTable = getMessageStatusTable(isTestKey);
+          await db.insert(messageStatusTable).values(
+            messageEvents.map((event) => ({
+              analyticsId: event.id,
+              apiKey: body.apiKey,
+              status: "new" as const,
+            })),
+          );
+        }
 
         // 7. Trigger identity reconciliation asynchronously (don't block response)
         if (body.userId && body.identifyId) {

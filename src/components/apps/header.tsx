@@ -8,16 +8,14 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronsUpDown, LogOut, Plus, Sparkles, User } from "lucide-react";
+import { LogOut, Plus, Sparkles, User } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useUserApps } from "@/domains/app/app.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useParams, usePathname } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { getColor } from "@/lib/colors";
 import { useMe, useToggleDevMode } from "@/domains/user/me.api";
 import {
   getPlanDisplayName,
@@ -30,6 +28,8 @@ import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useAnalyticsOverview } from "@/domains/analytics/analytics.api";
+import { useNewErrorsCount } from "@/domains/app/errors/errors.api";
+import { useNewMessagesCount } from "@/domains/app/messages/messages.api";
 
 const DevelopmentModeToggle = () => {
   const { me } = useMe();
@@ -253,6 +253,33 @@ const Apps = () => {
   );
 };
 
+const formatCount = (count: number): string => {
+  if (count > 99) return "+99";
+  return count.toString();
+};
+
+const CountBadge = ({
+  count,
+  variant = "red",
+}: {
+  count: number;
+  variant?: "red" | "blue";
+}) => {
+  if (count === 0) return null;
+
+  return (
+    <span
+      className={cn(
+        "ml-1.5 inline-flex items-center justify-center min-w-5 h-5 px-1.5 text-xs font-medium text-white",
+        variant === "red" && "bg-red-500",
+        variant === "blue" && "bg-blue-500",
+      )}
+    >
+      {formatCount(count)}
+    </span>
+  );
+};
+
 function AppHeader() {
   const pathname = usePathname();
   const params = useParams();
@@ -260,6 +287,14 @@ function AppHeader() {
   const { me } = useMe();
   const appSlug = typeof params.slug === "string" ? params.slug : undefined;
   const { overview } = useAnalyticsOverview(appSlug, me?.devModeEnabled);
+  const { count: newErrorsCount } = useNewErrorsCount(
+    appSlug,
+    me?.devModeEnabled,
+  );
+  const { count: newMessagesCount } = useNewMessagesCount(
+    appSlug,
+    me?.devModeEnabled,
+  );
 
   if (!hasSelectedApp) {
     return null;
@@ -269,6 +304,8 @@ function AppHeader() {
     {
       name: "Overview",
       href: `/a/s/${params.slug}`,
+      count: 0,
+      variant: "red" as const,
       get current() {
         return pathname === this.href;
       },
@@ -276,6 +313,26 @@ function AppHeader() {
     {
       name: "Users",
       href: `/a/s/${params.slug}/users`,
+      count: 0,
+      variant: "red" as const,
+      get current() {
+        return pathname === this.href;
+      },
+    },
+    {
+      name: "Errors",
+      href: `/a/s/${params.slug}/errors`,
+      count: newErrorsCount,
+      variant: "red" as const,
+      get current() {
+        return pathname === this.href;
+      },
+    },
+    {
+      name: "Messages",
+      href: `/a/s/${params.slug}/messages`,
+      count: newMessagesCount,
+      variant: "blue" as const,
       get current() {
         return pathname === this.href;
       },
@@ -283,16 +340,20 @@ function AppHeader() {
     {
       name: "Settings",
       href: `/a/s/${params.slug}/settings`,
+      count: 0,
+      variant: "red" as const,
       get current() {
         return pathname === this.href;
       },
     },
   ];
 
-  // Only show Overview when there are no users (onboarding state)
+  // Only show Overview and Messages when there are no users (onboarding state)
   const visibleLinks =
     overview?.totalUsers === 0
-      ? links.filter((link) => link.name === "Overview")
+      ? links.filter(
+          (link) => link.name === "Overview" || link.name === "Messages",
+        )
       : links;
 
   return (
@@ -307,6 +368,7 @@ function AppHeader() {
           )}
         >
           {link.name}
+          <CountBadge count={link.count} variant={link.variant} />
         </Link>
       ))}
     </nav>

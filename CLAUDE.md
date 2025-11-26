@@ -72,7 +72,7 @@ react-analytics/
 
 - **Endpoint**: `POST /api/analytics/push`
 - **Authentication**: API key-based (production + test keys)
-- **Event Types**: Navigation, Actions, Errors, State, Identify
+- **Event Types**: Navigation, Actions, Errors, State, Identify, Message
 - **Properties**: Max 600 characters per event
 - **Batching**: Client-side 5-second interval batching
 - **Storage**: Separate tables for production vs test data
@@ -88,14 +88,35 @@ react-analytics/
 - **Filtering**: By date range, event type, user ID
 - **Privacy**: Sensitive mode to hide user data (configured in Settings)
 
-### 3. Multi-App Management
+### 3. Messages Dashboard
+
+Contact form messages from your app users, tracked via `analytics.message()`.
+
+- **Location**: `/a/s/[slug]/messages`
+- **Features**:
+  - View all contact form submissions
+  - Filter by status: All, New, Seen, Completed
+  - Message detail sheet with full content view
+  - Add private notes to messages
+  - Mark messages as seen/completed
+  - URL-based deep linking (`?messageId=xxx`)
+- **Data Displayed**:
+  - Contact info (email or phone)
+  - User info (if identified via `analytics.identify()`)
+  - Message content
+  - Platform (iOS, Android, Web)
+  - Country (from IP geolocation)
+  - Timestamp
+- **Status Flow**: `new` → `seen` → `completed`
+
+### 4. Multi-App Management
 
 - **App Creation**: Users can create multiple apps
 - **Slug-based**: Each app has unique slug for routing
 - **API Keys**: Separate production/test keys per app
 - **Settings**: `/app/s/[slug]/settings`
 
-### 4. Analytics Package (`@jvidalv/react-analytics`)
+### 5. Analytics Package (`@jvidalv/react-analytics`)
 
 - **Auto-detection**: Automatically detects Next.js, Expo Router, React Router
 - **Event Types**:
@@ -104,6 +125,7 @@ react-analytics/
   - **Error**: Error boundary integration
   - **State**: App state changes (React Native)
   - **Identify**: User identification
+  - **Message**: Contact form submissions (`analytics.message(contact, content)`)
 - **Storage Adapters**: localStorage (web), AsyncStorage (React Native)
 - **Device Detection**: Platform, OS, browser, device info
 - **Batching**: 5-second intervals, max 100 events per batch
@@ -150,6 +172,7 @@ src/app/
 ├── a/s/[slug]/                    # App-specific routes
 │   ├── page.tsx                   # Overview with new joiners
 │   ├── users/                     # Analytics dashboard
+│   ├── messages/                  # Contact form messages
 │   └── settings/                  # App settings
 ├── dashboard/page.tsx             # Main dashboard
 ├── account/page.tsx               # User account settings
@@ -167,6 +190,8 @@ src/domains/
 │   ├── users/
 │   │   ├── users.api.ts           # Analytics user queries
 │   │   └── stats/users-stats.api.ts # User statistics
+│   ├── messages/
+│   │   └── messages.api.ts        # Messages list, single, update hooks
 │   └── (legacy stores/translations to be removed)
 ├── user/
 │   ├── me.api.ts                  # Current user operations
@@ -242,22 +267,45 @@ src/domains/
 - Same schema as `analytics` table
 - Separate for development testing
 
+#### `message_status` - Message status tracking (production)
+
+```typescript
+{
+  id: string (uuid)
+  apiKey: string (indexed)
+  analyticsId: string (fk -> analytics.id) // Links to the message event
+  status: "new" | "seen" | "completed"
+  notes: string | null // Private notes for the team
+  createdAt: timestamp
+  updatedAt: timestamp
+}
+```
+
+- **Created automatically** when a `message` event is received
+- **Status values** defined in `MESSAGE_STATUS_VALUES` (single source of truth in schema.ts)
+- **Joined with** `analytics` table to get message content and `identified_users_mv` for user info
+
+#### `message_status_test` - Test environment message status
+
+- Same schema as `message_status` table
+- Used when test API key is provided
+
 #### `analytics_identified_users_mv` - Materialized view (production)
 
 Optimized view for querying identified users:
 
 ```typescript
 {
-  identifyId: string (uuid)
-  userId: string | null
-  name: string | null
-  email: string | null
-  avatar: string | null
-  platform: string | null  // ios, android, web
-  country: string | null   // ISO country code
-  appVersion: string | null
-  firstSeen: timestamp
-  lastSeen: timestamp
+  identifyId: string(uuid);
+  userId: string | null;
+  name: string | null;
+  email: string | null;
+  avatar: string | null;
+  platform: string | null; // ios, android, web
+  country: string | null; // ISO country code
+  appVersion: string | null;
+  firstSeen: timestamp;
+  lastSeen: timestamp;
 }
 ```
 
@@ -327,6 +375,37 @@ Get detailed user analytics.
 Get user statistics.
 
 **Returns:** Total users, active users, retention metrics
+
+### Messages APIs
+
+Located at `/api/protected/app/[slug]/analytics/messages/`
+
+#### `GET /messages/list`
+
+List paginated messages for an app.
+
+**Query Params:** `page`, `limit`, `status`
+
+**Returns:** Messages with contact info, content, status, platform, country, and linked user data
+
+#### `GET /messages/:messageId`
+
+Get single message by ID.
+
+**Returns:** Full message details with user info
+
+#### `PUT /messages/:messageId`
+
+Update message status or notes.
+
+**Body:**
+
+```typescript
+{
+  status?: "new" | "seen" | "completed"
+  notes?: string | null
+}
+```
 
 ### App Management APIs
 
@@ -578,6 +657,7 @@ yarn db:migrate
 ```
 
 **Important Notes:**
+
 - Use `DISTINCT ON` instead of `GROUP BY` for first/last seen to avoid "must appear in GROUP BY" errors
 - Filter to `type = 'identify'` only to get user data (name, email, avatar)
 - Use `LAST_VALUE()` window function with proper frame for last_seen
@@ -980,23 +1060,27 @@ React Analytics is designed as a **privacy-first, self-hosted** analytics platfo
 ### Key Privacy Features
 
 **Self-Hosted Architecture:**
+
 - All data stays on user's infrastructure
 - No third-party sharing by design
 - Complete data ownership
 - Host in any region (EU, US, etc.) for data sovereignty
 
 **Configurable Data Collection:**
+
 - **Automatic**: identifyId (UUID), timestamp, platform, appVersion, country
 - **Opt-In Only**: name, email, userId (via `identify()` method)
 - PII collection requires explicit user consent under GDPR
 
 **UUID-Based Tracking:**
+
 - Uses UUID v7 (not traditional cookies)
 - Stored in localStorage/AsyncStorage
 - No automatic cross-site tracking
 - Easy for users to clear
 
 **Event Batching:**
+
 - 5-second intervals (configurable)
 - Reduces network exposure
 - Minimizes data transmission frequency
@@ -1004,6 +1088,7 @@ React Analytics is designed as a **privacy-first, self-hosted** analytics platfo
 ### Legal Positioning
 
 **Clear Disclaimer:** "You are the data controller"
+
 - Platform provides tools, not guarantees
 - Implementers are responsible for compliance
 - No built-in consent management (must be implemented)
@@ -1025,19 +1110,20 @@ If collecting PII (name, email) via `identify()`, you **MUST** implement:
 
 ### Privacy vs SaaS Analytics
 
-| Feature | React Analytics | Google Analytics | Mixpanel |
-|---------|----------------|------------------|----------|
-| Self-Hosted | ✅ Yes | ❌ No | ❌ No |
-| Open Source | ✅ Yes | ❌ No | ❌ No |
-| Full Data Ownership | ✅ Yes | ❌ No | ❌ No |
-| No Third-Party Sharing | ✅ Yes | ❌ No | ❌ No |
-| Your Infrastructure | ✅ Yes | ❌ No | ❌ No |
-| PII Collection | Opt-in only | Automatic | Automatic |
-| Cookie-Free Option | ✅ Yes (UUID) | ❌ No | ❌ No |
+| Feature                | React Analytics | Google Analytics | Mixpanel  |
+| ---------------------- | --------------- | ---------------- | --------- |
+| Self-Hosted            | ✅ Yes          | ❌ No            | ❌ No     |
+| Open Source            | ✅ Yes          | ❌ No            | ❌ No     |
+| Full Data Ownership    | ✅ Yes          | ❌ No            | ❌ No     |
+| No Third-Party Sharing | ✅ Yes          | ❌ No            | ❌ No     |
+| Your Infrastructure    | ✅ Yes          | ❌ No            | ❌ No     |
+| PII Collection         | Opt-in only     | Automatic        | Automatic |
+| Cookie-Free Option     | ✅ Yes (UUID)   | ❌ No            | ❌ No     |
 
 ### Data Collection Details
 
 **Automatically Collected (No PII):**
+
 - identifyId (UUID v7) - pseudonymous device identifier
 - timestamp - when event occurred
 - platform - ios, android, web
@@ -1046,6 +1132,7 @@ If collecting PII (name, email) via `identify()`, you **MUST** implement:
 - userAgent - browser/device info (web only)
 
 **Opt-In Only (PII - Requires Consent):**
+
 - userId - user identifier (only if you call `identify()`)
 - email - user email (only if you pass to `identify()`)
 - name - user name (only if you pass to `identify()`)
@@ -1055,30 +1142,33 @@ If collecting PII (name, email) via `identify()`, you **MUST** implement:
 ### Best Practices
 
 **Minimize Data Collection:**
+
 ```typescript
 // ✅ Good: Only collect what you need
-analytics.navigation('/dashboard');
+analytics.navigation("/dashboard");
 
 // ❌ Avoid: Collecting unnecessary PII
-analytics.action('click', {
-  socialSecurityNumber: '...' // Never do this!
+analytics.action("click", {
+  socialSecurityNumber: "...", // Never do this!
 });
 ```
 
 **Anonymize When Possible:**
+
 ```typescript
 // ✅ Good: Use non-identifiable IDs
-analytics.identify('user-uuid-123');
+analytics.identify("user-uuid-123");
 
 // ⚠️ Requires Consent: Identifiable information
-analytics.identify('user-uuid-123', {
-  email: 'user@example.com'  // Requires user consent!
+analytics.identify("user-uuid-123", {
+  email: "user@example.com", // Requires user consent!
 });
 ```
 
 **Respect Do Not Track:**
+
 ```typescript
-if (navigator.doNotTrack === '1') {
+if (navigator.doNotTrack === "1") {
   // Don't initialize analytics
 }
 ```

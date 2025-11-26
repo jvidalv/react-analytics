@@ -34,12 +34,12 @@ async function resetDatabase() {
     console.log("   Dropping materialized views (or tables)...");
     try {
       await sql`DROP MATERIALIZED VIEW IF EXISTS analytics_identified_users_mv CASCADE`;
-    } catch (e) {
+    } catch (_e) {
       await sql`DROP TABLE IF EXISTS analytics_identified_users_mv CASCADE`;
     }
     try {
       await sql`DROP MATERIALIZED VIEW IF EXISTS analytics_test_identified_users_mv CASCADE`;
-    } catch (e) {
+    } catch (_e) {
       await sql`DROP TABLE IF EXISTS analytics_test_identified_users_mv CASCADE`;
     }
 

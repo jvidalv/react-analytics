@@ -8,6 +8,9 @@ export { analytics } from "./core";
 // Provider component
 export { default as AnalyticsProvider } from "./analytics-provider";
 
+// Error boundary component
+export { default as AnalyticsErrorBoundary } from "./error-boundary";
+
 // Router tracking components
 export {
   RouterTracker,

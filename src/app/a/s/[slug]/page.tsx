@@ -5,7 +5,6 @@ import { UsersOnboarding } from "./users/users.onboarding";
 import { useTitle } from "@/hooks/use-title";
 import { useAppSlugFromParams, useAppBySlug } from "@/domains/app/app.api";
 import { useAnalyticsApiKeys } from "@/domains/analytics/analytics-api-keys.api";
-import { useScrollPosition } from "@/hooks/use-scroll-position";
 import { PropsWithChildren } from "react";
 import { cn } from "@/lib/utils";
 import { useQueryStates, parseAsInteger } from "nuqs";
@@ -169,7 +168,6 @@ export default function OverviewPage() {
   const appSlug = useAppSlugFromParams();
   const { app, isLoading: isLoadingApp } = useAppBySlug(appSlug);
   const { apiKeys, isLoading: isLoadingApiKeys } = useAnalyticsApiKeys(appSlug);
-  const apiKey = me?.devModeEnabled ? apiKeys?.apiKeyTest : apiKeys?.apiKey;
 
   const { overview, isLoading: isLoadingOverview } = useAnalyticsOverview(
     app?.slug,

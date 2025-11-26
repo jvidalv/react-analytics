@@ -10,6 +10,8 @@ A **universal analytics library** that works with **any React project** - Next.j
 - 🎯 **Smart Router Detection** - Auto-detects expo-router, react-router, Next.js App/Pages Router
 - 💾 **Built-in Storage** - Uses localStorage for web, AsyncStorage for React Native (auto-detected)
 - 📊 **Event Batching** - Queues and pushes events every 5 seconds with retry logic
+- 💬 **Contact Form Messages** - Built-in message tracking with dashboard management
+- 🛡️ **Error Boundary** - Automatic error reporting with React error boundaries
 - 🔒 **Type-Safe** - Full TypeScript support with comprehensive types
 
 ## Installation
@@ -57,6 +59,7 @@ function App() {
 analytics.identify("user-123", { email: "user@example.com" });
 analytics.action("button_click", { button: "login" });
 analytics.error("Network error", { statusCode: 500 });
+analytics.message("user@example.com", "I need help with...");
 ```
 
 The provider automatically:
@@ -270,6 +273,24 @@ analytics.page("/dashboard", {
 });
 ```
 
+### `analytics.message(contact, content)`
+
+Track a contact form message. Messages appear in your dashboard's Messages section where you can view, respond, and manage them.
+
+```typescript
+analytics.message("user@example.com", "I need help with my account settings.");
+
+analytics.message("+1234567890", "Please call me back regarding my order.");
+```
+
+**Dashboard Features:**
+
+- View all messages with contact info, platform, and country
+- Mark messages as "seen" or "completed"
+- Add private notes to messages
+- Filter by status (new, seen, completed)
+- Deep-link to specific messages via URL
+
 ### `analytics.cleanup()`
 
 Stop tracking and cleanup resources. Usually not needed unless you want to manually disable analytics.
@@ -334,6 +355,19 @@ The library automatically tracks and sends these event types:
 }
 ```
 
+### Message Event
+
+```typescript
+{
+  type: 'message',
+  date: '2025-01-04T12:00:00.000Z',
+  properties: {
+    contact: 'user@example.com',
+    content: 'I need help with my account'
+  }
+}
+```
+
 ### State Event (React Native only)
 
 ```typescript
@@ -341,6 +375,89 @@ The library automatically tracks and sends these event types:
   type: 'state',
   active: true, // or false
   date: '2025-01-04T12:00:00.000Z'
+}
+```
+
+## Error Boundary
+
+The `AnalyticsErrorBoundary` component automatically catches React rendering errors and reports them to analytics with rich context including stack traces, component stack, route, and device info.
+
+### Basic Usage
+
+```tsx
+import {
+  AnalyticsProvider,
+  AnalyticsErrorBoundary,
+} from "@jvidalv/react-analytics";
+
+function App() {
+  return (
+    <AnalyticsProvider config={{ apiKey: "your-api-key" }}>
+      <AnalyticsErrorBoundary>
+        <MyApp />
+      </AnalyticsErrorBoundary>
+    </AnalyticsProvider>
+  );
+}
+```
+
+### Custom Fallback UI
+
+```tsx
+<AnalyticsErrorBoundary
+  fallback={(error, reset) => (
+    <div>
+      <h1>Something went wrong</h1>
+      <p>{error.message}</p>
+      <button onClick={reset}>Try again</button>
+    </div>
+  )}
+>
+  <MyApp />
+</AnalyticsErrorBoundary>
+```
+
+### With Error Callback
+
+```tsx
+<AnalyticsErrorBoundary
+  onError={(error, errorInfo) => {
+    // Custom logging, Sentry integration, etc.
+    console.error("Caught error:", error);
+    console.error("Component stack:", errorInfo.componentStack);
+  }}
+>
+  <MyApp />
+</AnalyticsErrorBoundary>
+```
+
+### Props
+
+| Prop       | Type                                                            | Description                                                                                                                                                                |
+| ---------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `children` | `ReactNode`                                                     | The components to wrap                                                                                                                                                     |
+| `fallback` | `ReactNode \| ((error: Error, reset: () => void) => ReactNode)` | UI to show when an error occurs. Can be a static element or a render function with access to the error and reset function. Defaults to `null` for universal compatibility. |
+| `onError`  | `(error: Error, errorInfo: ErrorInfo) => void`                  | Optional callback when an error is caught                                                                                                                                  |
+| `disabled` | `boolean`                                                       | Set to `true` to disable analytics reporting (still catches errors)                                                                                                        |
+
+### Error Data Captured
+
+When an error is caught, the following data is automatically sent to analytics:
+
+```typescript
+{
+  type: 'error',
+  message: 'Error message here',
+  properties: {
+    name: 'TypeError',           // Error name
+    stack: '...',                // Stack trace (limited to 2000 chars)
+    componentStack: '...',       // React component stack (limited to 2000 chars)
+    route: '/current/path',      // Current route (web only)
+    platform: 'web',             // Platform (web/ios/android)
+    osVersion: '14.0',           // OS version
+    browser: 'Chrome',           // Browser (web only)
+    source: 'ErrorBoundary'      // Identifies the error source
+  }
 }
 ```
 

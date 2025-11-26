@@ -11,6 +11,14 @@ import {
 import type { AdapterAccountType } from "next-auth/adapters";
 import { jsonb } from "drizzle-orm/pg-core";
 
+// Single source of truth for message status values
+export const MESSAGE_STATUS_VALUES = ["new", "seen", "completed"] as const;
+export type MessageStatusType = (typeof MESSAGE_STATUS_VALUES)[number];
+
+// Single source of truth for error status values
+export const ERROR_STATUS_VALUES = ["new", "seen", "fixed"] as const;
+export type ErrorStatusType = (typeof ERROR_STATUS_VALUES)[number];
+
 export const users = pgTable("user", {
   id: uuid().primaryKey().defaultRandom(),
   name: text(),
@@ -103,7 +111,9 @@ export const analytics = pgTable(
     userId: text("user_id"),
     type: text("type")
       .notNull()
-      .$type<"navigation" | "identify" | "action" | "state" | "error">(),
+      .$type<
+        "navigation" | "identify" | "action" | "state" | "error" | "message"
+      >(),
     properties: jsonb("properties").notNull(),
     date: timestamp("date", { mode: "date", withTimezone: true }).notNull(),
     info: jsonb("info").default({}),
@@ -136,7 +146,9 @@ export const analyticsTest = pgTable(
     userId: text("user_id"),
     type: text("type")
       .notNull()
-      .$type<"navigation" | "identify" | "action" | "state" | "error">(),
+      .$type<
+        "navigation" | "identify" | "action" | "state" | "error" | "message"
+      >(),
     properties: jsonb("properties").notNull(),
     date: timestamp("date", { mode: "date", withTimezone: true }).notNull(),
     info: jsonb("info").default({}),
@@ -213,4 +225,112 @@ export const analyticsTestIdentifiedUsersMv = pgTable(
       withTimezone: true,
     }).notNull(),
   },
+);
+
+// Message status tracking (production)
+export const messageStatus = pgTable(
+  "message_status",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    analyticsId: uuid("analytics_id")
+      .notNull()
+      .references(() => analytics.id, { onDelete: "cascade" }),
+    apiKey: text("api_key")
+      .notNull()
+      .references(() => analyticsApiKeys.apiKey, { onDelete: "cascade" }),
+    status: text("status").notNull().default("new").$type<MessageStatusType>(),
+    notes: text("notes"),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => ({
+    idxAnalyticsId: index("idx_message_status_analytics_id").on(
+      table.analyticsId,
+    ),
+    idxApiKeyStatus: index("idx_message_status_api_key_status").on(
+      table.apiKey,
+      table.status,
+    ),
+  }),
+);
+
+// Message status tracking (test)
+export const messageStatusTest = pgTable(
+  "message_status_test",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    analyticsId: uuid("analytics_id")
+      .notNull()
+      .references(() => analyticsTest.id, { onDelete: "cascade" }),
+    apiKey: text("api_key")
+      .notNull()
+      .references(() => analyticsApiKeys.apiKeyTest, { onDelete: "cascade" }),
+    status: text("status").notNull().default("new").$type<MessageStatusType>(),
+    notes: text("notes"),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => ({
+    idxAnalyticsId: index("idx_message_status_test_analytics_id").on(
+      table.analyticsId,
+    ),
+    idxApiKeyStatus: index("idx_message_status_test_api_key_status").on(
+      table.apiKey,
+      table.status,
+    ),
+  }),
+);
+
+// Error status tracking (production)
+export const errorStatus = pgTable(
+  "error_status",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    analyticsId: uuid("analytics_id")
+      .notNull()
+      .references(() => analytics.id, { onDelete: "cascade" }),
+    apiKey: text("api_key")
+      .notNull()
+      .references(() => analyticsApiKeys.apiKey, { onDelete: "cascade" }),
+    status: text("status").notNull().default("new").$type<ErrorStatusType>(),
+    notes: text("notes"),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => ({
+    idxAnalyticsId: index("idx_error_status_analytics_id").on(
+      table.analyticsId,
+    ),
+    idxApiKeyStatus: index("idx_error_status_api_key_status").on(
+      table.apiKey,
+      table.status,
+    ),
+  }),
+);
+
+// Error status tracking (test)
+export const errorStatusTest = pgTable(
+  "error_status_test",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    analyticsId: uuid("analytics_id")
+      .notNull()
+      .references(() => analyticsTest.id, { onDelete: "cascade" }),
+    apiKey: text("api_key")
+      .notNull()
+      .references(() => analyticsApiKeys.apiKeyTest, { onDelete: "cascade" }),
+    status: text("status").notNull().default("new").$type<ErrorStatusType>(),
+    notes: text("notes"),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => ({
+    idxAnalyticsId: index("idx_error_status_test_analytics_id").on(
+      table.analyticsId,
+    ),
+    idxApiKeyStatus: index("idx_error_status_test_api_key_status").on(
+      table.apiKey,
+      table.status,
+    ),
+  }),
 );

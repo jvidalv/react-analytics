@@ -2,11 +2,8 @@ import { Button } from "@/components/ui/button";
 import { PublicHeader } from "@/components/public/header";
 import { PublicFooter } from "@/components/public/footer";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Check, Database, Infinity, LayoutGrid, Plus, X } from "lucide-react";
+import { Database, LayoutGrid } from "lucide-react";
 import Link from "next/link";
-import { PRICE_PLANS } from "@/domains/plan/api.plan";
 import { JoinSection } from "@/components/public/join-section";
 
 export default function Home() {

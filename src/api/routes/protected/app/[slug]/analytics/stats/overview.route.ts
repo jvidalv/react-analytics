@@ -1,23 +1,15 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { db } from "@/db";
 import { countDistinct, eq, and, gte, lt } from "drizzle-orm";
-import { getAnalyticsTable } from "@/api/utils/analytics";
-
-// Response schema
-const StatsOverviewResponseSchema = t.Object({
-  totalUsers: t.Number(),
-  mau: t.Number(),
-  dau: t.Number(),
-  mauChange: t.Number(),
-  dauChange: t.Number(),
-});
+import {
+  getAnalyticsTable,
+  getAnalyticsFromStore,
+} from "@/api/utils/analytics";
 
 export const overviewRoute = new Elysia().get(
   "/overview",
   async ({ store }) => {
-    // Access from store (set by parent route)
-    const apiKey = (store as any).apiKey as string;
-    const isTest = (store as any).isTest as boolean;
+    const { apiKey, isTest } = getAnalyticsFromStore(store);
 
     // Get correct table (production or test)
     const table = getAnalyticsTable(isTest);

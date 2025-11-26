@@ -42,12 +42,21 @@ export type StateEvent = {
   properties?: Record<string, unknown>;
 };
 
+export type MessageEvent = {
+  type: "message";
+  contact: string;
+  content: string;
+  date: string;
+  properties?: Record<string, unknown>;
+};
+
 export type AnalyticsEvent =
   | NavigationEvent
   | ActionEvent
   | IdentifyEvent
   | StateEvent
-  | ErrorEvent;
+  | ErrorEvent
+  | MessageEvent;
 
 export type AnalyticsConfig = {
   /**

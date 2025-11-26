@@ -1,4 +1,4 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { getUserFromStore } from "@/api/utils/auth";
 import { SuccessResponse } from "@/api/schemas/common.schema";
 import {

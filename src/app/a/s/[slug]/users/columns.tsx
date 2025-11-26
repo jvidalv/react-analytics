@@ -5,7 +5,7 @@ import { User } from "@/domains/app/users/users-list.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow, format } from "date-fns";
-import { Eye, Globe, Info, Maximize2, Copy, Check } from "lucide-react";
+import { Eye, Globe, Maximize2, Copy, Check } from "lucide-react";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
 import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";

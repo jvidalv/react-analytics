@@ -15,6 +15,7 @@ import type {
   IdentifyEvent,
   NavigationEvent,
   StateEvent,
+  MessageEvent,
 } from "./types";
 
 const DEFAULT_API_URL = "https://expofast.app/api/analytics/push";
@@ -350,6 +351,26 @@ function page(path: string, properties?: Record<string, unknown>): void {
 }
 
 /**
+ * Track a contact form message
+ */
+function message(
+  contact: string,
+  content: string,
+  properties?: Record<string, unknown>,
+): void {
+  const event: MessageEvent = {
+    type: "message",
+    contact,
+    content,
+    date: getDateForApi(),
+    properties,
+  };
+
+  if (config?.debug) logEvent(event);
+  events.push(event);
+}
+
+/**
  * Get current configuration
  */
 export function getConfig(): AnalyticsConfig | null {
@@ -365,5 +386,6 @@ export const analytics = {
   action,
   error,
   page,
+  message,
   cleanup,
 };

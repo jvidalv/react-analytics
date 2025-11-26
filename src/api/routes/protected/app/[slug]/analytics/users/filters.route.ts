@@ -1,14 +1,15 @@
 import { Elysia, t } from "elysia";
 import { db } from "@/db";
 import { sql } from "drizzle-orm";
-import { getAnalyticsTable } from "@/api/utils/analytics";
+import {
+  getAnalyticsTable,
+  getAnalyticsFromStore,
+} from "@/api/utils/analytics";
 
 export const usersFiltersRoute = new Elysia().get(
   "/filters",
   async ({ store }) => {
-    // Access from store (set by parent route)
-    const apiKey = (store as any).apiKey as string;
-    const isTest = (store as any).isTest as boolean;
+    const { apiKey, isTest } = getAnalyticsFromStore(store);
 
     // Get correct table (production or test)
     const targetTable = getAnalyticsTable(isTest);

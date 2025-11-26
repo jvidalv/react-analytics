@@ -29,6 +29,20 @@
       "when": 1763565336333,
       "tag": "0003_fix-mv-use-identify-events",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1764184203467,
+      "tag": "0004_simple_naoko",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1764189108396,
+      "tag": "0005_cold_talos",
+      "breakpoints": true
     }
   ]
 }

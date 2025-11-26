@@ -1,41 +1,15 @@
 import { Elysia, t } from "elysia";
 import { db } from "@/db";
-import { sql, eq, gte, desc, count } from "drizzle-orm";
-import { getIdentifiedUsersMv } from "@/api/utils/analytics";
-
-// Response schemas
-const NewJoinerSchema = t.Object({
-  identifyId: t.String(),
-  userId: t.Union([t.String(), t.Null()]),
-  name: t.Union([t.String(), t.Null()]),
-  email: t.Union([t.String(), t.Null()]),
-  avatar: t.Union([t.String(), t.Null()]),
-  platform: t.Union([t.String(), t.Null()]),
-  country: t.Union([t.String(), t.Null()]),
-  appVersion: t.Union([t.String(), t.Null()]),
-  isIdentified: t.Boolean(),
-  firstSeen: t.String(), // ISO date string
-  lastSeen: t.String(), // ISO date string
-});
-
-const PaginationSchema = t.Object({
-  page: t.Number(),
-  limit: t.Number(),
-  total: t.Number(),
-  totalPages: t.Number(),
-});
-
-const NewJoinersResponseSchema = t.Object({
-  users: t.Array(NewJoinerSchema),
-  pagination: PaginationSchema,
-});
+import { sql, desc, count } from "drizzle-orm";
+import {
+  getIdentifiedUsersMv,
+  getAnalyticsFromStore,
+} from "@/api/utils/analytics";
 
 export const newJoinersRoute = new Elysia().get(
   "/new-joiners",
   async ({ store, query }) => {
-    // Access from store (set by parent route)
-    const apiKey = (store as any).apiKey as string;
-    const isTest = (store as any).isTest as boolean;
+    const { apiKey, isTest } = getAnalyticsFromStore(store);
 
     // Get query parameters
     const page = parseInt(query.page || "1", 10);

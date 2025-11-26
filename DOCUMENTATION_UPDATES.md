@@ -5,17 +5,20 @@ This document tracks the key updates made to CLAUDE.md, AGENTS.md, and BUGBOT.md
 ## Key Changes in Recent Commits
 
 ### Dependency Management
+
 - **Removed**: stripe, openai, @hookform/resolvers, zustand, html-to-image, @radix-ui/react-toast, tailwindcss-animate, @tailwindcss/postcss
 - **Added**: mdx, @react-email/tailwind, typescript-eslint
 - **Moved**: @jvidalv/react-analytics from devDependencies to dependencies
 - **New Script**: `yarn check:deps` - Check for unused dependencies
 
 ### Environment Variables
+
 - **Removed**: AUTH_DRIZZLE_URL (was duplicate of DATABASE_URL)
 - **Updated Plan Names**: Free/Starter/Pro (was Straw/Wood/Metal)
 - **Added**: CRON_SECRET, BASE_URL for cron job authentication
 
 ### Architecture Changes
+
 - **Data Fetching**: Migrated from SWR to React Query (@tanstack/react-query)
 - **API Routes**: All routes now use Elysia (not Next.js API routes)
 - **Route Structure**: Analytics moved from `/src/api/routes/public/analytics/` to `/src/api/routes/analytics/`
@@ -23,6 +26,7 @@ This document tracks the key updates made to CLAUDE.md, AGENTS.md, and BUGBOT.md
 - **Removed**: Seed data scripts and files (analytics_rows.sql, seed-analytics.ts, etc.)
 
 ### Technology Stack Updates
+
 - Next.js: 15.x → 16.0.3
 - React: 19.0.0 → 19.2.0
 - Tailwind CSS: 3.x → 4.1.17 (major version upgrade)
@@ -31,16 +35,19 @@ This document tracks the key updates made to CLAUDE.md, AGENTS.md, and BUGBOT.md
 ## Updates Applied to CLAUDE.md
 
 ### ✅ Materialized Views Section (Lines 245-274)
+
 - Already documented correctly
 - Includes refresh schedule (every minute)
 - Explains cron job endpoint
 
 ### ✅ Environment Variables (Lines 566-602)
+
 - Still shows AUTH_DRIZZLE_URL (needs removal)
 - Still shows old plan names (METAL/WOOD/STRAW)
 - Missing CRON_SECRET and BASE_URL
 
 ### ⚠️ Tech Stack Section (Lines 31-68)
+
 - Shows Next.js 15.1.6 (should be 16.0.3)
 - Shows React 19.0.0 (should be 19.2.0)
 - Shows Tailwind 3.4.1 (should be 4.1.17)
@@ -49,37 +56,44 @@ This document tracks the key updates made to CLAUDE.md, AGENTS.md, and BUGBOT.md
 - Shows Apple provider (not configured)
 
 ### ⚠️ API Routes Section (Lines 134-160)
+
 - Shows /docs route (removed in commit b56d4fe)
 - Structure needs update to reflect Elysia routes
 
 ## Updates Needed for AGENTS.md
 
 ### Technology Stack (Lines 81-86)
+
 - Update Next.js version to 16.0.3
 - Update React version to 19.2.0
 
 ### Data Fetching Patterns (Lines 181-230)
+
 - Add React Query section
 - Document query keys pattern
 - Document useQuery with Eden Treaty
 - Document cache invalidation with queryClient.invalidateQueries()
 
 ### Remove References
+
 - Remove any db:push command references
 - Remove db:add-data script references
 
 ## Updates Needed for BUGBOT.md
 
 ### API Route Debugging (Lines 252-302)
+
 - Update to reflect Elysia structure at /src/api/routes/
 - Remove Next.js API route patterns
 
 ### Database Commands (Lines 142-190)
+
 - Remove db:push references
 - Remove db:add-data references
 - Keep db:reset as the recommended approach
 
 ### Add New Sections
+
 1. **React Query Debugging**
    - Query cache issues
    - Stale data problems
@@ -129,6 +143,7 @@ BASE_URL=...     # Defaults to http://localhost:3000
 Document this pattern in all files:
 
 ### Old (SWR):
+
 ```typescript
 import useSWR from "swr";
 import { mutate } from "swr";
@@ -138,6 +153,7 @@ await mutate("/api/app/all");
 ```
 
 ### New (React Query):
+
 ```typescript
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetcherProtected } from "@/lib/fetcher";
@@ -149,7 +165,7 @@ const { data } = useQuery({
     const { data, error } = await fetcherProtected.app.all.get();
     if (error) throw error;
     return data;
-  }
+  },
 });
 
 // Cache invalidation
@@ -167,16 +183,14 @@ import { fetcherProtected } from "@/lib/fetcher";
 // GET request
 const { data, error } = await fetcherProtected
   .app({ slug: "my-app" })
-  .analytics
-  .users
-  .list
-  .get({ query: { page: 1, limit: 50 } });
+  .analytics.users.list.get({ query: { page: 1, limit: 50 } });
 
 // POST request
-const { data, error } = await fetcherProtected
-  .app
-  .create
-  .post({ id: "...", name: "...", description: "..." });
+const { data, error } = await fetcherProtected.app.create.post({
+  id: "...",
+  name: "...",
+  description: "...",
+});
 
 // Error handling
 if (error) {
@@ -226,6 +240,7 @@ Document current API structure:
 Update all command references:
 
 ### Available:
+
 - `yarn dev` - Next.js + cron watchers (runs concurrently)
 - `yarn dev:next` - Next.js only (no cron)
 - `yarn build` - Production build
@@ -240,6 +255,7 @@ Update all command references:
 - `yarn format` - Run ESLint + Prettier
 
 ### Removed:
+
 - `yarn db:add-data` - Seed data script (removed)
 - `yarn db:push` - Direct schema push (never existed, use migrations)
 
@@ -264,4 +280,3 @@ Current cron job setup:
 - **Views refreshed**:
   - `analytics_identified_users_mv` (production data)
   - `analytics_test_identified_users_mv` (test data)
-

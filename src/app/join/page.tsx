@@ -1,6 +1,4 @@
-import ThunderIcon from "@/components/custom/thunder-icon";
 import { PublicFooter } from "@/components/public/footer";
-import Image from "next/image";
 import { SignInButton } from "@/app/join/page.buttons";
 import { Suspense } from "react";
 import { Metadata } from "next";

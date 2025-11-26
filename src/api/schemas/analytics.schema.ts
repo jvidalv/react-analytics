@@ -11,6 +11,7 @@ export const EventTypeSchema = t.Union([
   t.Literal("identify"),
   t.Literal("state"),
   t.Literal("error"),
+  t.Literal("message"),
 ]);
 
 export type EventType = Static<typeof EventTypeSchema>;
@@ -67,6 +68,16 @@ export const ErrorEventSchema = t.Composite([
   }),
 ]);
 
+// Message event schema (for contact forms)
+export const MessageEventSchema = t.Composite([
+  BaseEventSchema,
+  t.Object({
+    type: t.Literal("message"),
+    contact: t.String({ minLength: 1 }),
+    content: t.String({ minLength: 1 }),
+  }),
+]);
+
 // Union of all event types
 export const AnalyticsEventSchema = t.Union([
   NavigationEventSchema,
@@ -74,6 +85,7 @@ export const AnalyticsEventSchema = t.Union([
   IdentifyEventSchema,
   StateEventSchema,
   ErrorEventSchema,
+  MessageEventSchema,
 ]);
 
 export type AnalyticsEvent = Static<typeof AnalyticsEventSchema>;
@@ -82,7 +94,8 @@ export type AnalyticsEvent = Static<typeof AnalyticsEventSchema>;
 export const PushRequestBodySchema = t.Object({
   // Accept both UUID format (case-insensitive) and new custom format (prod|dev)-{name}-{hash}
   apiKey: t.String({
-    pattern: "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|(prod|dev)-[a-z0-9-]+-[0-9a-f]{32})$",
+    pattern:
+      "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|(prod|dev)-[a-z0-9-]+-[0-9a-f]{32})$",
   }),
   identifyId: t.String({ minLength: 1 }),
   userId: t.Optional(t.Union([t.String(), t.Null()])),

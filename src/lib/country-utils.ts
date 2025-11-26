@@ -33,7 +33,7 @@ export function getCountryName(
   try {
     const displayNames = new Intl.DisplayNames([locale], { type: "region" });
     return displayNames.of(countryCode.toUpperCase()) || countryCode;
-  } catch (error) {
+  } catch (_error) {
     return countryCode;
   }
 }

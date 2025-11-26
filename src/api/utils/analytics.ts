@@ -5,11 +5,41 @@ import {
   analyticsApiKeys,
   analyticsIdentifiedUsersMv,
   analyticsTestIdentifiedUsersMv,
+  messageStatus,
+  messageStatusTest,
+  errorStatus,
+  errorStatusTest,
 } from "@/db/schema";
-import { eq, and, gte, sql, count } from "drizzle-orm";
+import { eq, and, gte, count, sql } from "drizzle-orm";
 import type { AnalyticsEvent, EventType } from "@/api/schemas/analytics.schema";
 import { MAX_PROPERTIES_LENGTH } from "@/api/schemas/analytics.schema";
 import { uuidv7 } from "uuidv7";
+
+// Analytics store type (set by analytics routes onBeforeHandle)
+export type AnalyticsStore = {
+  apiKey: string;
+  isTest: boolean;
+};
+
+/**
+ * Get analytics context from store (apiKey and isTest flag)
+ * Throws if called outside of analytics routes
+ */
+export const getAnalyticsFromStore = (store: {
+  apiKey?: string;
+  isTest?: boolean;
+}): AnalyticsStore => {
+  if (store.apiKey === undefined || store.isTest === undefined) {
+    throw new Error(
+      "You are using analytics store outside of an analytics route!",
+    );
+  }
+
+  return {
+    apiKey: store.apiKey,
+    isTest: store.isTest,
+  };
+};
 
 // Type for analytics table
 export type AnalyticsTable = typeof analytics | typeof analyticsTest;
@@ -18,6 +48,14 @@ export type AnalyticsTable = typeof analytics | typeof analyticsTest;
 export type IdentifiedUsersMvTable =
   | typeof analyticsIdentifiedUsersMv
   | typeof analyticsTestIdentifiedUsersMv;
+
+// Type for message status table
+export type MessageStatusTable =
+  | typeof messageStatus
+  | typeof messageStatusTest;
+
+// Type for error status table
+export type ErrorStatusTable = typeof errorStatus | typeof errorStatusTest;
 
 /**
  * Get the appropriate analytics table based on API key
@@ -35,6 +73,22 @@ export const getIdentifiedUsersMv = (
   return isTestKey
     ? analyticsTestIdentifiedUsersMv
     : analyticsIdentifiedUsersMv;
+};
+
+/**
+ * Get the appropriate message status table based on API key
+ */
+export const getMessageStatusTable = (
+  isTestKey: boolean,
+): MessageStatusTable => {
+  return isTestKey ? messageStatusTest : messageStatus;
+};
+
+/**
+ * Get the appropriate error status table based on API key
+ */
+export const getErrorStatusTable = (isTestKey: boolean): ErrorStatusTable => {
+  return isTestKey ? errorStatusTest : errorStatus;
 };
 
 /**
@@ -124,6 +178,13 @@ export const buildEventProperties = (event: AnalyticsEvent) => {
       specialPropertyKey = "message";
       specialPropertyValue = event.message;
       break;
+    case "message":
+      // Message events store contact and content
+      return {
+        contact: event.contact,
+        content: event.content,
+        ...(event.properties ? { data: event.properties } : {}),
+      };
     default:
       // This should never happen due to TypeBox validation
       throw new Error(`Invalid event type: ${(event as any).type}`);
