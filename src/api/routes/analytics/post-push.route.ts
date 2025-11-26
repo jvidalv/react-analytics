@@ -12,6 +12,7 @@ import {
   validateApiKey,
   getAnalyticsTable,
   getMessageStatusTable,
+  getErrorStatusTable,
   extractRequestMetadata,
   isValidPropertiesSize,
   buildEventObject,
@@ -144,6 +145,19 @@ export const postPushRoute = new Elysia()
           const messageStatusTable = getMessageStatusTable(isTestKey);
           await db.insert(messageStatusTable).values(
             messageEvents.map((event) => ({
+              analyticsId: event.id,
+              apiKey: body.apiKey,
+              status: "new" as const,
+            })),
+          );
+        }
+
+        // 6c. Create error_status entries for any error events
+        const errorEvents = eventObjects.filter((e) => e.type === "error");
+        if (errorEvents.length > 0) {
+          const errorStatusTable = getErrorStatusTable(isTestKey);
+          await db.insert(errorStatusTable).values(
+            errorEvents.map((event) => ({
               analyticsId: event.id,
               apiKey: body.apiKey,
               status: "new" as const,
