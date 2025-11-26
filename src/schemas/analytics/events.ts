@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { DateStringSchema, JsonObjectSchema } from "./common";
+import { MAX_PROPERTIES_LENGTH } from "@/api/schemas/analytics.schema";
 
 /**
  * Analytics event schemas
@@ -16,15 +17,14 @@ export const AnalyticsEventTypeSchema = z.enum([
 
 export type AnalyticsEventType = z.infer<typeof AnalyticsEventTypeSchema>;
 
-// Event properties with 600 character limit
+// Event properties with character limit
 export const EventPropertiesSchema = z.record(z.string(), z.unknown()).refine(
   (props) => {
     const jsonString = JSON.stringify(props);
-    return jsonString.length <= 600;
+    return jsonString.length <= MAX_PROPERTIES_LENGTH;
   },
   {
-    message:
-      "Event properties must be less than 600 characters when stringified",
+    message: `Event properties must be less than ${MAX_PROPERTIES_LENGTH} characters when stringified`,
   },
 );
 

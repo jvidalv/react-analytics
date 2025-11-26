@@ -24,7 +24,7 @@ export default function HomeStarterFeatures() {
       points: [
         "Automatic navigation tracking for Next.js App Router, Expo Router, and React Router.",
         "Track custom actions, errors, state changes, and user identification.",
-        "Properties support for detailed event metadata (up to 600 characters).",
+        "Properties support for detailed event metadata (up to 5KB).",
         "Client-side batching for optimized network performance.",
       ],
       Icon: Activity,

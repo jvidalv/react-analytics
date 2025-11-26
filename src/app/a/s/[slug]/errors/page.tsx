@@ -63,7 +63,6 @@ export default function ErrorsPage() {
   const params = useParams();
   const appSlug = params.slug as string;
   const { me } = useMe();
-
   const [filters, setFilters] = useQueryStates(
     {
       page: parseAsInteger.withDefault(1),

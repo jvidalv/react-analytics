@@ -6,6 +6,7 @@ import {
   PushSuccessResponseSchema,
   PushErrorResponseSchema,
   ErrorCodes,
+  MAX_PROPERTIES_LENGTH,
 } from "@/api/schemas/analytics.schema";
 import {
   validateApiKey,
@@ -115,8 +116,7 @@ export const postPushRoute = new Elysia()
               success: false,
               error: {
                 code: ErrorCodes.PROPERTIES_TOO_LARGE,
-                message:
-                  "Event properties exceed maximum size (600 characters)",
+                message: `Event properties exceed maximum size (${MAX_PROPERTIES_LENGTH} characters)`,
                 field: `events[${i}].properties`,
               },
             };

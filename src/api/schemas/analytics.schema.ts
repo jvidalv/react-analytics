@@ -1,7 +1,7 @@
 import { t, Static } from "elysia";
 
 // Constants
-export const MAX_PROPERTIES_LENGTH = 600;
+export const MAX_PROPERTIES_LENGTH = 5000;
 export const MAX_EVENTS_PER_BATCH = 100;
 
 // Event types enum
