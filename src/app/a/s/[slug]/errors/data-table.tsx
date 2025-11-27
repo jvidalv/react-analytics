@@ -44,11 +44,42 @@ import {
 import { useMe } from "@/domains/user/me.api";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { Bug, Eye, Globe, Loader2 } from "lucide-react";
+import { Bug, Check, Copy, Eye, Globe, Loader2 } from "lucide-react";
 import IosIcon from "@/components/custom/ios-icon";
 import AndroidIcon from "@/components/custom/android-icon";
 import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
 import { cn } from "@/lib/utils";
+
+function CopyButton({
+  value,
+  className,
+}: {
+  value: string;
+  className?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(value);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className={cn("size-6 shrink-0", className)}
+      onClick={handleCopy}
+    >
+      {copied ? (
+        <Check className="size-3 text-green-500" />
+      ) : (
+        <Copy className="size-3" />
+      )}
+    </Button>
+  );
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -309,9 +340,12 @@ export function DataTable<TData, TValue>({
               <div className="flex flex-col gap-6 p-4">
                 {/* Error Message */}
                 <div className="space-y-2">
-                  <Label className="text-muted-foreground text-xs uppercase tracking-wide">
-                    Error Message
-                  </Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-muted-foreground text-xs uppercase tracking-wide">
+                      Error Message
+                    </Label>
+                    <CopyButton value={selectedError.message} />
+                  </div>
                   <div className="bg-destructive/10 border border-destructive/20 p-4">
                     <p className="font-mono text-sm break-all">
                       {selectedError.message}
@@ -327,9 +361,12 @@ export function DataTable<TData, TValue>({
                 {/* Stack Trace */}
                 {selectedError.stack && (
                   <div className="space-y-2">
-                    <Label className="text-muted-foreground text-xs uppercase tracking-wide">
-                      Stack Trace
-                    </Label>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-muted-foreground text-xs uppercase tracking-wide">
+                        Stack Trace
+                      </Label>
+                      <CopyButton value={selectedError.stack} />
+                    </div>
                     <div className="bg-muted/50 p-4 overflow-x-auto max-h-48 overflow-y-auto">
                       <pre className="text-xs font-mono whitespace-pre-wrap break-all">
                         {selectedError.stack}
@@ -341,9 +378,12 @@ export function DataTable<TData, TValue>({
                 {/* Component Stack */}
                 {selectedError.componentStack && (
                   <div className="space-y-2">
-                    <Label className="text-muted-foreground text-xs uppercase tracking-wide">
-                      Component Stack
-                    </Label>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-muted-foreground text-xs uppercase tracking-wide">
+                        Component Stack
+                      </Label>
+                      <CopyButton value={selectedError.componentStack} />
+                    </div>
                     <div className="bg-muted/50 p-4 overflow-x-auto max-h-32 overflow-y-auto">
                       <pre className="text-xs font-mono whitespace-pre-wrap break-all">
                         {selectedError.componentStack}
@@ -382,9 +422,14 @@ export function DataTable<TData, TValue>({
                     </p>
                   </div>
                   <div className="space-y-1 col-span-2">
-                    <Label className="text-muted-foreground text-xs uppercase tracking-wide">
-                      Route
-                    </Label>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-muted-foreground text-xs uppercase tracking-wide">
+                        Route
+                      </Label>
+                      {selectedError.route && (
+                        <CopyButton value={selectedError.route} />
+                      )}
+                    </div>
                     <p className="text-sm font-mono break-all">
                       {selectedError.route || "-"}
                     </p>
@@ -451,9 +496,12 @@ export function DataTable<TData, TValue>({
                     </p>
                   </div>
                   <div className="space-y-1 col-span-2">
-                    <Label className="text-muted-foreground text-xs uppercase tracking-wide">
-                      Device ID
-                    </Label>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-muted-foreground text-xs uppercase tracking-wide">
+                        Device ID
+                      </Label>
+                      <CopyButton value={selectedError.identifyId} />
+                    </div>
                     <p className="text-xs font-mono text-muted-foreground break-all">
                       {selectedError.identifyId}
                     </p>
