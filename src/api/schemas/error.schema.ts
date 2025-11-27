@@ -21,6 +21,8 @@ export const ErrorSchema = t.Object({
   componentStack: t.Union([t.String(), t.Null()]),
   route: t.Union([t.String(), t.Null()]),
   source: t.Union([t.String(), t.Null()]),
+  browser: t.Union([t.String(), t.Null()]),
+  osVersion: t.Union([t.String(), t.Null()]),
   status: ErrorStatusSchema,
   notes: t.Union([t.String(), t.Null()]),
   platform: t.Union([t.String(), t.Null()]),
@@ -45,6 +47,8 @@ export interface AnalyticsError {
   componentStack: string | null;
   route: string | null;
   source: string | null;
+  browser: string | null;
+  osVersion: string | null;
   status: ErrorStatus;
   notes: string | null;
   platform: string | null;

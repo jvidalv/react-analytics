@@ -375,9 +375,17 @@ export function DataTable<TData, TValue>({
                   </div>
                   <div className="space-y-1">
                     <Label className="text-muted-foreground text-xs uppercase tracking-wide">
+                      Source
+                    </Label>
+                    <p className="text-sm">
+                      {selectedError.source || "Manual"}
+                    </p>
+                  </div>
+                  <div className="space-y-1 col-span-2">
+                    <Label className="text-muted-foreground text-xs uppercase tracking-wide">
                       Route
                     </Label>
-                    <p className="text-sm font-mono">
+                    <p className="text-sm font-mono break-all">
                       {selectedError.route || "-"}
                     </p>
                   </div>
@@ -418,6 +426,22 @@ export function DataTable<TData, TValue>({
                       </span>
                     )}
                   </div>
+                  {selectedError.browser && (
+                    <div className="space-y-1">
+                      <Label className="text-muted-foreground text-xs uppercase tracking-wide">
+                        Browser
+                      </Label>
+                      <p className="text-sm">{selectedError.browser}</p>
+                    </div>
+                  )}
+                  {selectedError.osVersion && (
+                    <div className="space-y-1">
+                      <Label className="text-muted-foreground text-xs uppercase tracking-wide">
+                        OS Version
+                      </Label>
+                      <p className="text-sm">{selectedError.osVersion}</p>
+                    </div>
+                  )}
                   <div className="space-y-1">
                     <Label className="text-muted-foreground text-xs uppercase tracking-wide">
                       App Version
@@ -426,12 +450,12 @@ export function DataTable<TData, TValue>({
                       {selectedError.appVersion || "-"}
                     </p>
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1 col-span-2">
                     <Label className="text-muted-foreground text-xs uppercase tracking-wide">
-                      Source
+                      Device ID
                     </Label>
-                    <p className="text-sm">
-                      {selectedError.source || "Manual"}
+                    <p className="text-xs font-mono text-muted-foreground break-all">
+                      {selectedError.identifyId}
                     </p>
                   </div>
                 </div>
