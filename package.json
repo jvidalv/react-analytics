@@ -29,7 +29,7 @@
     "db:migrate": "tsx src/db/migrate.ts",
     "db:studio": "npx drizzle-kit studio",
     "db:reset": "tsx scripts/reset-database.ts",
-    "vercel-build": "npm run db:migrate && npm run build",
+    "vercel-build": "npm run build && npm run db:migrate",
     "format": "eslint --fix . && prettier --write .",
     "check:deps": "npx depcheck --json",
     "emails:dev": "email dev --dir ./src/components/emails --port 3001",

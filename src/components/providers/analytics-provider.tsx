@@ -13,9 +13,10 @@ interface AnalyticsWrapperProps {
 }
 
 /**
- * Component that identifies the current user to analytics
+ * Component that identifies the current user to analytics.
+ * Must be used inside QueryClientProvider (e.g., in authenticated routes).
  */
-const AnalyticsIdentify: FC = () => {
+export const AnalyticsIdentify: FC = () => {
   const { me } = useMe();
   const identifiedUserIdRef = useRef<string | null>(null);
 
@@ -54,10 +55,7 @@ export const AnalyticsWrapper: FC<AnalyticsWrapperProps> = ({ children }) => {
         debug: process.env.NODE_ENV === "development",
       }}
     >
-      <AnalyticsErrorBoundary>
-        <AnalyticsIdentify />
-        {children}
-      </AnalyticsErrorBoundary>
+      <AnalyticsErrorBoundary>{children}</AnalyticsErrorBoundary>
     </AnalyticsProvider>
   );
 };

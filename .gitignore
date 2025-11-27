@@ -44,7 +44,3 @@ next-env.d.ts
 
 # ide
 .idea
-
-# large sql seed files
-*.sql
-!drizzle/migrations/*.sql

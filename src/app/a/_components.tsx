@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { logout } from "@/app/actions";
 import { queryClient } from "@/lib/query-client";
 import { useUserApps } from "@/domains/app/app.api";
+import { AnalyticsIdentify } from "@/components/providers/analytics-provider";
 
 export function AppLayoutClient({
   children,
@@ -19,6 +20,7 @@ export function AppLayoutClient({
   return (
     <Suspense>
       <QueryClientProvider client={queryClient}>
+        <AnalyticsIdentify />
         <AppsLayoutContent>{children}</AppsLayoutContent>
       </QueryClientProvider>
     </Suspense>
