@@ -28,14 +28,15 @@ export const errorsOneRoute = new Elysia().get(
           e.created_at,
           a.identify_id,
           a.user_id,
-          a.properties->>'message' as message,
-          a.properties->>'name' as name,
-          a.properties->>'stack' as stack,
-          a.properties->>'componentStack' as component_stack,
-          a.properties->>'route' as route,
-          a.properties->>'source' as source,
-          a.properties->>'browser' as browser,
-          a.properties->>'osVersion' as os_version,
+          COALESCE(a.properties->>'message', a.properties->'data'->>'message') as message,
+          COALESCE(a.properties->>'name', a.properties->'data'->>'name') as name,
+          COALESCE(a.properties->>'stack', a.properties->'data'->>'stack') as stack,
+          COALESCE(a.properties->>'componentStack', a.properties->'data'->>'componentStack') as component_stack,
+          COALESCE(a.properties->>'route', a.properties->'data'->>'route') as route,
+          COALESCE(a.properties->>'source', a.properties->'data'->>'source') as source,
+          COALESCE(a.properties->>'browser', a.properties->'data'->>'browser') as browser,
+          COALESCE(a.properties->>'osVersion', a.properties->'data'->>'osVersion') as os_version,
+          COALESCE(a.properties->>'platform', a.properties->'data'->>'platform') as error_platform,
           a.app_version,
           a.date,
           a.info->'requestMetadata'->>'country' as country,
@@ -61,6 +62,16 @@ export const errorsOneRoute = new Elysia().get(
     }
 
     const row = result[0] as any;
+
+    // Normalize platform from error properties or info
+    let platform = row.platform;
+    if (row.error_platform) {
+      const p = row.error_platform.toLowerCase();
+      if (p === "ios") platform = "iOS";
+      else if (p === "android") platform = "Android";
+      else if (p === "web") platform = "Web";
+    }
+
     const error = {
       id: row.id,
       analyticsId: row.analytics_id,
@@ -74,7 +85,7 @@ export const errorsOneRoute = new Elysia().get(
       osVersion: row.os_version,
       status: row.status,
       notes: row.notes,
-      platform: row.platform,
+      platform,
       country: row.country,
       appVersion: row.app_version,
       identifyId: row.identify_id,
