@@ -1,14 +1,39 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect, useRef } from "react";
 import {
   AnalyticsProvider,
   AnalyticsErrorBoundary,
+  analytics,
 } from "@jvidalv/react-analytics";
+import { useMe } from "@/domains/user/me.api";
 
 interface AnalyticsWrapperProps {
   children: ReactNode;
 }
+
+/**
+ * Component that identifies the current user to analytics
+ */
+const AnalyticsIdentify: FC = () => {
+  const { me } = useMe();
+  const identifiedUserIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    // Only identify if we have a user and haven't identified this user yet
+    if (me && me.id !== identifiedUserIdRef.current) {
+      analytics.identify(me.id, {
+        name: me.name,
+        email: me.email,
+        avatar: me.image,
+        plan: me.plan,
+      });
+      identifiedUserIdRef.current = me.id;
+    }
+  }, [me]);
+
+  return null;
+};
 
 /**
  * Analytics wrapper using @jvidalv/react-analytics library
@@ -29,7 +54,10 @@ export const AnalyticsWrapper: FC<AnalyticsWrapperProps> = ({ children }) => {
         debug: process.env.NODE_ENV === "development",
       }}
     >
-      <AnalyticsErrorBoundary>{children}</AnalyticsErrorBoundary>
+      <AnalyticsErrorBoundary>
+        <AnalyticsIdentify />
+        {children}
+      </AnalyticsErrorBoundary>
     </AnalyticsProvider>
   );
 };
