@@ -10,6 +10,9 @@ export type NewJoiner = {
   isIdentified: boolean;
   firstSeen: string;
   lastSeen: string;
+  country: string | null;
+  platform: "iOS" | "Android" | "Web";
+  appVersion: string;
 };
 
 export type NewJoinersList = {

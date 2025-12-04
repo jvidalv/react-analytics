@@ -1,0 +1,177 @@
+"use client";
+
+import { ColumnDef } from "@tanstack/react-table";
+import { NewJoiner } from "@/domains/app/users/new-joiners.api";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { formatDistanceToNow, format } from "date-fns";
+import { Globe, Copy, Check } from "lucide-react";
+import IosIcon from "@/components/custom/ios-icon";
+import AndroidIcon from "@/components/custom/android-icon";
+import { TooltipWrapper } from "@/components/custom/tooltip-wrapper";
+import { countryCodeToFlag, getCountryName } from "@/lib/country-utils";
+import { getAvatarFromUuid, getUuidLastDigits } from "@/lib/avatar-utils";
+import { cn } from "@/lib/utils";
+import { useClipboard } from "@/hooks/use-clipboard";
+import { toast } from "sonner";
+
+function CopyableText({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
+  const [copied, copyToClipboard] = useClipboard();
+
+  const handleCopy = () => {
+    copyToClipboard(text);
+    toast.success("Copied to clipboard");
+  };
+
+  return (
+    <div className="group relative inline-flex items-center gap-1.5">
+      <span className={cn("cursor-pointer", className)} onClick={handleCopy}>
+        {text}
+      </span>
+      <button
+        onClick={handleCopy}
+        className="opacity-0 group-hover:opacity-100 transition-opacity"
+        aria-label="Copy to clipboard"
+      >
+        {copied ? (
+          <Check className="size-3 text-green-600" />
+        ) : (
+          <Copy className="size-3 text-muted-foreground hover:text-foreground" />
+        )}
+      </button>
+    </div>
+  );
+}
+
+function NameCell({ user }: { user: NewJoiner }) {
+  const isAnonymous = !user.name && !user.email;
+
+  const displayName =
+    user.name || user.email || getUuidLastDigits(user.identifyId);
+
+  const initials = isAnonymous
+    ? getUuidLastDigits(user.identifyId, 2).toUpperCase()
+    : displayName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+
+  const avatarSrc = isAnonymous
+    ? getAvatarFromUuid(user.identifyId)
+    : user.avatar;
+
+  return (
+    <div className="flex items-center gap-3">
+      <Avatar className={cn("size-10", isAnonymous && "bg-muted/20")}>
+        {avatarSrc && <AvatarImage src={avatarSrc} alt={displayName} />}
+        <AvatarFallback>{initials}</AvatarFallback>
+      </Avatar>
+      <div className="flex flex-col">
+        <span className="sensitive font-medium">{displayName}</span>
+        {!isAnonymous && user.email && user.name && (
+          <CopyableText
+            text={user.email}
+            className="sensitive text-sm text-muted-foreground"
+          />
+        )}
+        {isAnonymous && (
+          <CopyableText
+            text={user.identifyId}
+            className="text-xs text-muted-foreground"
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+export const newJoinersColumns: ColumnDef<NewJoiner>[] = [
+  {
+    accessorKey: "name",
+    header: "Name",
+    cell: ({ row }) => <NameCell user={row.original} />,
+  },
+  {
+    accessorKey: "platform",
+    header: "Platform",
+    size: 110,
+    cell: ({ row }) => {
+      const user = row.original;
+      const platformIcon = {
+        iOS: <IosIcon className="size-4" />,
+        Android: <AndroidIcon className="size-4" />,
+        Web: <Globe className="size-4 text-muted-foreground" />,
+      }[user.platform];
+
+      return (
+        <div className="flex items-center gap-1">
+          {platformIcon}
+          <span className="text-sm">{user.platform}</span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "country",
+    header: "Country",
+    size: 130,
+    cell: ({ row }) => {
+      const user = row.original;
+      return (
+        <div className="flex items-center gap-1">
+          {user.country ? (
+            <>
+              <span className="text-base">
+                {countryCodeToFlag(user.country)}
+              </span>
+              <span className="text-sm">{getCountryName(user.country)}</span>
+            </>
+          ) : (
+            <span className="text-sm text-muted-foreground">—</span>
+          )}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "appVersion",
+    header: "Version",
+    size: 90,
+    cell: ({ row }) => {
+      const user = row.original;
+      return (
+        <span className="font-mono text-sm text-foreground">
+          {user.appVersion}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "firstSeen",
+    header: "Joined",
+    size: 120,
+    cell: ({ row }) => {
+      const firstSeen = row.getValue("firstSeen") as string;
+      const firstSeenDate = new Date(firstSeen);
+      return (
+        <TooltipWrapper
+          content={format(firstSeenDate, "d MMM yyyy 'at' HH:mm")}
+        >
+          <time
+            dateTime={firstSeenDate.toISOString()}
+            className="text-sm text-foreground cursor-help"
+          >
+            {formatDistanceToNow(firstSeenDate, { addSuffix: true })}
+          </time>
+        </TooltipWrapper>
+      );
+    },
+  },
+];
