@@ -18,7 +18,6 @@ import {
   buildEventObject,
   reconcileIdentity,
   logPushMetrics,
-  checkRateLimit,
 } from "@/api/utils/analytics";
 
 export const postPushRoute = new Elysia()
@@ -27,11 +26,6 @@ export const postPushRoute = new Elysia()
       origin: true, // Allow all origins (web apps from any domain)
       credentials: false, // No credentials needed (API key in body)
       methods: ["POST", "OPTIONS"], // POST for events, OPTIONS for preflight
-      exposeHeaders: [
-        "X-RateLimit-Limit",
-        "X-RateLimit-Remaining",
-        "X-RateLimit-Reset",
-      ], // Let clients read rate limit headers
       allowedHeaders: ["Content-Type"], // Only need JSON
       maxAge: 86400, // Cache preflight for 24 hours
       preflight: true, // Handle OPTIONS requests
@@ -68,39 +62,10 @@ export const postPushRoute = new Elysia()
         const { isTestKey } = validationResult;
         const targetTable = getAnalyticsTable(isTestKey);
 
-        // 2. Check rate limit
-        const rateLimitResult = await checkRateLimit(body.apiKey, targetTable);
-
-        // Set rate limit headers
-        set.headers["X-RateLimit-Limit"] = rateLimitResult.limit.toString();
-        set.headers["X-RateLimit-Remaining"] =
-          rateLimitResult.remaining.toString();
-        set.headers["X-RateLimit-Reset"] =
-          rateLimitResult.resetAt.toISOString();
-
-        if (!rateLimitResult.allowed) {
-          set.status = 429;
-          logPushMetrics({
-            apiKey: body.apiKey,
-            eventCount: body.events.length,
-            duration: Date.now() - startTime,
-            success: false,
-            error: "Rate limit exceeded",
-          });
-
-          return {
-            success: false,
-            error: {
-              code: ErrorCodes.RATE_LIMIT_EXCEEDED,
-              message: `Rate limit exceeded. Maximum ${rateLimitResult.limit} requests per minute.`,
-            },
-          };
-        }
-
-        // 3. Extract request metadata from headers
+        // 2. Extract request metadata from headers
         const requestMetadata = extractRequestMetadata(request.headers);
 
-        // 4. Validate properties size for each event
+        // 3. Validate properties size for each event
         for (let i = 0; i < body.events.length; i++) {
           const event = body.events[i];
           if (event.properties && !isValidPropertiesSize(event.properties)) {
@@ -124,7 +89,7 @@ export const postPushRoute = new Elysia()
           }
         }
 
-        // 5. Build all event objects for insertion
+        // 4. Build all event objects for insertion
         const eventObjects = body.events.map((event) =>
           buildEventObject(event, {
             apiKey: body.apiKey,
@@ -136,10 +101,10 @@ export const postPushRoute = new Elysia()
           }),
         );
 
-        // 6. Batch insert all events (single query - performance improvement!)
+        // 5. Batch insert all events
         await db.insert(targetTable).values(eventObjects);
 
-        // 6b. Create message_status entries for any message events
+        // 6. Create message_status entries for any message events
         const messageEvents = eventObjects.filter((e) => e.type === "message");
         if (messageEvents.length > 0) {
           const messageStatusTable = getMessageStatusTable(isTestKey);
@@ -152,7 +117,7 @@ export const postPushRoute = new Elysia()
           );
         }
 
-        // 6c. Create error_status entries for any error events
+        // 7. Create error_status entries for any error events
         const errorEvents = eventObjects.filter((e) => e.type === "error");
         if (errorEvents.length > 0) {
           const errorStatusTable = getErrorStatusTable(isTestKey);
@@ -165,7 +130,7 @@ export const postPushRoute = new Elysia()
           );
         }
 
-        // 7. Trigger identity reconciliation asynchronously (don't block response)
+        // 8. Trigger identity reconciliation asynchronously (don't block response)
         if (body.userId && body.identifyId) {
           void reconcileIdentity(
             body.userId,
@@ -175,7 +140,7 @@ export const postPushRoute = new Elysia()
           );
         }
 
-        // 8. Log metrics for observability
+        // 9. Log metrics for observability
         logPushMetrics({
           apiKey: body.apiKey,
           eventCount: body.events.length,
@@ -183,7 +148,7 @@ export const postPushRoute = new Elysia()
           success: true,
         });
 
-        // 9. Return success response
+        // 10. Return success response
         set.status = 201;
         return { success: true };
       } catch (error) {
@@ -214,7 +179,6 @@ export const postPushRoute = new Elysia()
         201: PushSuccessResponseSchema,
         400: PushErrorResponseSchema,
         403: PushErrorResponseSchema,
-        429: PushErrorResponseSchema,
         500: PushErrorResponseSchema,
       },
       detail: {

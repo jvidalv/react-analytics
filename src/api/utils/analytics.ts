@@ -10,7 +10,7 @@ import {
   errorStatus,
   errorStatusTest,
 } from "@/db/schema";
-import { eq, and, gte, count, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import type { AnalyticsEvent, EventType } from "@/api/schemas/analytics.schema";
 import { MAX_PROPERTIES_LENGTH } from "@/api/schemas/analytics.schema";
 import { uuidv7 } from "uuidv7";
@@ -302,44 +302,6 @@ export const validateApiKey = async (apiKey: string) => {
   }
 
   return null;
-};
-
-/**
- * Check rate limit for API key
- * Returns whether the request should be allowed and current quota information
- */
-export const checkRateLimit = async (
-  apiKey: string,
-  table: AnalyticsTable,
-): Promise<{
-  allowed: boolean;
-  current: number;
-  limit: number;
-  remaining: number;
-  resetAt: Date;
-}> => {
-  const windowMinutes = 1;
-  const limit = 1000;
-
-  // Calculate cutoff time for sliding window
-  const cutoffTime = new Date(Date.now() - windowMinutes * 60 * 1000);
-
-  // Count events in the last minute for this API key
-  const result = await db
-    .select({ count: count() })
-    .from(table)
-    .where(and(eq(table.apiKey, apiKey), gte(table.date, cutoffTime)));
-
-  const currentCount = Number(result[0]?.count || 0);
-  const remaining = Math.max(0, limit - currentCount);
-
-  return {
-    allowed: currentCount < limit,
-    current: currentCount,
-    limit,
-    remaining,
-    resetAt: new Date(Date.now() + windowMinutes * 60 * 1000),
-  };
 };
 
 /**

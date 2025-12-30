@@ -135,6 +135,7 @@ export const analytics = pgTable(
       table.type,
       table.date.desc(),
     ),
+    idxUserId: index("idx_analytics_user_id").on(table.userId),
   }),
 );
 
@@ -168,6 +169,7 @@ export const analyticsTest = pgTable(
       table.type,
       table.date.desc(),
     ),
+    idxUserId: index("idx_analytics_test_user_id").on(table.userId),
   }),
 );
 

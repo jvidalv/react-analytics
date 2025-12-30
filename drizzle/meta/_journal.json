@@ -43,6 +43,13 @@
       "when": 1764189108396,
       "tag": "0005_cold_talos",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1767090842341,
+      "tag": "0006_rich_nemesis",
+      "breakpoints": true
     }
   ]
 }
